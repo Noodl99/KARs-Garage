@@ -6,7 +6,7 @@
    - Speedrider layout: horizontal "machine cards" grid per course & mode.
 */
 
-/* === Paste your published CSV URLs === */
+/* === Published CSV URLs === */
 const SRC_CSV = "https://docs.google.com/spreadsheets/d/e/2PACX-1vRLdSEHHpUNrBHTlJlEZLBJmJpbBuxrnJ4AXQk_vqzhVoyliOzaM-uEAw-WXNskMOhcjZq7HWLctrBN/pub?output=csv";
 const SR_CSV  = "https://docs.google.com/spreadsheets/d/e/2PACX-1vRLLtoztu41AtY4reRXwNd00WqxhlFyTbn3RKoBwssrf1fXFGAZxO2b1dB62-0lrUOz4yi1dLuJrmml/pub?output=csv";
 
@@ -57,7 +57,7 @@ function linkCell(url){
   const u = String(url||'').trim();
   if (!u) return '';
   const label = u.replace(/^https?:\/\/(www\.)?/,'').slice(0,36) + (u.length>36?'…':'');
-  return `${u}${label}</a>`;
+  return `<a href="${u}" target="_blank" rel="noopener">${label}</a>`;
 }
 
 /* Extract {course, ruleset} from Subcategory text */
@@ -72,10 +72,7 @@ function parseCourseAndRules(subcatRaw){
   let course = s.replace(/restricted|unrestricted/ig,'');
   course = course.replace(/[-–—|•]/g,' ');
   course = course.replace(/\s+/g,' ').trim();
-
-  // Sometimes subcategory strings include prefixes like "Air Ride - " or trailing mode names
   course = course.replace(/^air\s*ride\s*[:-]\s*/i,'').trim();
-  // Remove trailing "time attack" / "free run" if present
   course = course.replace(/time\s*attack|free\s*run/ig,'').trim();
 
   return {course, ruleset};
@@ -120,7 +117,6 @@ function renderSpeedriderGrid(mountId, byMachine){
   machineNames.forEach(machine => {
     const entries = byMachine[machine] || [];
     html += `<div class="sr-card"><h4 class="sr-machine">${machine}</h4>`;
-    // Mini table: Time | Rider | Player | Node Link | Player Link
     html += '<table class="sr-mini"><thead><tr>';
     SR_MINI_COLS.forEach(c => html += `<th>${c}</th>`);
     html += '</tr></thead><tbody>';
@@ -205,13 +201,9 @@ async function loadAll(){
     Time: idxOf(srHeader,"Time"),
     Node: idxOf(srHeader,"Node Link"),
     PlayerLink: idxOf(srHeader,"Player Link"),
-    // Time (sec) exists but we preserve source order per your tie rule
   };
 
-  /* Group Speedrider by course -> mode buckets -> machine arrays
-     NOTE: Your provided CSV may merge TA/FR. For now, we render the same data
-     for both TA and FR grids to match the visual layout. If you later provide
-     separate CSVs, we can wire TA to TA and FR to FR cleanly. */
+  /* Group Speedrider by course -> mode buckets -> machine arrays */
   const srByCourse = new Map();
   srRows.slice(1).forEach(r => {
     const course  = r[SR_IDX.Course] ?? '';
@@ -230,7 +222,7 @@ async function loadAll(){
       srByCourse.set(course, {TA:{}, FR:{}});
     }
     const courseObj = srByCourse.get(course);
-    // For now, put the same entry into both TA & FR buckets
+    // Until we get separate SR feeds for TA/FR, include entries in both
     if (!courseObj.TA[machine]) courseObj.TA[machine] = [];
     if (!courseObj.FR[machine]) courseObj.FR[machine] = [];
     courseObj.TA[machine].push(entry);
@@ -246,7 +238,7 @@ async function loadAll(){
     const anchorId = makeAnchorId(courseName);
     // Nav item
     const li = document.createElement('li');
-    li.innerHTML = `#${anchorId}${courseName}</a>`;
+    li.innerHTML = `<a href="#${anchorId}">${courseName}</a>`;
     navList.appendChild(li);
 
     // Section scaffold
