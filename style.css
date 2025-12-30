@@ -1,0 +1,135 @@
+
+/* ===========================
+   Theme variables (your palette)
+   =========================== */
+:root{
+  --bg: #ffffff;
+  --text: #000000;
+  --muted: #333333;
+  --panel: #f7f7f7;
+  --border: #e5e5e5;
+  --accent: #ff5252;
+  --link: #ff5252;        /* link color = accent */
+  --link-hover: #d60000;  /* darker hover for contrast */
+  --maxw: 1200px;
+}
+
+/* ===========================
+   Base & layout
+   =========================== */
+*{box-sizing:border-box}
+html,body{height:100%}
+body{
+  margin:0;
+  color:var(--text);
+  background:var(--bg);
+  /* Font stack honors your preference order:
+     1) Google Sans (if available)
+     2) Avenir Next
+     3) Metropolis (self-hosted)
+     then sensible fallbacks. */
+  font-family:
+    "Google Sans",
+    "Avenir Next",
+    "Metropolis",
+    Inter,
+    system-ui, -apple-system, Segoe UI, Roboto,
+    "Helvetica Neue", Arial, sans-serif;
+  line-height:1.45;
+}
+.container{max-width:var(--maxw); margin:0 auto; padding:0 16px}
+
+/* ===========================
+   Self-hosted Metropolis font
+   (Place converted files in /fonts)
+   =========================== */
+@font-face {
+  font-family: "Metropolis";
+  src: url("/fonts/Metropolis-Regular.woff2") format("woff2"),
+       url("/fonts/Metropolis-Regular.woff") format("woff");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: "Metropolis";
+  src: url("/fonts/Metropolis-Bold.woff2") format("woff2"),
+       url("/fonts/Metropolis-Bold.woff") format("woff");
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+
+/* ===========================
+   Header
+   =========================== */
+.site-header{padding:16px 0 8px; background:var(--bg)}
+.brand{margin:0; font-weight:700; font-size:2rem; letter-spacing:.02em}
+.tagline{margin:6px 0 10px; color:var(--muted)}
+.accent{border:none; height:4px; background:var(--accent);}
+
+/* ===========================
+   Navigation
+   =========================== */
+.top-nav ul{display:flex; flex-wrap:wrap; gap:10px; list-style:none; padding:12px 0; margin:0}
+.top-nav a{
+  display:inline-block; padding:8px 12px;
+  color:var(--text); background:var(--panel);
+  border:1px solid var(--border); border-radius:8px;
+  text-decoration:none;
+}
+.top-nav a:hover{background:#efefef}
+
+/* ===========================
+   Course sections
+   =========================== */
+.course{margin:28px 0 44px}
+.course-title{margin:0 0 6px; font-size:1.6rem; font-weight:700; letter-spacing:.02em}
+.course-subtitle{margin:0 0 14px; color:var(--muted)}
+.anchor{position:relative; top:-80px} /* offset for in-page nav */
+.section-divider{border:none; height:2px; background:#eee; margin:18px 0}
+
+/* Grid for tables */
+.tables-grid{
+  display:grid; gap:16px; margin-top:16px;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+.table-card{background:var(--panel); border:1px solid var(--border); border-radius:8px; padding:12px}
+.table-card h3{margin:0 0 10px; font-size:1.0rem; border-left:4px solid var(--accent); padding-left:8px}
+.table-card.wide{grid-column:1 / -1}
+
+/* ===========================
+   Table styles (rendered from JS)
+   =========================== */
+.table{
+  width:100%; border-collapse:collapse; table-layout:fixed;
+  border:1px solid var(--border); border-radius:8px; overflow:hidden;
+}
+.table th, .table td{
+  border-right:1px solid var(--border);
+  padding:8px 10px;
+  word-break:break-word;
+}
+.table th{
+  background:#fafafa;
+  text-align:left; font-weight:700; font-size:.9rem;
+}
+.table td{background:#fff}
+.table tr:nth-child(even) td{background:#fbfbfb}
+.table thead tr th:last-child, .table tbody tr td:last-child{border-right:none}
+
+/* Links inside tables */
+.table a{color:var(--link); text-decoration:none}
+.table a:hover{color:var(--link-hover); text-decoration:underline}
+
+/* ===========================
+   Footer
+   =========================== */
+.site-footer{border-top:1px solid var(--border); padding:12px 0; color:var(--muted)}
+
+/* ===========================
+   Responsive
+   =========================== */
+@media (max-width: 900px){
+  .tables-grid{grid-template-columns: 1fr}
+}
