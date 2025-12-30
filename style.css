@@ -9,13 +9,13 @@
   --panel: #f7f7f7;
   --border: #e5e5e5;
   --accent: #ff5252;
-  --link: #ff5252;        /* link color = accent */
-  --link-hover: #d60000;  /* darker hover for contrast */
+  --link: #ff5252;
+  --link-hover: #d60000;
   --maxw: 1200px;
 }
 
 /* ===========================
-   Base & layout
+   Base & font stack
    =========================== */
 *{box-sizing:border-box}
 html,body{height:100%}
@@ -23,11 +23,7 @@ body{
   margin:0;
   color:var(--text);
   background:var(--bg);
-  /* Font stack honors your preference order:
-     1) Google Sans (if available)
-     2) Avenir Next
-     3) Metropolis (self-hosted)
-     then sensible fallbacks. */
+  /* Font order requested: Google Sans → Avenir Next → Metropolis → Inter → fallbacks */
   font-family:
     "Google Sans",
     "Avenir Next",
@@ -39,10 +35,7 @@ body{
 }
 .container{max-width:var(--maxw); margin:0 auto; padding:0 16px}
 
-/* ===========================
-   Self-hosted Metropolis font
-   (Place converted files in /fonts)
-   =========================== */
+/* Self-hosted Metropolis (place files under /fonts) */
 @font-face {
   font-family: "Metropolis";
   src: url("/fonts/Metropolis-Regular.woff2") format("woff2"),
@@ -61,15 +54,69 @@ body{
 }
 
 /* ===========================
-   Header
+   Global header/footer
    =========================== */
-.site-header{padding:16px 0 8px; background:var(--bg)}
+.site-header{padding:16px 0 8px}
 .brand{margin:0; font-weight:700; font-size:2rem; letter-spacing:.02em}
 .tagline{margin:6px 0 10px; color:var(--muted)}
-.accent{border:none; height:4px; background:var(--accent);}
+.accent{border:none; height:4px; background:var(--accent)}
+.site-footer{border-top:1px solid var(--border); padding:12px 0; color:var(--muted)}
+#year{white-space:nowrap}
 
 /* ===========================
-   Navigation
+   Home page (index.html)
+   =========================== */
+.topbar{background:#000; color:#fff}
+.bar-inner{display:flex; align-items:center; gap:12px; padding:10px 16px}
+.brand-logo{font-size:1.2rem}
+.brand-name{font-weight:700}
+.site-nav a{color:#fff; text-decoration:none; margin-left:auto}
+.site-nav a:hover{color:#ddd}
+
+.hero{position:relative; min-height:280px; display:flex; align-items:center}
+.hero-bg{
+  position:absolute; inset:0; background:
+  linear-gradient(180deg, rgba(0,0,0,.35), rgba(0,0,0,.35)),
+  url('images/garage-hero.jpg') center/cover no-repeat;
+}
+.hero-content{position:relative; z-index:1}
+.hero-title{
+  margin:48px 0; font-size:2.6rem; font-weight:800; color:#fff;
+  text-shadow: 0 2px 8px rgba(0,0,0,.4);
+}
+
+.tile-grid{
+  display:grid; gap:18px; margin:24px 0;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+.tile{
+  display:flex; align-items:flex-end;
+  background:#fff; border:2px solid var(--accent); border-radius:16px;
+  min-height:220px; text-decoration:none; position:relative; overflow:hidden;
+  box-shadow: 0 6px 0 rgba(0,0,0,.12);
+}
+.tile:hover{box-shadow: 0 8px 0 rgba(0,0,0,.16)}
+.tile-label{font-weight:800; font-size:2rem; color:#333; padding:16px}
+
+.tile-airride{background:
+  linear-gradient(180deg, rgba(255,82,82,.12), rgba(255,82,82,.12)),
+  url('images/tile-airride.png') center/cover no-repeat;}
+.tile-topride{background:
+  linear-gradient(180deg, rgba(255,196,0,.12), rgba(255,196,0,.12)),
+  url('images/tile-topride.png') center/cover no-repeat;}
+.tile-citytrial{background:
+  linear-gradient(180deg, rgba(0,170,80,.12), rgba(0,170,80,.12)),
+  url('images/tile-citytrial.png') center/cover no-repeat;}
+.tile-roadtrip{background:
+  linear-gradient(180deg, rgba(0,64,128,.12), rgba(0,64,128,.12)),
+  url('images/tile-roadtrip.png') center/cover no-repeat;}
+
+@media (max-width: 900px){
+  .tile-grid{grid-template-columns: 1fr}
+}
+
+/* ===========================
+   Air Ride subpage
    =========================== */
 .top-nav ul{display:flex; flex-wrap:wrap; gap:10px; list-style:none; padding:12px 0; margin:0}
 .top-nav a{
@@ -80,16 +127,12 @@ body{
 }
 .top-nav a:hover{background:#efefef}
 
-/* ===========================
-   Course sections
-   =========================== */
 .course{margin:28px 0 44px}
 .course-title{margin:0 0 6px; font-size:1.6rem; font-weight:700; letter-spacing:.02em}
 .course-subtitle{margin:0 0 14px; color:var(--muted)}
 .anchor{position:relative; top:-80px} /* offset for in-page nav */
 .section-divider{border:none; height:2px; background:#eee; margin:18px 0}
 
-/* Grid for tables */
 .tables-grid{
   display:grid; gap:16px; margin-top:16px;
   grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -98,9 +141,7 @@ body{
 .table-card h3{margin:0 0 10px; font-size:1.0rem; border-left:4px solid var(--accent); padding-left:8px}
 .table-card.wide{grid-column:1 / -1}
 
-/* ===========================
-   Table styles (rendered from JS)
-   =========================== */
+/* Native tables (for SRC detail lists) */
 .table{
   width:100%; border-collapse:collapse; table-layout:fixed;
   border:1px solid var(--border); border-radius:8px; overflow:hidden;
@@ -117,19 +158,35 @@ body{
 .table td{background:#fff}
 .table tr:nth-child(even) td{background:#fbfbfb}
 .table thead tr th:last-child, .table tbody tr td:last-child{border-right:none}
-
-/* Links inside tables */
 .table a{color:var(--link); text-decoration:none}
 .table a:hover{color:var(--link-hover); text-decoration:underline}
 
 /* ===========================
-   Footer
+   Speedrider horizontal layout
    =========================== */
-.site-footer{border-top:1px solid var(--border); padding:12px 0; color:var(--muted)}
+/* Grid of "machine cards" arranged horizontally */
+.sr-grid{
+  display:grid; gap:12px;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+}
+.sr-card{
+  background:#fff; border:1px solid var(--border); border-radius:8px;
+  padding:10px;
+}
+.sr-card .sr-machine{
+  font-weight:700; margin:0 0 8px; font-size:.95rem; border-left:4px solid var(--accent); padding-left:8px;
+}
+.sr-mini{
+  width:100%; border-collapse:collapse; table-layout:auto;
+}
+.sr-mini th, .sr-mini td{
+  text-align:left; font-size:.9rem; padding:4px 6px; border-bottom:1px solid #eee;
+}
+.sr-mini th{background:#fafafa; font-weight:600}
+.sr-mini tr:last-child td{border-bottom:none}
+.sr-mini a{color:var(--link); text-decoration:none}
+.sr-mini a:hover{color:var(--link-hover); text-decoration:underline}
 
-/* ===========================
-   Responsive
-   =========================== */
 @media (max-width: 900px){
   .tables-grid{grid-template-columns: 1fr}
 }

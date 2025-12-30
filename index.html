@@ -7,40 +7,60 @@
   <title>KARs Garage</title>
 
   <!-- Fallback web font (Inter) via Google Fonts -->
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link
-    href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap"
-    rel="stylesheet"
-  />
+  https://fonts.googleapis.com
+  https://fonts.gstatic.com
+  https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap
 
-  <link rel="stylesheet" href="style.css" />
+  <!-- Site styles -->
+  style.css
 </head>
-<body>
-  <!-- Header -->
-  <header class="site-header">
-    <div class="container">
-      <h1 class="brand">KARs Garage</h1>
-      <p class="tagline">Kirby Air Riders – WR Hub</p>
+<body class="home">
+  <!-- Top bar -->
+  <header class="topbar">
+    <div class="container bar-inner">
+      <div class="brand-logo" aria-hidden="true">🏁</div>
+      <div class="brand-name">KARs Garage</div>
+      <nav class="site-nav">
+        air-ride.htmlAir Ride</a>
+      </nav>
     </div>
-    <hr class="accent" />
   </header>
 
-  <!-- Navigation (auto-filled by script.js with course anchors) -->
-  <nav id="top-nav" class="top-nav container" aria-label="Course navigation">
-    <ul id="nav-list"></ul>
-  </nav>
+  <!-- Hero -->
+  <section class="hero">
+    <div class="hero-bg" aria-hidden="true"></div>
+    <div class="hero-content container">
+      <h1 class="hero-title">KIRBY AIR RIDERS GARAGE</h1>
+    </div>
+  </section>
 
-  <!-- Main content (script.js injects course sections + tables here) -->
-  <main id="content" class="container"></main>
+  <!-- Tiles -->
+  <main class="container">
+    <div class="tile-grid">
+      <a class="tile tile-airride" href="air-ride.html">
+        <div class="tile-label">Air Ride</div>
+      </a>
+      <a class="tile tile-topride" href="#">
+        <div class="tile-label">Top Ride</div>
+      </a>
+      <a class="tile tile-citytrial" href="#">
+        <div class="tile-label">City Trial</div>
+      </a>
+      <a class="tile tile-roadtrip" href="#">
+        <div class="tile-label">Road Trip</div>
+      </a>
+    </div>
+  </main>
 
   <!-- Footer -->
   <footer class="site-footer">
     <div class="container">
-      <p>© <span id="year"></span> KARs Garage • Built for Kirby Air Riders WR hub</p>
+      <p>© <span id="year"></span> KARs Garage</p>
     </div>
   </footer>
 
-  <script src="script.js"></script>
+  <script>
+    document.getElementById('year').textContent = new Date().getFullYear();
+  </script>
 </body>
 </html>
