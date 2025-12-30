@@ -23,19 +23,15 @@ body{
   margin:0;
   color:var(--text);
   background:var(--bg);
-  /* Font order: Google Sans → Avenir Next → Metropolis → Inter → fallbacks */
   font-family:
-    "Google Sans",
-    "Avenir Next",
-    "Metropolis",
-    Inter,
-    system-ui, -apple-system, Segoe UI, Roboto,
+    "Google Sans", "Avenir Next", "Metropolis",
+    Inter, system-ui, -apple-system, Segoe UI, Roboto,
     "Helvetica Neue", Arial, sans-serif;
   line-height:1.45;
 }
 .container{max-width:var(--maxw); margin:0 auto; padding:0 16px}
 
-/* Self-hosted Metropolis (place files under /fonts) */
+/* Self-hosted Metropolis (place files under /fonts if you have them) */
 @font-face {
   font-family: "Metropolis";
   src: url("/fonts/Metropolis-Regular.woff2") format("woff2"),
@@ -56,6 +52,14 @@ body{
 /* ===========================
    Global header/footer
    =========================== */
+.topbar{background:#000; color:#fff}
+.bar-inner{display:flex; align-items:center; gap:12px; padding:10px 16px}
+.brand-logo{font-size:1.2rem}
+.brand-name{font-weight:700}
+.site-nav a{color:#fff; text-decoration:none; margin-left:16px; padding:8px 4px; border-bottom:2px solid transparent}
+.site-nav a.active{border-bottom-color:var(--accent)}
+.site-nav a:hover{color:#ddd}
+
 .site-header{padding:16px 0 8px}
 .brand{margin:0; font-weight:700; font-size:2rem; letter-spacing:.02em}
 .tagline{margin:6px 0 10px; color:var(--muted)}
@@ -66,13 +70,6 @@ body{
 /* ===========================
    Home page (index.html)
    =========================== */
-.topbar{background:#000; color:#fff}
-.bar-inner{display:flex; align-items:center; gap:12px; padding:10px 16px}
-.brand-logo{font-size:1.2rem}
-.brand-name{font-weight:700}
-.site-nav a{color:#fff; text-decoration:none; margin-left:auto}
-.site-nav a:hover{color:#ddd}
-
 .hero{position:relative; min-height:280px; display:flex; align-items:center}
 .hero-bg{
   position:absolute; inset:0; background:
@@ -80,82 +77,51 @@ body{
   url('/images/garage-hero.jpg') center/cover no-repeat;
 }
 .hero-content{position:relative; z-index:1}
-.hero-title{
-  margin:48px 0; font-size:2.6rem; font-weight:800; color:#fff;
-  text-shadow: 0 2px 8px rgba(0,0,0,.4);
-}
+.hero-title{margin:48px 0; font-size:2.6rem; font-weight:800; color:#fff; text-shadow:0 2px 8px rgba(0,0,0,.4)}
 
-.tile-grid{
-  display:grid; gap:18px; margin:24px 0;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-}
-.tile{
-  display:flex; align-items:flex-end;
-  background:#fff; border:2px solid var(--accent); border-radius:16px;
-  min-height:220px; text-decoration:none; position:relative; overflow:hidden;
-  box-shadow: 0 6px 0 rgba(0,0,0,.12);
-}
-.tile:hover{box-shadow: 0 8px 0 rgba(0,0,0,.16)}
+.tile-grid{display:grid; gap:18px; margin:24px 0; grid-template-columns: repeat(2, minmax(0, 1fr))}
+.tile{display:flex; align-items:flex-end; background:#fff; border:2px solid var(--accent); border-radius:16px; min-height:220px; text-decoration:none; position:relative; overflow:hidden; box-shadow:0 6px 0 rgba(0,0,0,.12)}
+.tile:hover{box-shadow:0 8px 0 rgba(0,0,0,.16)}
 .tile-label{font-weight:800; font-size:2rem; color:#333; padding:16px}
-
-.tile-airride{background:
-  linear-gradient(180deg, rgba(255,82,82,.12), rgba(255,82,82,.12)),
-  url('/images/tile-airride.png') center/cover no-repeat;}
-.tile-topride{background:
-  linear-gradient(180deg, rgba(255,196,0,.12), rgba(255,196,0,.12)),
-  url('/images/tile-topride.png') center/cover no-repeat;}
-.tile-citytrial{background:
-  linear-gradient(180deg, rgba(0,170,80,.12), rgba(0,170,80,.12)),
-  url('/images/tile-citytrial.png') center/cover no-repeat;}
-.tile-roadtrip{background:
-  linear-gradient(180deg, rgba(0,64,128,.12), rgba(0,64,128,.12)),
-  url('/images/tile-roadtrip.png') center/cover no-repeat;}
-
-@media (max-width: 900px){
-  .tile-grid{grid-template-columns: 1fr}
-}
+.tile-airride{background:linear-gradient(180deg, rgba(255,82,82,.12), rgba(255,82,82,.12)), url('/images/tile-airride.png') center/cover no-repeat}
+.tile-topride{background:linear-gradient(180deg, rgba(255,196,0,.12), rgba(255,196,0,.12)), url('/images/tile-topride.png') center/cover no-repeat}
+.tile-citytrial{background:linear-gradient(180deg, rgba(0,170,80,.12), rgba(0,170,80,.12)), url('/images/tile-citytrial.png') center/cover no-repeat}
+.tile-roadtrip{background:linear-gradient(180deg, rgba(0,64,128,.12), rgba(0,64,128,.12)), url('/images/tile-roadtrip.png') center/cover no-repeat}
+@media (max-width: 900px){ .tile-grid{grid-template-columns: 1fr} }
 
 /* ===========================
    Air Ride subpage
    =========================== */
-.top-nav ul{display:flex; flex-wrap:wrap; gap:10px; list-style:none; padding:12px 0; margin:0}
-.top-nav a{
-  display:inline-block; padding:8px 12px;
-  color:var(--text); background:var(--panel);
-  border:1px solid var(--border); border-radius:8px;
-  text-decoration:none;
-}
-.top-nav a:hover{background:#efefef}
+/* Two-column layout: left sidebar + main content */
+.layout{display:grid; grid-template-columns: 220px 1fr; gap:24px}
+@media (max-width: 900px){ .layout{grid-template-columns: 1fr} }
 
-.course{margin:28px 0 44px}
+.sidebar{padding:8px 0}
+#course-nav{position:sticky; top:12px}
+#course-nav a{
+  display:block; padding:6px 2px;
+  color:var(--text); text-decoration:none;
+  border-bottom:2px solid transparent;
+}
+#course-nav a:hover{border-bottom-color:#999}
+#course-nav a.active{border-bottom-color:var(--accent)} /* red underline for current course */
+
+.course{margin:12px 0 44px}
 .course-title{margin:0 0 6px; font-size:1.6rem; font-weight:700; letter-spacing:.02em}
 .course-subtitle{margin:0 0 14px; color:var(--muted)}
 .anchor{position:relative; top:-80px} /* offset for in-page nav */
 .section-divider{border:none; height:2px; background:#eee; margin:18px 0}
 
-/* Two columns for the four SRC tables; Speedrider takes full width below */
-.tables-grid{
-  display:grid; gap:16px; margin-top:16px;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-}
+/* SRC detail tables (two columns, then Speedrider full width) */
+.tables-grid{display:grid; gap:16px; margin-top:16px; grid-template-columns: repeat(2, minmax(0, 1fr))}
 .table-card{background:var(--panel); border:1px solid var(--border); border-radius:8px; padding:12px}
 .table-card h3{margin:0 0 10px; font-size:1.0rem; border-left:4px solid var(--accent); padding-left:8px}
 .table-card.wide{grid-column:1 / -1}
 
-/* Native tables (SRC detail lists) */
-.table{
-  width:100%; border-collapse:collapse; table-layout:fixed;
-  border:1px solid var(--border); border-radius:8px; overflow:hidden;
-}
-.table th, .table td{
-  border-right:1px solid var(--border);
-  padding:8px 10px;
-  word-break:break-word;
-}
-.table th{
-  background:#fafafa;
-  text-align:left; font-weight:700; font-size:.9rem;
-}
+/* Native tables (SRC lists) */
+.table{width:100%; border-collapse:collapse; table-layout:fixed; border:1px solid var(--border); border-radius:8px; overflow:hidden}
+.table th, .table td{border-right:1px solid var(--border); padding:8px 10px; word-break:break-word}
+.table th{background:#fafafa; text-align:left; font-weight:700; font-size:.9rem}
 .table td{background:#fff}
 .table tr:nth-child(even) td{background:#fbfbfb}
 .table thead tr th:last-child, .table tbody tr td:last-child{border-right:none}
@@ -163,30 +129,15 @@ body{
 .table a:hover{color:var(--link-hover); text-decoration:underline}
 
 /* ===========================
-   Speedrider horizontal layout
+   Speedrider horizontal strip
    =========================== */
-.sr-grid{
-  display:grid; gap:12px;
-  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+.sr-strip{display:flex; gap:12px; overflow-x:auto; padding-bottom:8px}
+.sr-col{
+  flex:0 0 180px; /* fixed column width; strip scrolls horizontally */
+  background:#fff; border:1px solid var(--border); border-radius:8px; padding:10px;
 }
-.sr-card{
-  background:#fff; border:1px solid var(--border); border-radius:8px;
-  padding:10px;
-}
-.sr-card .sr-machine{
-  font-weight:700; margin:0 0 8px; font-size:.95rem; border-left:4px solid var(--accent); padding-left:8px;
-}
-.sr-mini{
-  width:100%; border-collapse:collapse; table-layout:auto;
-}
-.sr-mini th, .sr-mini td{
-  text-align:left; font-size:.9rem; padding:4px 6px; border-bottom:1px solid #eee;
-}
-.sr-mini th{background:#fafafa; font-weight:600}
-.sr-mini tr:last-child td{border-bottom:none}
-.sr-mini a{color:var(--link); text-decoration:none}
-.sr-mini a:hover{color:var(--link-hover); text-decoration:underline}
-
-@media (max-width: 900px){
-  .tables-grid{grid-template-columns: 1fr}
-}
+.sr-time{font-weight:700; font-size:1rem; margin:0 0 8px; border-left:4px solid var(--accent); padding-left:8px}
+.sr-item{font-size:.9rem; margin:4px 0}
+.sr-item .label{display:inline-block; width:72px; color:#666}
+.sr-item a{color:var(--link); text-decoration:none}
+.sr-item a:hover{color:var(--link-hover); text-decoration:underline}
