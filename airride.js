@@ -1,25 +1,18 @@
 
-/* KARs Garage — Air Ride subpage
-   - SRC: Category (A) -> TA/FR; Subcategory (C) -> "Course + Restricted/Unrestricted"
-     * ignores the " + " and dedupes course names.
-   - Left sidebar: underlined course links; active course gets red underline (scroll‑spy).
-   - Speedrider: single horizontal strip, sorted fastest (Time sec asc) to the left.
-     * Displays: Time (top), Machine, Rider, Player, Player Link (no Node, no Time sec shown).
-   - Course banners: maps course names to your provided .webp images.
-*/
+/* KARs Garage — Air Ride subpage */
 
 const SRC_CSV = "https://docs.google.com/spreadsheets/d/e/2PACX-1vRLdSEHHpUNrBHTlJlEZLBJmJpbBuxrnJ4AXQk_vqzhVoyliOzaM-uEAw-WXNskMOhcjZq7HWLctrBN/pub?output=csv";
 const SR_CSV  = "https://docs.google.com/spreadsheets/d/e/2PACX-1vRLLtoztu41AtY4reRXwNd00WqxhlFyTbn3RKoBwssrf1fXFGAZxO2b1dB62-0lrUOz4yi1dLuJrmml/pub?output=csv";
 
-/* Mode detection from Category */
+/* Detect TA / FR in Column A: Category */
 const TA_LABEL = /air\s*ride\s*time\s*attack/i;
 const FR_LABEL = /air\s*ride\s*free\s*run/i;
 
-/* Ruleset detection from Subcategory */
+/* Ruleset in Column C: Subcategory */
 const RESTRICTED = /restricted/i;
 const UNRESTRICTED = /unrestricted/i;
 
-/* Banners: course name → filename (from your attachments) */
+/* Course → banner image */
 const BANNERS = {
   "Airtopia Ruins": "/images/airtopia_banner.webp",
   "Mount Amberfalls": "/images/Amberfalls_banner.webp",
@@ -40,10 +33,9 @@ const BANNERS = {
   "Waveflow Waters": "/images/Waveflow_Banner.webp"
 };
 
-/* Display columns for SRC detail tables */
 const SRC_COLS = ["Player","Time","Machine","Rider","SRC Link","Video"];
 
-/* Parse CSV with quotes */
+/* CSV parser */
 function parseCSV(text){
   const rows = [];
   let row = [], cur = '', inQuotes = false;
@@ -78,17 +70,13 @@ function linkCell(url){
   const label = u.replace(/^https?:\/\/(www\.)?/,'').slice(0,36) + (u.length>36?'…':'');
   return `<a href="${u}" target="_blank" rel="noopener">${label}</a>`;
 }
-
-/* Extract {course, ruleset} from Subcategory "Course + Restricted/Unrestricted" */
 function parseCourseAndRules(subcatRaw){
   const s = String(subcatRaw||'').trim();
   if (!s) return {course:"", ruleset:""};
-  // Split on " + " first, but also support cases without plus
   const parts = s.split(/\s*\+\s*/);
   let course = (parts[0] || "").trim();
   let ruleset = (parts[1] || "").trim();
 
-  // Normalize ruleset via regex
   if (!ruleset){
     if (RESTRICTED.test(s)) ruleset = "Restricted";
     else if (UNRESTRICTED.test(s)) ruleset = "Unrestricted";
@@ -97,16 +85,13 @@ function parseCourseAndRules(subcatRaw){
     else if (UNRESTRICTED.test(ruleset)) ruleset = "Unrestricted";
   }
 
-  // Strip mode words from the course if present
   course = course.replace(/time\s*attack|free\s*run/ig,'').trim();
-
-  // Final normalization (avoid duplicates like "Floria Fields +")
-  course = course.replace(/\s*\+\s*$/,'').trim();
+  course = course.replace(/\s*\+\s*$/,'').trim(); // remove trailing +
 
   return {course, ruleset};
 }
 
-/* Render an SRC detail table (top-3 list) */
+/* Render SRC tables */
 function renderSrcTable(mountId, rows){
   const mount = document.getElementById(mountId);
   if (!mount) return;
@@ -132,7 +117,7 @@ function renderSrcTable(mountId, rows){
   mount.innerHTML = html;
 }
 
-/* Render Speedrider horizontal strip (single row; scrollable) */
+/* Render Speedrider horizontal strip */
 function renderSpeedriderStrip(mountId, entries){
   const mount = document.getElementById(mountId);
   if (!mount) return;
@@ -156,7 +141,7 @@ function renderSpeedriderStrip(mountId, entries){
   mount.innerHTML = html;
 }
 
-/* Scroll‑spy: highlight current course in left nav */
+/* Scroll‑spy */
 function setupScrollSpy(sectionIds){
   const links = sectionIds.map(id => ({ id, el: document.querySelector(`#course-nav a[href="#${id}"]`) }))
                          .filter(x => x.el);
@@ -179,11 +164,9 @@ function setupScrollSpy(sectionIds){
   });
 }
 
-/* === Main build === */
+/* Main */
 async function loadAll(){
-  document.getElementById('year').textContent = new Date().getFullYear();
-
-  // Fetch both CSVs
+  // Fetch CSVs
   const [srcRes, srRes] = await Promise.all([
     fetch(SRC_CSV, {cache:'no-cache'}),
     fetch(SR_CSV,  {cache:'no-cache'}),
@@ -192,7 +175,7 @@ async function loadAll(){
   const srcRows = parseCSV(srcText);
   const srRows  = parseCSV(srText);
 
-  /* Build SRC indices */
+  // Build SRC indices
   const srcHeader = srcRows[0].map(h => String(h).trim());
   const SRC_IDX = {
     Category: idxOf(srcHeader,"Category"),
@@ -205,4 +188,164 @@ async function loadAll(){
     Video: idxOf(srcHeader,"Video"),
   };
 
-  /* Group SRC by course and mode/rules */
+  const srcByCourse = new Map(); // course -> { TA:{Restricted:[],Unrestricted:[]}, FR:{Restricted:[],Unrestricted:[]} }
+  srcRows.slice(1).forEach(r => {
+    const category = r[SRC_IDX.Category] ?? '';
+    const subcat   = r[SRC_IDX.Subcategory] ?? '';
+    if (!category || !subcat) return;
+
+    const mode = TA_LABEL.test(category) ? 'TA'
+               : FR_LABEL.test(category) ? 'FR' : 'OTHER';
+    if (mode === 'OTHER') return; // ignore plain "Air Ride"
+
+    const {course, ruleset} = parseCourseAndRules(subcat);
+    if (!course || !(ruleset === "Restricted" || ruleset === "Unrestricted")) return;
+
+    const rowObj = {
+      Player: r[SRC_IDX.Player],
+      Time:   r[SRC_IDX.Time],
+      Machine:r[SRC_IDX.Machine],
+      Rider:  r[SRC_IDX.Rider],
+      "SRC Link": r[SRC_IDX.Link],
+      "Video":    r[SRC_IDX.Video]
+    };
+
+    if (!srcByCourse.has(course)){
+      srcByCourse.set(course, {TA:{Restricted:[],Unrestricted:[]}, FR:{Restricted:[],Unrestricted:[]}});
+    }
+    const bucket = srcByCourse.get(course);
+    bucket[mode][ruleset].push(rowObj);
+  });
+
+  // Build Speedrider indices
+  const srHeader = srRows[0].map(h => String(h).trim());
+  const SR_IDX = {
+    Course: idxOf(srHeader,"Course"),
+    Machine: idxOf(srHeader,"Machine"),
+    Rider: idxOf(srHeader,"Rider"),
+    Player: idxOf(srHeader,"Player"),
+    Time: idxOf(srHeader,"Time"),
+    TimeSec: idxOf(srHeader,"Time (sec)"),
+    PlayerLink: idxOf(srHeader,"Player Link"),
+  };
+
+  const srByCourse = new Map(); // course -> { TA:[], FR:[] } (same data if feed merges)
+  srRows.slice(1).forEach(r => {
+    const course  = r[SR_IDX.Course] ?? '';
+    if (!course) return;
+
+    const entry = {
+      "Time": r[SR_IDX.Time],
+      "Machine": r[SR_IDX.Machine],
+      "Rider": r[SR_IDX.Rider],
+      "Player": r[SR_IDX.Player],
+      "Player Link": r[SR_IDX.PlayerLink],
+      _sec: Number(r[SR_IDX.TimeSec] || NaN)
+    };
+
+    if (!srByCourse.has(course)) srByCourse.set(course, {TA:[], FR:[]});
+    const buckets = srByCourse.get(course);
+    buckets.TA.push(entry);
+    buckets.FR.push(entry);
+  });
+
+  // Sort Speedrider by time (sec) asc
+  srByCourse.forEach(courseObj => {
+    ["TA","FR"].forEach(mode => {
+      courseObj[mode].sort((a,b) => {
+        const ax = (typeof a._sec === 'number' && !isNaN(a._sec)) ? a._sec : Infinity;
+        const bx = (typeof b._sec === 'number' && !isNaN(b._sec)) ? b._sec : Infinity;
+        return ax - bx;
+      });
+    });
+  });
+
+  // Build left nav + sections
+  const content = document.getElementById('content');
+  const nav = document.getElementById('course-nav');
+
+  const courseNames = Array.from(new Set([
+    ...srcByCourse.keys(),
+    ...srByCourse.keys()
+  ])).sort((a,b) => a.localeCompare(b));
+
+  nav.innerHTML = courseNames.map(course => {
+    const id = makeAnchorId(course);
+    return `<a href="#${id}">${course}</a>`;
+  }).join("");
+
+  const sectionIds = [];
+  courseNames.forEach(courseName => {
+    const id = makeAnchorId(courseName);
+    sectionIds.push(id);
+
+    const srcCourse = srcByCourse.get(courseName) || {TA:{Restricted:[],Unrestricted:[]}, FR:{Restricted:[],Unrestricted:[]}};
+    const srCourse  = srByCourse.get(courseName) || {TA:[], FR:[]};
+
+    const sec = document.createElement('section');
+    sec.className = 'course';
+    sec.innerHTML = `
+      <span id="${id}" class="anchor"></span>
+      <h2 class="course-title">${courseName}</h2>
+      ${BANNERS[courseName] ? `<img class="course-banner" src="${BANNERS[courseName]}" alt="${courseName} banner">` : ''}
+      <p class="course-subtitle">SRC Top‑3 & Speedrider WRs</p>
+
+      <div class="tables-grid">
+        <article class="table-card">
+          <h3>Time Attack — Restricted</h3>
+          <div id="${id}-ta-r"></div>
+        </article>
+        <article class="table-card">
+          <h3>Time Attack — Unrestricted</h3>
+          <div id="${id}-ta-u"></div>
+        </article>
+        <article class="table-card">
+          <h3>Free Run — Restricted</h3>
+          <div id="${id}-fr-r"></div>
+        </article>
+        <article class="table-card">
+          <h3>Free Run — Unrestricted</h3>
+          <div id="${id}-fr-u"></div>
+        </article>
+
+        <article class="table-card wide">
+          <h3>Speedrider — Time Attack Records by Machine</h3>
+          <div id="${id}-sr-ta"></div>
+        </article>
+        <article class="table-card wide">
+          <h3>Speedrider — Free Run Records by Machine</h3>
+          <div id="${id}-sr-fr"></div>
+        </article>
+      </div>
+
+      <hr class="section-divider" />
+    `;
+    content.appendChild(sec);
+
+    // Fill SRC tables
+    renderSrcTable(`${id}-ta-r`, srcCourse.TA.Restricted);
+    renderSrcTable(`${id}-ta-u`, srcCourse.TA.Unrestricted);
+    renderSrcTable(`${id}-fr-r`, srcCourse.FR.Restricted);
+    renderSrcTable(`${id}-fr-u`, srcCourse.FR.Unrestricted);
+
+    // Fill Speedrider strips
+    renderSpeedriderStrip(`${id}-sr-ta`, srCourse.TA);
+    renderSpeedriderStrip(`${id}-sr-fr`, srCourse.FR);
+  });
+
+  // Scroll‑spy and smooth scroll
+  setupScrollSpy(sectionIds);
+  nav.querySelectorAll('a').forEach(a => {
+    a.addEventListener('click', (e) => {
+      e.preventDefault();
+      const hash = a.getAttribute('href');
+      const target = document.querySelector(hash);
+      if (target){
+        target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }
+    });
+  });
+}
+
+/* Boot */
+document.addEventListener('DOMContentLoaded', loadAll);
