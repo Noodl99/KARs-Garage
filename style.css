@@ -31,7 +31,8 @@ body{
 }
 .container{max-width:var(--maxw); margin:0 auto; padding:0 16px}
 
-/* Self-hosted Metropolis (place files under /fonts if you have them) */
+/* Optional self-hosted Metropolis (put files under /fonts) */
+/*
 @font-face {
   font-family: "Metropolis";
   src: url("/fonts/Metropolis-Regular.woff2") format("woff2"),
@@ -48,6 +49,7 @@ body{
   font-style: normal;
   font-display: swap;
 }
+*/
 
 /* ===========================
    Global header/footer
@@ -74,7 +76,7 @@ body{
 .hero-bg{
   position:absolute; inset:0; background:
   linear-gradient(180deg, rgba(0,0,0,.35), rgba(0,0,0,.35)),
-  url('/images/garage-hero.jpg') center/cover no-repeat;
+  url('/images/kars-garage-hero.png') center/cover no-repeat;
 }
 .hero-content{position:relative; z-index:1}
 .hero-title{margin:48px 0; font-size:2.6rem; font-weight:800; color:#fff; text-shadow:0 2px 8px rgba(0,0,0,.4)}
@@ -83,10 +85,10 @@ body{
 .tile{display:flex; align-items:flex-end; background:#fff; border:2px solid var(--accent); border-radius:16px; min-height:220px; text-decoration:none; position:relative; overflow:hidden; box-shadow:0 6px 0 rgba(0,0,0,.12)}
 .tile:hover{box-shadow:0 8px 0 rgba(0,0,0,.16)}
 .tile-label{font-weight:800; font-size:2rem; color:#333; padding:16px}
-.tile-airride{background:linear-gradient(180deg, rgba(255,82,82,.12), rgba(255,82,82,.12)), url('/images/tile-airride.png') center/cover no-repeat}
-.tile-topride{background:linear-gradient(180deg, rgba(255,196,0,.12), rgba(255,196,0,.12)), url('/images/tile-topride.png') center/cover no-repeat}
-.tile-citytrial{background:linear-gradient(180deg, rgba(0,170,80,.12), rgba(0,170,80,.12)), url('/images/tile-citytrial.png') center/cover no-repeat}
-.tile-roadtrip{background:linear-gradient(180deg, rgba(0,64,128,.12), rgba(0,64,128,.12)), url('/images/tile-roadtrip.png') center/cover no-repeat}
+.tile-airride{background:linear-gradient(180deg, rgba(255,82,82,.12), rgba(255,82,82,.12)), url('/images/air-ride.png') center/cover no-repeat}
+.tile-topride{background:linear-gradient(180deg, rgba(255,196,0,.12), rgba(255,196,0,.12)), url('/images/top-ride.png') center/cover no-repeat}
+.tile-citytrial{background:linear-gradient(180deg, rgba(0,170,80,.12), rgba(0,170,80,.12)), url('/images/city-trial.png') center/cover no-repeat}
+.tile-roadtrip{background:linear-gradient(180deg, rgba(0,64,128,.12), rgba(0,64,128,.12)), url('/images/road-trip.png') center/cover no-repeat}
 @media (max-width: 900px){ .tile-grid{grid-template-columns: 1fr} }
 
 /* ===========================
@@ -112,8 +114,16 @@ body{
 .anchor{position:relative; top:-80px} /* offset for in-page nav */
 .section-divider{border:none; height:2px; background:#eee; margin:18px 0}
 
+/* Course banner (image above tables) */
+.course-banner{
+  width:100%; height:220px;
+  object-fit:cover;
+  border:1px solid var(--border); border-radius:8px;
+  margin:8px 0 12px 0;
+}
+
 /* SRC detail tables (two columns, then Speedrider full width) */
-.tables-grid{display:grid; gap:16px; margin-top:16px; grid-template-columns: repeat(2, minmax(0, 1fr))}
+.tables-grid{display:grid; gap:16px; margin-top:12px; grid-template-columns: repeat(2, minmax(0, 1fr))}
 .table-card{background:var(--panel); border:1px solid var(--border); border-radius:8px; padding:12px}
 .table-card h3{margin:0 0 10px; font-size:1.0rem; border-left:4px solid var(--accent); padding-left:8px}
 .table-card.wide{grid-column:1 / -1}
@@ -133,7 +143,7 @@ body{
    =========================== */
 .sr-strip{display:flex; gap:12px; overflow-x:auto; padding-bottom:8px}
 .sr-col{
-  flex:0 0 180px; /* fixed column width; strip scrolls horizontally */
+  flex:0 0 180px;
   background:#fff; border:1px solid var(--border); border-radius:8px; padding:10px;
 }
 .sr-time{font-weight:700; font-size:1rem; margin:0 0 8px; border-left:4px solid var(--accent); padding-left:8px}

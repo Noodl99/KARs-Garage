@@ -1,10 +1,11 @@
 
 /* KARs Garage — Air Ride subpage
    - SRC: Category (A) -> TA/FR; Subcategory (C) -> "Course + Restricted/Unrestricted"
-     * ignores the " + " and dedupes course names (no "Course +" vs "Course").
-   - Left sidebar: underlined text links; active course gets red underline (scroll‑spy).
+     * ignores the " + " and dedupes course names.
+   - Left sidebar: underlined course links; active course gets red underline (scroll‑spy).
    - Speedrider: single horizontal strip, sorted fastest (Time sec asc) to the left.
-     * Each column shows: Time (top), Machine, Rider, Player, Player Link (no Node, no Time sec displayed).
+     * Displays: Time (top), Machine, Rider, Player, Player Link (no Node, no Time sec shown).
+   - Course banners: maps course names to your provided .webp images.
 */
 
 const SRC_CSV = "https://docs.google.com/spreadsheets/d/e/2PACX-1vRLdSEHHpUNrBHTlJlEZLBJmJpbBuxrnJ4AXQk_vqzhVoyliOzaM-uEAw-WXNskMOhcjZq7HWLctrBN/pub?output=csv";
@@ -17,6 +18,27 @@ const FR_LABEL = /air\s*ride\s*free\s*run/i;
 /* Ruleset detection from Subcategory */
 const RESTRICTED = /restricted/i;
 const UNRESTRICTED = /unrestricted/i;
+
+/* Banners: course name → filename (from your attachments) */
+const BANNERS = {
+  "Airtopia Ruins": "/images/airtopia_banner.webp",
+  "Mount Amberfalls": "/images/Amberfalls_banner.webp",
+  "Beanstalk Park": "/images/beanstalk_banner.webp",
+  "Cavernous Corners": "/images/cavernous_banner.webp",
+  "Checker Knights": "/images/checker_banner.webp",
+  "Crystalline Fissure": "/images/Crystalline_banner.webp",
+  "Cyberion Highway": "/images/Cyberion_Banner.webp",
+  "Fantasy Meadows": "/images/Fantasy_banner.webp",
+  "Floria Fields": "/images/Floria_banner.webp",
+  "Frozen Hillside": "/images/Frozen_banner.webp",
+  "Machine Passage": "/images/Machine_Banner.webp",
+  "Magma Flows": "/images/Magma_Banner.webp",
+  "Nebula Belt": "/images/Nebula_Banner.webp",
+  "Galactic Nova": "/images/Nova_Banner.webp",
+  "Sky Sands": "/images/Sky_Banner.webp",
+  "Steamgust Forge": "/images/Steamgust_Banner.webp",
+  "Waveflow Waters": "/images/Waveflow_Banner.webp"
+};
 
 /* Display columns for SRC detail tables */
 const SRC_COLS = ["Player","Time","Machine","Rider","SRC Link","Video"];
@@ -63,10 +85,10 @@ function parseCourseAndRules(subcatRaw){
   if (!s) return {course:"", ruleset:""};
   // Split on " + " first, but also support cases without plus
   const parts = s.split(/\s*\+\s*/);
-  let course = parts[0].trim();
+  let course = (parts[0] || "").trim();
   let ruleset = (parts[1] || "").trim();
 
-  // Normalize ruleset by regex too (handles variations)
+  // Normalize ruleset via regex
   if (!ruleset){
     if (RESTRICTED.test(s)) ruleset = "Restricted";
     else if (UNRESTRICTED.test(s)) ruleset = "Unrestricted";
@@ -75,8 +97,11 @@ function parseCourseAndRules(subcatRaw){
     else if (UNRESTRICTED.test(ruleset)) ruleset = "Unrestricted";
   }
 
-  // Remove any trailing mode words from course if present
+  // Strip mode words from the course if present
   course = course.replace(/time\s*attack|free\s*run/ig,'').trim();
+
+  // Final normalization (avoid duplicates like "Floria Fields +")
+  course = course.replace(/\s*\+\s*$/,'').trim();
 
   return {course, ruleset};
 }
@@ -107,7 +132,7 @@ function renderSrcTable(mountId, rows){
   mount.innerHTML = html;
 }
 
-/* Render Speedrider horizontal strip */
+/* Render Speedrider horizontal strip (single row; scrollable) */
 function renderSpeedriderStrip(mountId, entries){
   const mount = document.getElementById(mountId);
   if (!mount) return;
@@ -146,7 +171,7 @@ function setupScrollSpy(sectionIds){
         link.classList.add('active');
       }
     });
-  }, { root: null, rootMargin: '0px 0px -60% 0px', threshold: 0.1 });
+  }, { root: null, rootMargin: '0px 0px -60% 0px', threshold: 0.25 });
 
   sectionIds.forEach(id => {
     const sec = document.getElementById(id);
@@ -181,176 +206,3 @@ async function loadAll(){
   };
 
   /* Group SRC by course and mode/rules */
-  const srcByCourse = new Map(); // course -> { TA:{Restricted:[],Unrestricted:[]}, FR:{Restricted:[],Unrestricted:[]} }
-  srcRows.slice(1).forEach(r => {
-    const category = r[SRC_IDX.Category] ?? '';
-    const subcat   = r[SRC_IDX.Subcategory] ?? '';
-    if (!category || !subcat) return;
-
-    // Only use TA and FR rows; ignore "Air Ride" (neither)
-    const mode = TA_LABEL.test(category) ? 'TA'
-               : FR_LABEL.test(category) ? 'FR' : 'OTHER';
-    if (mode === 'OTHER') return;
-
-    const {course, ruleset} = parseCourseAndRules(subcat);
-    if (!course || !(ruleset === "Restricted" || ruleset === "Unrestricted")) return;
-
-    const rowObj = {
-      Player: r[SRC_IDX.Player],
-      Time:   r[SRC_IDX.Time],
-      Machine:r[SRC_IDX.Machine],
-      Rider:  r[SRC_IDX.Rider],
-      "SRC Link": r[SRC_IDX.Link],
-      "Video":    r[SRC_IDX.Video]
-    };
-
-    if (!srcByCourse.has(course)){
-      srcByCourse.set(course, {TA:{Restricted:[],Unrestricted:[]}, FR:{Restricted:[],Unrestricted:[]}});
-    }
-    const bucket = srcByCourse.get(course);
-    bucket[mode][ruleset].push(rowObj);
-  });
-
-  /* Build Speedrider indices */
-  const srHeader = srRows[0].map(h => String(h).trim());
-  const SR_IDX = {
-    Course: idxOf(srHeader,"Course"),
-    Machine: idxOf(srHeader,"Machine"),
-    Rider: idxOf(srHeader,"Rider"),
-    Player: idxOf(srHeader,"Player"),
-    Time: idxOf(srHeader,"Time"),
-    TimeSec: idxOf(srHeader,"Time (sec)"),
-    PlayerLink: idxOf(srHeader,"Player Link"),
-    // Node Link exists but is not used for display
-  };
-
-  /* Group Speedrider by course; sort by Time (sec) asc for strip */
-  const srByCourse = new Map(); // course -> { TA:[], FR:[] } (same data for both if no mode info)
-  srRows.slice(1).forEach(r => {
-    const course  = r[SR_IDX.Course] ?? '';
-    if (!course) return;
-
-    const entry = {
-      "Time": r[SR_IDX.Time],
-      "Machine": r[SR_IDX.Machine],
-      "Rider": r[SR_IDX.Rider],
-      "Player": r[SR_IDX.Player],
-      "Player Link": r[SR_IDX.PlayerLink],
-      _sec: Number(r[SR_IDX.TimeSec] || NaN)
-    };
-
-    if (!srByCourse.has(course)) srByCourse.set(course, {TA:[], FR:[]});
-    const buckets = srByCourse.get(course);
-    buckets.TA.push(entry);
-    buckets.FR.push(entry);
-  });
-
-  // Sort TA and FR arrays by Time (sec) ascending
-  srByCourse.forEach(courseObj => {
-    ["TA","FR"].forEach(mode => {
-      courseObj[mode].sort((a,b) => {
-        const ax = (typeof a._sec === 'number' && !isNaN(a._sec)) ? a._sec : Infinity;
-        const bx = (typeof b._sec === 'number' && !isNaN(b._sec)) ? b._sec : Infinity;
-        return ax - bx;
-      });
-    });
-  });
-
-  /* Build LEFT NAV and SECTIONS */
-  const content = document.getElementById('content');
-  const nav = document.getElementById('course-nav');
-
-  // De-duplicated union of course names
-  const courseNames = Array.from(new Set([
-    ...srcByCourse.keys(),
-    ...srByCourse.keys()
-  ])).sort((a,b) => a.localeCompare(b));
-
-  // Left nav links
-  nav.innerHTML = courseNames.map(course => {
-    const id = makeAnchorId(course);
-    return `<a href="#${id}" id="link-${id}">${course}</a>`;
-  }).join("");
-
-  // Sections
-  const sectionIds = [];
-  courseNames.forEach(courseName => {
-    const id = makeAnchorId(courseName);
-    sectionIds.push(id);
-
-    const srcCourse = srcByCourse.get(courseName) || {TA:{Restricted:[],Unrestricted:[]}, FR:{Restricted:[],Unrestricted:[]}};
-    const srCourse  = srByCourse.get(courseName) || {TA:[], FR:[]};
-
-    const sec = document.createElement('section');
-    sec.className = 'course';
-    sec.innerHTML = `
-      <span id="${id}" class="anchor"></span>
-      <h2 class="course-title">${courseName}</h2>
-      <p class="course-subtitle">SRC Top‑3 & Speedrider WRs</p>
-
-      <div class="tables-grid">
-        <article class="table-card">
-          <h3>Time Attack — Restricted</h3>
-          <div id="${id}-ta-r"></div>
-        </article>
-        <article class="table-card">
-          <h3>Time Attack — Unrestricted</h3>
-          <div id="${id}-ta-u"></div>
-        </article>
-        <article class="table-card">
-          <h3>Free Run — Restricted</h3>
-          <div id="${id}-fr-r"></div>
-        </article>
-        <article class="table-card">
-          <h3>Free Run — Unrestricted</h3>
-          <div id="${id}-fr-u"></div>
-        </article>
-
-        <article class="table-card wide">
-          <h3>Speedrider — Time Attack Records by Machine</h3>
-          <div id="${id}-sr-ta"></div>
-        </article>
-        <article class="table-card wide">
-          <h3>Speedrider — Free Run Records by Machine</h3>
-          <div id="${id}-sr-fr"></div>
-        </article>
-      </div>
-
-      <hr class="section-divider" />
-    `;
-    content.appendChild(sec);
-
-    // Fill SRC tables
-    renderSrcTable(`${id}-ta-r`, srcCourse.TA.Restricted);
-    renderSrcTable(`${id}-ta-u`, srcCourse.TA.Unrestricted);
-    renderSrcTable(`${id}-fr-r`, srcCourse.FR.Restricted);
-    renderSrcTable(`${id}-fr-u`, srcCourse.FR.Unrestricted);
-
-    // Fill Speedrider strips
-    renderSpeedriderStrip(`${id}-sr-ta`, srCourse.TA);
-    renderSpeedriderStrip(`${id}-sr-fr`, srCourse.FR);
-  });
-
-  // Scroll‑spy
-  setupScrollSpy(sectionIds);
-
-  // Left nav click: smooth scroll + set active
-  nav.querySelectorAll('a').forEach(a => {
-    a.addEventListener('click', (e) => {
-      e.preventDefault();
-      const hash = a.getAttribute('href');
-      const target = document.querySelector(hash);
-      if (target){
-        target.scrollIntoView({ behavior: 'smooth', block: 'start' });
-      }
-    });
-  });
-}
-
-/* Boot */
-document.getElementById('year').textContent = new Date().getFullYear();
-loadAll().catch(err => {
-  console.error(err);
-  const content = document.getElementById('content');
-  content.innerHTML = `<p class="muted">Failed to load data.</p>`;
-});
