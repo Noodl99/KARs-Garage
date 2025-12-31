@@ -7,21 +7,21 @@
   <title>KARs Garage</title>
 
   <!-- Favicon -->
-  <link rel="icon" href="/icons/garage-icon-black.webp" type="image/webp" />
+  <link rel="icon" type="image/webp" href="/icons/garage-icon-black.webp" />
 
   <!-- Fonts (fallback Inter) -->
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet" />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
 
   <!-- Site styles -->
   <link rel="stylesheet" href="/style.css" />
 </head>
 <body class="home">
-  <!-- Top bar -->
-  <header class="topbar">
+  <!-- Fixed top bar -->
+  <header class="topbar fixed">
     <div class="container bar-inner">
-      <div class="brand-logo" aria-hidden="true">🏁</div>
+      <img class="brand-logo-img" src="/icons/garage-icon-black.webp" alt="KARs Garage icon" />
       <div class="brand-name">KARs Garage</div>
       <nav class="site-nav">
         <a href="/" class="active">Home</a>
@@ -31,28 +31,20 @@
   </header>
 
   <!-- Hero -->
-  <section class="hero">
-    <div class="hero-bg" aria-hidden="true"></div>
+  <section class="hero hero--home">
+    <div class="hero-bg hero-bg--top" aria-hidden="true"></div>
     <div class="hero-content container">
-      <h1 class="hero-title">KIRBY AIR RIDERS GARAGE</h1>
+      <h1 class="hero-title hero-title--65">KIRBY AIR RIDERS GARAGE</h1>
     </div>
   </section>
 
   <!-- Tiles -->
   <main class="container">
     <div class="tile-grid">
-      <a class="tile tile-airride" href="/air-ride.html">
-        <div class="tile-label">Air Ride</div>
-      </a>
-      <a class="tile tile-topride" href="#">
-        <div class="tile-label">Top Ride</div>
-      </a>
-      <a class="tile tile-citytrial" href="#">
-        <div class="tile-label">City Trial</div>
-      </a>
-      <a class="tile tile-roadtrip" href="#">
-        <div class="tile-label">Road Trip</div>
-      </a>
+      <a href="/air-ride.html" class="tile tile-airride" aria-label="Air Ride"></a>
+      <a href="#" class="tile tile-topride" aria-label="Top Ride"></a>
+      <a href="#" class="tile tile-citytrial" aria-label="City Trial"></a>
+      <a href="#" class="tile tile-roadtrip" aria-label="Road Trip"></a>
     </div>
   </main>
 
