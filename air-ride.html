@@ -1,41 +1,64 @@
 
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="utf-8">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>KARs Garage — Air Ride</title>
-  <meta name="viewport" content="width=device-width,initial-scale=1">
-  <link rel="icon" type="image/png" href="/icons/garage-icon-white.png">
-  <link rel="stylesheet" href="/style.css">
+
+  <!-- Favicon -->
+  <link rel="icon" type="image/webp" href="/icons/garage-icon-white.webp" />
+  <link rel="icon" type="image/png" href="/icons/garage-icon-white.png" />
+
+  <!-- Fonts (fallback Inter) -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet" />
+
+  <!-- Site styles -->
+  <link rel="stylesheet" href="/style.css" />
+
+  <!-- Page script -->
+  <script src="/airride.js" defer></script>
 </head>
-<body>
+<body class="airride">
   <!-- Fixed top bar -->
   <header class="topbar fixed">
     <div class="container bar-inner">
-      <img class="brand-logo-img" src="/icons/garage-icon-white.png" alt="KARs Garage icon" width="24" height="24">
+      <img src="/icons/garage-icon-white.webp" alt="" class="brand-logo-img" />
       <div class="brand-name">KARs Garage</div>
-      <nav class="site-nav" aria-label="Primary">
+      <nav class="site-nav">
         <a href="/">Home</a>
         <a href="/air-ride.html" class="active">Air Ride</a>
       </nav>
     </div>
   </header>
 
-  <main class="container layout">
-    <!-- Left sidebar TOC -->
-    <aside class="sidebar" aria-label="Courses">
+  <!-- Page header -->
+  <header class="site-header">
+    <div class="container">
+      <h1 class="brand">AIR RIDE</h1>
+      <p class="tagline">Updates daily at 12 am, 6 am, 12 pm, and 6 pm EST</p>
+    </div>
+    <hr class="accent" />
+  </header>
+
+  <!-- Page layout: left sidebar (courses) + main content -->
+  <div class="container layout">
+    <aside class="sidebar" aria-label="Course navigation">
       <nav id="course-nav"></nav>
     </aside>
 
-    <!-- Course content sections will be injected here -->
-    <section id="content"></section>
-  </main>
+    <main id="content" class="content"></main>
+  </div>
 
+  <!-- Footer -->
   <footer class="site-footer">
-    <div class="container">© <span id="year"></span> KARs Garage • Air Ride</div>
+    <div class="container">
+      <p>© <span id="year"></span> KARs Garage • Air Ride</p>
+    </div>
   </footer>
 
-  <script src="/airride.js" defer></script>
+  <script>document.getElementById('year').textContent = new Date().getFullYear();</script>
 </body>
 </html>
-``

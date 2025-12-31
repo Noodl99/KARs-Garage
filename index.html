@@ -1,51 +1,63 @@
 
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="utf-8">
-  <title>KARs Garage — Home</title>
-  <meta name="viewport" content="width=device-width,initial-scale=1">
-  <link rel="icon" type="image/png" href="/icons/garage-icon-white.png">
-  <link rel="preload" href="/images/kars-garage-hero.png" as="image">
-  <link rel="stylesheet" href="/style.css">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>KARs Garage</title>
+
+  <!-- Favicon -->
+  <link rel="icon" type="image/webp" href="/icons/garage-icon-white.webp" />
+  <link rel="icon" type="image/png" href="/icons/garage-icon-white.png" />
+
+  <!-- Fonts (fallback Inter) -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet" />
+
+  <!-- Site styles -->
+  <link rel="stylesheet" href="/style.css" />
 </head>
-<body>
+<body class="home">
   <!-- Fixed top bar -->
   <header class="topbar fixed">
     <div class="container bar-inner">
-      <img class="brand-logo-img" src="/icons/garage-icon-white.png" alt="KARs Garage icon" width="24" height="24">
+      <img src="/icons/garage-icon-white.webp" alt="" class="brand-logo-img" />
       <div class="brand-name">KARs Garage</div>
-      <nav class="site-nav" aria-label="Primary">
-        <a href="/" class="active">Home</a>
-        <a href="/air-ride.html">Air Ride</a>
+      <nav class="site-nav">
+        <a href="/">Home</a>
+        <a href="/air-ride.html" class="active">Air Ride</a>
       </nav>
     </div>
   </header>
 
-  <main class="container">
-    <!-- Hero -->
-    <section class="hero--home">
-      <div class="hero-bg hero-bg--top" aria-hidden="true"></div>
-      <div class="hero-content">
-        <h1 class="hero-title--76">KIRBY AIR RIDERS GARAGE</h1>
-      </div>
-    </section>
+  <!-- Hero -->
+  <section class="hero hero--home">
+    <div class="hero-bg hero-bg--top" aria-hidden="true"></div>
+    <div class="hero-content container">
+      <h1 class="hero-title hero-title--76">KIRBY AIR RIDERS GARAGE</h1>
+    </div>
+  </section>
 
-    <!-- Tiles (artwork already contains labels) -->
-    <section aria-label="Modes">
-      <div class="tile-grid">
-        <a class="tile tile-airride" href="/air-ride.html" aria-label="Air Ride"></a>
-        <a class="tile tile-topride" href="#" aria-label="Top Ride"></a>
-        <a class="tile tile-citytrial" href="#" aria-label="City Trial"></a>
-        <a class="tile tile-roadtrip" href="#" aria-label="Road Trip"></a>
-      </div>
-    </section>
+  <!-- Tiles -->
+  <main class="container">
+    <div class="tile-grid">
+      <a class="tile tile-airride" href="/air-ride.html" aria-label="Air Ride"></a>
+      <a class="tile tile-topride" href="#" aria-label="Top Ride"></a>
+      <a class="tile tile-citytrial" href="#" aria-label="City Trial"></a>
+      <a class="tile tile-roadtrip" href="#" aria-label="Road Trip"></a>
+    </div>
   </main>
 
+  <!-- Footer -->
   <footer class="site-footer">
-    <div class="container">© <span id="year"></span> KARs Garage</div>
+    <div class="container">
+      <p>© <span id="year"></span> KARs Garage</p>
+    </div>
   </footer>
 
-  <script src="/script.js" defer></script>
+  <script>
+    document.getElementById('year').textContent = new Date().getFullYear();
+  </script>
 </body>
 </html>
