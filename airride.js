@@ -1,8 +1,7 @@
 
 /* KARs Garage — Air Ride
-   - Fixes SRC Link truncation (proper <a> tag)
-   - Adds <colgroup> to each table to enforce a fixed column width plan
-   - Keeps Player/Time/Machine/Rider one-line, visible, and prevents table overflow
+   - Corrects banner rendering (now uses <img class="course-banner" src="...">)
+   - Keeps previous fixes: link ellipsis, colgroup widths, one-line core columns, etc.
 */
 
 const SRC_CSV   = "https://docs.google.com/spreadsheets/d/e/2PACX-1vRLdSEHHpUNrBHTlJlEZLBJmJpbBuxrnJ4AXQk_vqzhVoyliOzaM-uEAw-WXNskMOhcjZq7HWLctrBN/pub?output=csv";
@@ -73,7 +72,7 @@ function makeAnchorId(name){
 }
 function stripPrefix(u){ return String(u ?? '').replace(/^https?:\/\/(www\.)?/i,''); }
 
-/* FIX: proper <a> tag so CSS ellipsis applies */
+/* Proper <a> so CSS ellipsis applies */
 function linkCell(url){
   const u = String(url ?? '').trim();
   if (!u) return '';
@@ -114,12 +113,11 @@ function toMillis(t){
   return Number.POSITIVE_INFINITY;
 }
 
-/* Render SRC table with fixed column plan */
+/* Render SRC table with fixed column plan via <colgroup> */
 function renderSrcTable(mountId, rows){
   const mount = document.getElementById(mountId); if (!mount) return;
   const COLS = ["Player","Time","Machine","Rider","SRC Link","Video"];
 
-  // Column width plan: % of table width; Link/Video are fixed by CSS too
   const colgroup = `
     <colgroup>
       <col style="width:18%">
@@ -321,7 +319,7 @@ async function loadAll(){
 
   nav.innerHTML = orderedCourses.map(course => {
     const id = makeAnchorId(course);
-    return `#${id}${course}</a>`;
+    return `<a href="#${id}">${course}</a>`;
   }).join("");
 
   const sectionIds = [];
@@ -337,7 +335,11 @@ async function loadAll(){
     sec.className = 'course';
 
     const bannerPath = BANNERS[courseName] || '';
-    const bannerImg  = bannerPath ? `${bannerPath}` : '';
+
+    /* FIX: render actual <img> for the banner */
+    const bannerImg = bannerPath
+      ? `<img class="course-banner" src="${bannerPath}" alt="${courseName} banner">`
+      : '';
 
     sec.innerHTML = `
       <span id="${id}" class="anchor"></span>
@@ -378,13 +380,13 @@ async function loadAll(){
     `;
     content.appendChild(sec);
 
-    // SRC tables (all 4 always rendered)
+    // SRC tables
     renderSrcTable(`${id}-ta-r`, srcCourse.TA.Restricted);
     renderSrcTable(`${id}-ta-u`, srcCourse.TA.Unrestricted);
     renderSrcTable(`${id}-fr-r`, srcCourse.FR.Restricted);
     renderSrcTable(`${id}-fr-u`, srcCourse.FR.Unrestricted);
 
-    // Speedrider strips (TA above FR)
+    // Speedrider strips
     renderSpeedriderStrip(`${id}-sr-ta`, srTaCourse);
     renderSpeedriderStrip(`${id}-sr-fr`, srFrCourse);
   });
