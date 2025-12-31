@@ -1,7 +1,8 @@
 
-/* KARs Garage — Air Ride
-   - Corrects banner rendering (now uses <img class="course-banner" src="...">)
-   - Keeps previous fixes: link ellipsis, colgroup widths, one-line core columns, etc.
+/* KARs Garage — Air Ride (GitHub Pages-friendly paths)
+   - All banner images use relative paths: 'images/...'
+   - Case-sensitive names match your uploaded files exactly.
+   - Rest of the code stays as we finalized earlier.
 */
 
 const SRC_CSV   = "https://docs.google.com/spreadsheets/d/e/2PACX-1vRLdSEHHpUNrBHTlJlEZLBJmJpbBuxrnJ4AXQk_vqzhVoyliOzaM-uEAw-WXNskMOhcjZq7HWLctrBN/pub?output=csv";
@@ -20,25 +21,26 @@ const COURSE_ORDER = [
   "Machine Passage","Checker Knights","Nebula Belt"
 ];
 
+/* IMPORTANT: exact filenames from your /images folder (case-sensitive) */
 const BANNERS = {
-  "Airtopia Ruins":   "/images/Airtopia_banner.webp",
-  "Beanstalk Park":   "/images/beanstalk_banner.webp",
-  "Cavernous Corners":"/images/cavernous_banner.webp",
-  "Checker Knights":  "/images/checker_banner.webp",
-  "Celestial Valley": "/images/Celestial_banner.webp",
-  "Crystalline Fissure": "/images/Crystalline_banner.webp",
-  "Cyberion Highway": "/images/Cyberion_Banner.webp",
-  "Fantasy Meadows":  "/images/Fantasy_banner.webp",
-  "Floria Fields":    "/images/Floria_banner.webp",
-  "Frozen Hillside":  "/images/Frozen_banner.webp",
-  "Galactic Nova":    "/images/Nova_Banner.webp",
-  "Machine Passage":  "/images/Machine_Banner.webp",
-  "Magma Flows":      "/images/Magma_Banner.webp",
-  "Mount Amberfalls": "/images/Amberfalls_banner.webp",
-  "Nebula Belt":      "/images/Nebula_Banner.webp",
-  "Sky Sands":        "/images/Sky_Banner.webp",
-  "Steamgust Forge":  "/images/Steamgust_Banner.webp",
-  "Waveflow Waters":  "/images/Waveflow_Banner.webp"
+  "Airtopia Ruins":     "images/airtopia_banner.webp",
+  "Beanstalk Park":     "images/beanstalk_banner.webp",
+  "Cavernous Corners":  "images/Cavernous_banner.webp",
+  "Checker Knights":    "images/checker_banner.webp",
+  "Celestial Valley":   "images/Celestial_banner.webp",
+  "Crystalline Fissure":"images/Crystalline_banner.webp",
+  "Cyberion Highway":   "images/Cyberion_Banner.webp",
+  "Fantasy Meadows":    "images/Fantasy_banner.webp",
+  "Floria Fields":      "images/Floria_banner.webp",
+  "Frozen Hillside":    "images/Frozen_banner.webp",
+  "Galactic Nova":      "images/Nova_Banner.webp",
+  "Machine Passage":    "images/Machine_Banner.webp",
+  "Magma Flows":        "images/Magma_Banner.webp",
+  "Mount Amberfalls":   "images/Amberfalls_banner.webp",
+  "Nebula Belt":        "images/Nebula_Banner.webp",
+  "Sky Sands":          "images/Sky_Banner.webp",
+  "Steamgust Forge":    "images/Steamgust_Banner.webp",
+  "Waveflow Waters":    "images/Waveflow_Banner.webp"
 };
 
 /* CSV parsing */
@@ -71,18 +73,14 @@ function makeAnchorId(name){
   return String(name).toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-+|-+$/g,'');
 }
 function stripPrefix(u){ return String(u ?? '').replace(/^https?:\/\/(www\.)?/i,''); }
-
-/* Proper <a> so CSS ellipsis applies */
 function linkCell(url){
   const u = String(url ?? '').trim();
   if (!u) return '';
   const label = stripPrefix(u);
-  return `<a href="${u}" target="_blank" rel="noopener">${label}</a>`;
+  return `${u}${label}</a>`;
 }
-
-/* Subcategory: "Course + Ruleset" */
 function parseCourseAndRules(subRaw){
-  const s = String(subRaw ?? '').trim().replace(/\s*\+$/, ''); // drop trailing '+'
+  const s = String(subRaw ?? '').trim().replace(/\s*\+$/, '');
   if (!s) return { course:"", rules:"" };
   const parts = s.split(/\s*\+\s*/);
   const course = (parts[0] || '').trim();
@@ -92,8 +90,6 @@ function parseCourseAndRules(subRaw){
   if (UNRESTRICTED.test(rulesText)) rules = 'Unrestricted';
   return { course, rules };
 }
-
-/* Time parser */
 function toMillis(t){
   const s = String(t || '').trim();
   let m;
@@ -121,11 +117,11 @@ function renderSrcTable(mountId, rows){
   const colgroup = `
     <colgroup>
       <col style="width:18%">
-      <col style="width:14%">
+      <col style="width:16%">  <!-- Time -->
       <col style="width:18%">
       <col style="width:18%">
-      <col style="width:16%">
-      <col style="width:16%">
+      <col style="width:15%">
+      <col style="width:15%">
     </colgroup>
   `;
 
@@ -138,7 +134,7 @@ function renderSrcTable(mountId, rows){
     sorted.forEach(r => {
       html += '<tr>';
       html += `<td>${r.Player ?? ''}</td>`;
-      html += `<td>${r.Time ?? ''}</td>`;
+      html += `<td class="td--time">${r.Time ?? ''}</td>`;
       html += `<td>${r.Machine ?? ''}</td>`;
       html += `<td>${r.Rider ?? ''}</td>`;
       html += `<td>${linkCell(r.Link)}</td>`;
@@ -152,7 +148,6 @@ function renderSrcTable(mountId, rows){
   html += '</tbody></table>';
   mount.innerHTML = html;
 
-  // Click-sort
   const ths = mount.querySelectorAll('th'); let sortState = {};
   ths.forEach(th => {
     th.addEventListener('click', () => {
@@ -319,7 +314,7 @@ async function loadAll(){
 
   nav.innerHTML = orderedCourses.map(course => {
     const id = makeAnchorId(course);
-    return `<a href="#${id}">${course}</a>`;
+    return `#${id}${course}</a>`;
   }).join("");
 
   const sectionIds = [];
@@ -336,15 +331,9 @@ async function loadAll(){
 
     const bannerPath = BANNERS[courseName] || '';
 
-    /* FIX: render actual <img> for the banner */
-    const bannerImg = bannerPath
-      ? `<img class="course-banner" src="${bannerPath}" alt="${courseName} banner">`
-      : '';
-
     sec.innerHTML = `
       <span id="${id}" class="anchor"></span>
       <figure class="banner-wrap">
-        ${bannerImg}
         <figcaption class="banner-title">${courseName}</figcaption>
       </figure>
 
@@ -378,15 +367,24 @@ async function loadAll(){
 
       <hr class="section-divider" />
     `;
+
+    /* Inject banner <img> (relative path) if present */
+    const fig = sec.querySelector('.banner-wrap');
+    if (bannerPath) {
+      const img = document.createElement('img');
+      img.className = 'course-banner';
+      img.src = bannerPath;   // e.g., images/Floria_banner.webp
+      img.alt = `${courseName} banner`;
+      fig.insertBefore(img, fig.firstChild);
+    }
+
     content.appendChild(sec);
 
-    // SRC tables
     renderSrcTable(`${id}-ta-r`, srcCourse.TA.Restricted);
     renderSrcTable(`${id}-ta-u`, srcCourse.TA.Unrestricted);
     renderSrcTable(`${id}-fr-r`, srcCourse.FR.Restricted);
     renderSrcTable(`${id}-fr-u`, srcCourse.FR.Unrestricted);
 
-    // Speedrider strips
     renderSpeedriderStrip(`${id}-sr-ta`, srTaCourse);
     renderSpeedriderStrip(`${id}-sr-fr`, srFrCourse);
   });
