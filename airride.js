@@ -1,8 +1,9 @@
 
-/* KARs Garage — Air Ride (GitHub Pages-friendly paths)
-   - All banner images use relative paths: 'images/...'
-   - Case-sensitive names match your uploaded files exactly.
-   - Rest of the code stays as we finalized earlier.
+/* KARs Garage — Air Ride (GitHub Pages-friendly)
+   - Sidebar TOC anchors fixed: <a href="#{id}">{course}</a>
+   - Banner images use relative paths: 'images/...'
+   - linkCell() outputs proper <a href="...">...</a>
+   - SRC & Speedrider logic as previously finalized
 */
 
 const SRC_CSV   = "https://docs.google.com/spreadsheets/d/e/2PACX-1vRLdSEHHpUNrBHTlJlEZLBJmJpbBuxrnJ4AXQk_vqzhVoyliOzaM-uEAw-WXNskMOhcjZq7HWLctrBN/pub?output=csv";
@@ -21,7 +22,7 @@ const COURSE_ORDER = [
   "Machine Passage","Checker Knights","Nebula Belt"
 ];
 
-/* IMPORTANT: exact filenames from your /images folder (case-sensitive) */
+/* Exact filenames from your /images folder (case-sensitive) */
 const BANNERS = {
   "Airtopia Ruins":     "images/airtopia_banner.webp",
   "Beanstalk Park":     "images/beanstalk_banner.webp",
@@ -73,14 +74,17 @@ function makeAnchorId(name){
   return String(name).toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-+|-+$/g,'');
 }
 function stripPrefix(u){ return String(u ?? '').replace(/^https?:\/\/(www\.)?/i,''); }
+
+/* FIXED: proper <a> anchor output */
 function linkCell(url){
   const u = String(url ?? '').trim();
   if (!u) return '';
   const label = stripPrefix(u);
   return `${u}${label}</a>`;
 }
+
 function parseCourseAndRules(subRaw){
-  const s = String(subRaw ?? '').trim().replace(/\s*\+$/, '');
+  const s = String(subRaw ?? '').trim().replace(/\s*\+$/, ''); // drop trailing '+'
   if (!s) return { course:"", rules:"" };
   const parts = s.split(/\s*\+\s*/);
   const course = (parts[0] || '').trim();
@@ -90,6 +94,7 @@ function parseCourseAndRules(subRaw){
   if (UNRESTRICTED.test(rulesText)) rules = 'Unrestricted';
   return { course, rules };
 }
+
 function toMillis(t){
   const s = String(t || '').trim();
   let m;
@@ -148,6 +153,7 @@ function renderSrcTable(mountId, rows){
   html += '</tbody></table>';
   mount.innerHTML = html;
 
+  // Click-sort
   const ths = mount.querySelectorAll('th'); let sortState = {};
   ths.forEach(th => {
     th.addEventListener('click', () => {
@@ -297,6 +303,7 @@ async function loadAll(){
     srcByCourse.get(course)[mode][rules].push(rowObj);
   });
 
+  // Sort SRC buckets fastest → slowest
   for (const course of srcByCourse.keys()){
     ['TA','FR'].forEach(m => ['Restricted','Unrestricted'].forEach(rule => {
       srcByCourse.get(course)[m][rule].sort((a,b) => a._ms - b._ms);
@@ -312,9 +319,10 @@ async function loadAll(){
   const courseSet = new Set([...srcByCourse.keys(), ...srTaByCourse.keys(), ...srFrByCourse.keys()]);
   const orderedCourses = COURSE_ORDER.filter(c => courseSet.has(c));
 
+  /* FIXED: Create proper <a> links in the TOC */
   nav.innerHTML = orderedCourses.map(course => {
     const id = makeAnchorId(course);
-    return `#${id}${course}</a>`;
+    return `#${id}">${course}</a>`;
   }).join("");
 
   const sectionIds = [];
@@ -368,12 +376,12 @@ async function loadAll(){
       <hr class="section-divider" />
     `;
 
-    /* Inject banner <img> (relative path) if present */
+    /* Inject banner <img> if present */
     const fig = sec.querySelector('.banner-wrap');
     if (bannerPath) {
       const img = document.createElement('img');
       img.className = 'course-banner';
-      img.src = bannerPath;   // e.g., images/Floria_banner.webp
+      img.src = bannerPath;
       img.alt = `${courseName} banner`;
       fig.insertBefore(img, fig.firstChild);
     }
@@ -391,6 +399,7 @@ async function loadAll(){
 
   setupScrollSpy(sectionIds);
 
+  // Smooth scroll on TOC clicks
   nav.querySelectorAll('a').forEach(a => {
     a.addEventListener('click', e => {
       e.preventDefault();
