@@ -1,43 +1,24 @@
 
-/* KARs Garage — Air Ride subpage */
+/* KARs Garage — Air Ride (native HTML; no iframes)
+   - Restores "AIR RIDE" page header and cadence line
+   - Parses SRC Column C Subcategory ("Course + Ruleset"), ignoring plain "Air Ride" category
+   - Renders TA/FR (Restricted/Unrestricted) tables; never omits sections
+   - Speedrider TA/FR strips from the two published CSV tabs
+   - Ensures link ellipsis and non-scrolling tables (CSS handles widths)
+*/
 
-/* SRC CSV */
-const SRC_CSV  = "https://docs.google.com/spreadsheets/d/e/2PACX-1vRLdSEHHpUNrBHTlJlEZLBJmJpbBuxrnJ4AXQk_vqzhVoyliOzaM-uEAw-WXNskMOhcjZq7HWLctrBN/pub?output=csv";
+/* === DATA SOURCES === */
+const SRC_CSV   = "https://docs.google.com/spreadsheets/d/e/2PACX-1vRLdSEHHpUNrBHTlJlEZLBJmJpbBuxrnJ4AXQk_vqzhVoyliOzaM-uEAw-WXNskMOhcjZq7HWLctrBN/pub?output=csv";
+const SR_TA_CSV = "https://docs.google.com/spreadsheets/d/e/2PACX-1vRLLtoztu41AtY4reRXwNd00WqxhlFyTbn3RKoBwssrf1fXFGAZxO2b1dB62-0lrUOz4yi1dLuJrmml/pub?gid=1618721256&single=true&output=csv";
+const SR_FR_CSV = "https://docs.google.com/spreadsheets/d/e/2PACX-1vRLLtoztu41AtY4reRXwNd00WqxhlFyTbn3RKoBwssrf1fXFGAZxO2b1dB62-0lrUOz4yi1dLuJrmml/pub?gid=109124482&single=true&output=csv";
 
-/* Speedrider CSVs (provided) */
-const SR_TA_CSV= "https://docs.google.com/spreadsheets/d/e/2PACX-1vRLLtoztu41AtY4reRXwNd00WqxhlFyTbn3RKoBwssrf1fXFGAZxO2b1dB62-0lrUOz4yi1dLuJrmml/pub?gid=1618721256&single=true&output=csv";
-const SR_FR_CSV= "https://docs.google.com/spreadsheets/d/e/2PACX-1vRLLtoztu41AtY4reRXwNd00WqxhlFyTbn3RKoBwssrf1fXFGAZxO2b1dB62-0lrUOz4yi1dLuJrmml/pub?gid=109124482&single=true&output=csv";
-
-/* Category → mode */
-const TA_LABEL = /air\s*ride\s*time\s*attack/i;
-const FR_LABEL = /air\s*ride\s*free\s*run/i;
-
-/* Ruleset in Subcategory */
-const RESTRICTED = /restricted/i;
+/* === LABELS === */
+const TA_LABEL = /time\s*attack/i;
+const FR_LABEL = /free\s*run/i;
+const RESTRICTED   = /restricted/i;
 const UNRESTRICTED = /unrestricted/i;
 
-/* Course → banner image */
-const BANNERS = {
-  "Airtopia Ruins": "/images/airtopia_banner.webp",
-  "Mount Amberfalls": "/images/Amberfalls_banner.webp",
-  "Beanstalk Park": "/images/beanstalk_banner.webp",
-  "Cavernous Corners": "/images/cavernous_banner.webp",
-  "Checker Knights": "/images/checker_banner.webp",
-  "Crystalline Fissure": "/images/Crystalline_banner.webp",
-  "Cyberion Highway": "/images/Cyberion_Banner.webp",
-  "Fantasy Meadows": "/images/Fantasy_banner.webp",
-  "Floria Fields": "/images/Floria_banner.webp",
-  "Frozen Hillside": "/images/Frozen_banner.webp",
-  "Machine Passage": "/images/Machine_Banner.webp",
-  "Magma Flows": "/images/Magma_Banner.webp",
-  "Nebula Belt": "/images/Nebula_Banner.webp",
-  "Galactic Nova": "/images/Nova_Banner.webp",
-  "Sky Sands": "/images/Sky_Banner.webp",
-  "Steamgust Forge": "/images/Steamgust_Banner.webp",
-  "Waveflow Waters": "/images/Waveflow_Banner.webp"
-};
-
-/* Explicit course order */
+/* === COURSE ORDER === */
 const COURSE_ORDER = [
   "Floria Fields","Waveflow Waters","Airtopia Ruins","Crystalline Fissure","Steamgust Forge",
   "Cavernous Corners","Cyberion Highway","Mount Amberfalls","Galactic Nova","Fantasy Meadows",
@@ -45,235 +26,317 @@ const COURSE_ORDER = [
   "Machine Passage","Checker Knights","Nebula Belt"
 ];
 
-const SRC_COLS = ["Player","Time","Machine","Rider","SRC Link","Video"];
+/* === BANNERS (img paths) — includes Celestial Valley === */
+const BANNERS = {
+  "Airtopia Ruins":   "/images/Airtopia_banner.webp",
+  "Beanstalk Park":   "/images/beanstalk_banner.webp",
+  "Cavernous Corners":"/images/cavernous_banner.webp",
+  "Checker Knights":  "/images/checker_banner.webp",
+  "Celestial Valley": "/images/Celestial_banner.webp",
+  "Crystalline Fissure": "/images/Crystalline_banner.webp",
+  "Cyberion Highway": "/images/Cyberion_Banner.webp",
+  "Fantasy Meadows":  "/images/Fantasy_banner.webp",
+  "Floria Fields":    "/images/Floria_banner.webp",
+  "Frozen Hillside":  "/images/Frozen_banner.webp",
+  "Galactic Nova":    "/images/Nova_Banner.webp",
+  "Machine Passage":  "/images/Machine_Banner.webp",
+  "Magma Flows":      "/images/Magma_Banner.webp",
+  "Mount Amberfalls": "/images/Amberfalls_banner.webp",
+  "Nebula Belt":      "/images/Nebula_Banner.webp",
+  "Sky Sands":        "/images/Sky_Banner.webp",
+  "Steamgust Forge":  "/images/Steamgust_Banner.webp",
+  "Waveflow Waters":  "/images/Waveflow_Banner.webp"
+};
 
-/* CSV parser */
+/* === CSV parsing === */
 function parseCSV(text){
-  const rows = []; let row = [], cur = '', inQuotes = false;
+  const rows = [];
+  let row = [], cur = '', inQuotes = false;
   for (let i=0; i<text.length; i++){
-    const ch=text[i], next=text[i+1];
+    const ch = text[i], next = text[i+1];
     if (inQuotes){
-      if (ch=='"' && next=='"'){cur+='"'; i++;}
-      else if (ch=='"'){inQuotes=false;}
-      else {cur+=ch;}
+      if (ch === '"' && next === '"'){ cur += '"'; i++; }
+      else if (ch === '"'){ inQuotes = false; }
+      else { cur += ch; }
     } else {
-      if (ch=='"'){inQuotes=true;}
-      else if (ch==','){row.push(cur); cur='';}
-      else if (ch=='\n'){row.push(cur); rows.push(row); row=[]; cur='';}
-      else {cur+=ch;}
+      if (ch === '"'){ inQuotes = true; }
+      else if (ch === ','){ row.push(cur); cur = ''; }
+      else if (ch === '\n'){ row.push(cur); rows.push(row); row = []; cur = ''; }
+      else { cur += ch; }
     }
   }
-  if (cur.length || row.length){row.push(cur); rows.push(row);}
-  return rows.filter(r=>r.length && r.some(v=>String(v).trim().length));
+  if (cur.length || row.length){ row.push(cur); rows.push(row); }
+  return rows.filter(r => r.length && r.some(v => String(v).trim().length));
 }
 
-/* Helpers */
-function idxOf(header, colName){const i=header.findIndex(h=>String(h).trim().toLowerCase()===String(colName).toLowerCase()); return i<0?null:i;}
-function makeAnchorId(name){return String(name).toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-+|-+$/g,'');}
-function stripPrefix(u){return String(u||'').replace(/^https?:\/\/(www\.)?/i,'');}
-function linkCell(url){const u=String(url||'').trim(); if(!u) return ''; const label=stripPrefix(u); return `<a href="${u}" target="_blank" rel="noopener">${label}</a>`;}
-function parseCourseAndRules(subcatRaw){
-  const s=String(subcatRaw||'').trim(); if(!s) return {course:"",ruleset:""};
-  const parts=s.split(/\s*\+\s*/); let course=(parts[0]||"").trim(); let ruleset=(parts[1]||"").trim();
-  if(!ruleset){ if(RESTRICTED.test(s)) ruleset="Restricted"; else if(UNRESTRICTED.test(s)) ruleset="Unrestricted"; }
-  else { if(RESTRICTED.test(ruleset)) ruleset="Restricted"; else if(UNRESTRICTED.test(ruleset)) ruleset="Unrestricted"; }
-  course=course.replace(/time\s*attack|free\s*run/ig,'').trim().replace(/\s*\+\s*$/,'').trim();
-  return {course,ruleset};
+/* === Helpers === */
+function idxOf(header, colName){
+  const i = header.findIndex(h => String(h).trim().toLowerCase() === String(colName).toLowerCase());
+  return i < 0 ? null : i;
 }
-function toSecondsFlexible(raw){
-  const s=String(raw||'').trim(); if(!s) return NaN; let m;
-  m=s.match(/^(\d+)'(\d{2})"(\d{2})$/);              if(m) return (+m[1])*60+(+m[2])+(+m[3])/100;
-  m=s.match(/^(\d+)'(\d{2})"(\d{3})$/);              if(m) return (+m[1])*60+(+m[2])+(+m[3])/1000;
-  m=s.match(/^(\d+):(\d{2})\.(\d{3})$/);             if(m) return (+m[1])*60+(+m[2])+(+m[3])/1000;
-  m=s.match(/^(\d+):(\d{2}):(\d{2})\.(\d{3})$/);     if(m) return (+m[1])*3600+(+m[2])*60+(+m[3])+(+m[4])/1000;
-  m=s.match(/^(\d+):(\d{2}):(\d{2})$/);              if(m) return (+m[1])*3600+(+m[2])*60+(+m[3]);
-  m=s.match(/^(\d+):(\d{2})$/);                      if(m) return (+m[1])*60+(+m[2]);
-  m=s.match(/^(\d+(?:\.\d+)?)$/);                    if(m) return +m[1];
-  return NaN;
+function makeAnchorId(name){
+  return String(name).toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-+|-+$/g,'');
+}
+function stripPrefix(u){ return String(u ?? '').replace(/^https?:\/\/(www\.)?/i,''); }
+function linkCell(url){
+  const u = String(url ?? '').trim(); if (!u) return '';
+  const label = stripPrefix(u);
+  return `<a href="${u}" target="_blank" rel="noopener">${label}</a>`;
 }
 
-/* Render SRC table with sortable headers and horizontal scroll */
-function renderSrcTableSortable(mountId, rows){
-  const mount=document.getElementById(mountId); if(!mount) return;
-  if(!rows || rows.length===0){mount.innerHTML='<p class="muted">No data</p>'; return;}
+/* Subcategory: "Course + Ruleset" (normalize any variant that contains restricted/unrestricted) */
+function parseCourseAndRules(subRaw){
+  const s = String(subRaw ?? '').trim().replace(/\s*\+$/, ''); // drop trailing '+'
+  if (!s) return { course:"", rules:"" };
+  const parts = s.split(/\s*\+\s*/);
+  const course = (parts[0] || '').trim();
+  let rulesText = (parts[1] || '').trim() || s;
+  let rules = '';
+  if (RESTRICTED.test(rulesText)) rules = 'Restricted';
+  if (UNRESTRICTED.test(rulesText)) rules = 'Unrestricted';
+  return { course, rules };
+}
 
-  rows=rows.slice().sort((a,b)=>{
-    const ax=toSecondsFlexible(a.Time), bx=toSecondsFlexible(b.Time);
-    return (isNaN(ax)?Infinity:ax)-(isNaN(bx)?Infinity:bx);
-  });
+/* Time parser for default sort (fastest first) */
+function toMillis(t){
+  const s = String(t || '').trim();
+  let m;
+  if ((m = s.match(/^(\d+)'(\d{2})"(\d{2,3})$/))) {
+    const mm = +m[1], ss = +m[2], frac = +m[3];
+    const ms = m[3].length === 2 ? frac * 10 : frac;
+    return (mm*60 + ss) * 1000 + ms;
+  }
+  if ((m = s.match(/^(\d+):(\d{2})\.(\d{3})$/))) {
+    const mm = +m[1], ss = +m[2], ms = +m[3];
+    return (mm*60 + ss) * 1000 + ms;
+  }
+  if ((m = s.match(/^(\d+):(\d{2}):(\d{2})\.(\d{3})$/))) {
+    const hh = +m[1], mm = +m[2], ss = +m[3], ms = +m[4];
+    return ((hh*3600)+(mm*60)+ss)*1000 + ms;
+  }
+  return Number.POSITIVE_INFINITY;
+}
 
-  let html='<div class="table-scroll"><table class="table"><thead><tr>';
-  SRC_COLS.forEach(c=>{html+=`<th data-col="${c}">${c}<span class="sort-ind"></span></th>`;});
-  html+='</tr></thead><tbody>';
+/* Render SRC table (non-scroll; link ellipsis via CSS widths) */
+function renderSrcTable(mountId, rows){
+  const mount = document.getElementById(mountId); if (!mount) return;
+  const COLS = ["Player","Time","Machine","Rider","Link","Video"];
 
-  rows.forEach(r=>{
-    html+='<tr>';
-    SRC_COLS.forEach((col,idx)=>{
-      let val=r[col]??'';
-      if(col==="SRC Link" || col==="Video") val=linkCell(val);
-      html+=`<td>${val??''}</td>`;
-    });
-    html+='</tr>';
-  });
+  let html = '<table class="table"><thead><tr>';
+  COLS.forEach(c => { html += `<th data-col="${c}">${c}<span class="sort-ind"></span></th>`; });
+  html += '</tr></thead><tbody>';
 
-  html+='</tbody></table></div>';
-  mount.innerHTML=html;
-
-  const ths=mount.querySelectorAll('th'); let sortState={};
-  ths.forEach(th=>{
-    th.addEventListener('click',()=>{
-      const col=th.getAttribute('data-col');
-      const dir=(sortState.col===col && sortState.dir==='asc')?'desc':'asc';
-      sortState={col,dir};
-      const tbody=mount.querySelector('tbody');
-      const rowsEl=Array.from(tbody.querySelectorAll('tr'));
-      rowsEl.sort((rA,rB)=>{
-        const a=rA.querySelector(`td:nth-child(${SRC_COLS.indexOf(col)+1})`).textContent.trim();
-        const b=rB.querySelector(`td:nth-child(${SRC_COLS.indexOf(col)+1})`).textContent.trim();
-        let cmp;
-        if(col==="Time"){const ax=toSecondsFlexible(a), bx=toSecondsFlexible(b); cmp=(isNaN(ax)?Infinity:ax)-(isNaN(bx)?Infinity:bx);}
-        else {cmp=a.localeCompare(b,undefined,{numeric:true,sensitivity:'base'});}
-        return dir==='asc'?cmp:-cmp;
+  if (rows && rows.length){
+    const sorted = rows.slice().sort((a,b) => (a._ms - b._ms));
+    sorted.forEach(r => {
+      html += '<tr>';
+      COLS.forEach(col => {
+        let val = r[col] ?? '';
+        if (col === 'Link' || col === 'Video') val = linkCell(val);
+        html += `<td>${val ?? ''}</td>`;
       });
-      rowsEl.forEach(el=>tbody.appendChild(el));
-      mount.querySelectorAll('.sort-ind').forEach(i=>i.textContent='');
-      th.querySelector('.sort-ind').textContent=dir==='asc'?'▲':'▼';
+      html += '</tr>';
+    });
+  } else {
+    html += `<tr><td colspan="${COLS.length}" class="muted">No data</td></tr>`;
+  }
+
+  html += '</tbody></table>';
+  mount.innerHTML = html;
+
+  // Click-sort (kept simple)
+  const ths = mount.querySelectorAll('th'); let sortState = {};
+  ths.forEach(th => {
+    th.addEventListener('click', () => {
+      const col = th.getAttribute('data-col');
+      const dir = (sortState.col === col && sortState.dir === 'asc') ? 'desc' : 'asc';
+      sortState = { col, dir };
+      const tbody = mount.querySelector('tbody');
+      const rowsEl = Array.from(tbody.querySelectorAll('tr')).filter(tr => !tr.querySelector('.muted'));
+      rowsEl.sort((rA, rB) => {
+        const a = rA.querySelector(`td:nth-child(${COLS.indexOf(col)+1})`).textContent.trim();
+        const b = rB.querySelector(`td:nth-child(${COLS.indexOf(col)+1})`).textContent.trim();
+        let cmp;
+        if (col === 'Time'){ cmp = toMillis(a) - toMillis(b); }
+        else { cmp = a.localeCompare(b, undefined, { numeric:true, sensitivity:'base' }); }
+        return dir === 'asc' ? cmp : -cmp;
+      });
+      rowsEl.forEach(el => tbody.appendChild(el));
+      mount.querySelectorAll('.sort-ind').forEach(i => i.textContent = '');
+      th.querySelector('.sort-ind').textContent = dir === 'asc' ? '▲' : '▼';
     });
   });
 }
 
-/* Speedrider strip */
+/* Speedrider strips (TA/FR) */
 function renderSpeedriderStrip(mountId, entries){
-  const mount=document.getElementById(mountId); if(!mount) return;
-  if(!entries || entries.length===0){mount.innerHTML='<p class="muted">No data</p>'; return;}
-  let html='<div class="sr-strip">';
-  entries.forEach(e=>{
-    html+=`
+  const mount = document.getElementById(mountId); if (!mount) return;
+  if (!entries || entries.length === 0){ mount.innerHTML = '<p class="muted">No data</p>'; return; }
+  let html = '<div class="sr-strip">';
+  entries.forEach(e => {
+    html += `
       <div class="sr-col">
-        <div class="sr-time">${e.Time||''}</div>
-        <div class="sr-item"><span class="label">Machine</span> ${e.Machine||''}</div>
-        <div class="sr-item"><span class="label">Rider</span> ${e.Rider||''}</div>
-        <div class="sr-item"><span class="label">Player</span> ${e.Player||''}</div>
-        <div class="sr-item"><span class="label">Link</span> ${linkCell(e["Player Link"]||'')}</div>
+        <div class="sr-time">${e.Time ?? ''}</div>
+        <div class="sr-item"><span class="label">Machine</span> ${e.Machine ?? ''}</div>
+        <div class="sr-item"><span class="label">Rider</span> ${e.Rider ?? ''}</div>
+        <div class="sr-item"><span class="label">Player</span> ${e.Player ?? ''}</div>
+        <div class="sr-item"><span class="label">Link</span> ${linkCell(e["Player Link"] ?? '')}</div>
       </div>`;
   });
-  html+='</div>';
-  mount.innerHTML=html;
+  html += '</div>';
+  mount.innerHTML = html;
 }
 
 /* Scroll‑spy */
 function setupScrollSpy(sectionIds){
-  const links=sectionIds.map(id=>({id,el:document.querySelector(`#course-nav a[href="#${id}"]`)})).filter(x=>x.el);
-  const observer=new IntersectionObserver((entries)=>{
-    entries.forEach(entry=>{
-      const id=entry.target.id;
-      const link=links.find(l=>l.id===id)?.el; if(!link) return;
-      if(entry.isIntersecting){links.forEach(l=>l.el.classList.remove('active')); link.classList.add('active');}
+  const links = sectionIds.map(id => ({ id, el: document.querySelector(`#course-nav a[href="#${id}"]`) })).filter(x => x.el);
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      const id = entry.target.id;
+      const link = links.find(l => l.id === id)?.el; if (!link) return;
+      if (entry.isIntersecting){
+        links.forEach(l => l.el.classList.remove('active'));
+        link.classList.add('active');
+      }
     });
-  },{root:null,rootMargin:'0px 0px -60% 0px',threshold:0.25});
-  sectionIds.forEach(id=>{const sec=document.getElementById(id); if(sec) observer.observe(sec);});
+  },{root:null, rootMargin:'0px 0px -60% 0px', threshold:0.25});
+  sectionIds.forEach(id => { const sec = document.getElementById(id); if (sec) observer.observe(sec); });
 }
 
-/* Build Speedrider index */
+/* Speedrider index (sorted fastest → slowest by Time (sec)) */
 function buildSrIndex(rows){
-  const header=rows[0].map(h=>String(h).trim());
-  const IDX={
-    Course:idxOf(header,"Course"),
-    Machine:idxOf(header,"Machine"),
-    Rider:idxOf(header,"Rider"),
-    Player:idxOf(header,"Player"),
-    Time:idxOf(header,"Time"),
-    TimeSec:idxOf(header,"Time (sec)"),
-    PlayerLink:idxOf(header,"Player Link"),
+  const header = rows[0].map(h => String(h).trim());
+  const IDX = {
+    Course:     idxOf(header,"Course"),
+    Machine:    idxOf(header,"Machine"),
+    Rider:      idxOf(header,"Rider"),
+    Player:     idxOf(header,"Player"),
+    Time:       idxOf(header,"Time"),
+    TimeSec:    idxOf(header,"Time (sec)"),
+    PlayerLink: idxOf(header,"Player Link")
   };
-  const byCourse=new Map();
-  rows.slice(1).forEach(r=>{
-    const course=r[IDX.Course]??''; if(!course) return;
-    const entry={
-      "Time":r[IDX.Time],
-      "Machine":r[IDX.Machine],
-      "Rider":r[IDX.Rider],
-      "Player":r[IDX.Player],
-      "Player Link":r[IDX.PlayerLink],
-      _sec:Number(r[IDX.TimeSec]||NaN)
+  const byCourse = new Map();
+  rows.slice(1).forEach(r => {
+    const course = r[IDX.Course] ?? ''; if (!course) return;
+    const entry = {
+      "Time": r[IDX.Time],
+      "Machine": r[IDX.Machine],
+      "Rider": r[IDX.Rider],
+      "Player": r[IDX.Player],
+      "Player Link": r[IDX.PlayerLink],
+      _sec: Number(r[IDX.TimeSec] ?? NaN)
     };
-    if(!byCourse.has(course)) byCourse.set(course,[]);
+    if (!byCourse.has(course)) byCourse.set(course, []);
     byCourse.get(course).push(entry);
   });
-  byCourse.forEach(arr=>{
-    arr.sort((a,b)=>{
-      const ax=(typeof a._sec==='number' && !isNaN(a._sec))?a._sec:Infinity;
-      const bx=(typeof b._sec==='number' && !isNaN(b._sec))?b._sec:Infinity;
-      return ax-bx;
+  byCourse.forEach(arr => {
+    arr.sort((a,b) => {
+      const ax = (typeof a._sec === 'number' && !isNaN(a._sec)) ? a._sec : Infinity;
+      const bx = (typeof b._sec === 'number' && !isNaN(b._sec)) ? b._sec : Infinity;
+      return ax - bx;
     });
   });
   return byCourse;
 }
 
-/* Main */
+/* === MAIN === */
 async function loadAll(){
-  const [srcRes, srTaRes, srFrRes]=await Promise.all([
-    fetch(SRC_CSV,{cache:'no-cache'}),
-    fetch(SR_TA_CSV,{cache:'no-cache'}),
-    fetch(SR_FR_CSV,{cache:'no-cache'})
-  ]);
-  const [srcText, srTaText, srFrText]=await Promise.all([srcRes.text(), srTaRes.text(), srFrRes.text()]);
-  const srcRows=parseCSV(srcText);
-  const srTaRows=parseCSV(srTaText);
-  const srFrRows=parseCSV(srFrText);
+  // Footer year
+  const y = document.getElementById('year');
+  if (y) y.textContent = new Date().getFullYear();
 
-  /* SRC indexes */
-  const srcHeader=srcRows[0].map(h=>String(h).trim());
-  const SRC_IDX={
-    Category:idxOf(srcHeader,"Category"),
-    Subcategory:idxOf(srcHeader,"Subcategory"),
-    Machine:idxOf(srcHeader,"Machine"),
-    Rider:idxOf(srcHeader,"Rider"),
-    Player:idxOf(srcHeader,"Player"),
-    Time:idxOf(srcHeader,"Time"),
-    Link:idxOf(srcHeader,"Link"),
-    Video:idxOf(srcHeader,"Video"),
+  // Fetch CSVs
+  const [srcRes, srTaRes, srFrRes] = await Promise.all([
+    fetch(SRC_CSV, { cache:'no-cache' }),
+    fetch(SR_TA_CSV, { cache:'no-cache' }),
+    fetch(SR_FR_CSV, { cache:'no-cache' })
+  ]);
+  const [srcText, srTaText, srFrText] = await Promise.all([srcRes.text(), srTaRes.text(), srFrRes.text()]);
+  const srcRows  = parseCSV(srcText);
+  const srTaRows = parseCSV(srTaText);
+  const srFrRows = parseCSV(srFrText);
+
+  // SRC indexes
+  const srcHeader = srcRows[0].map(h => String(h).trim());
+  const SRC_IDX = {
+    Category:    idxOf(srcHeader,"Category"),
+    Subcategory: idxOf(srcHeader,"Subcategory"),
+    Machine:     idxOf(srcHeader,"Machine"),
+    Rider:       idxOf(srcHeader,"Rider"),
+    Player:      idxOf(srcHeader,"Player"),
+    Time:        idxOf(srcHeader,"Time"),
+    Link:        idxOf(srcHeader,"Link"),
+    Video:       idxOf(srcHeader,"Video")
   };
 
-  /* Group SRC by course & mode/rules */
-  const srcByCourse=new Map();
-  srcRows.slice(1).forEach(r=>{
-    const category=r[SRC_IDX.Category]??''; const subcat=r[SRC_IDX.Subcategory]??''; if(!category||!subcat) return;
-    const mode=TA_LABEL.test(category)?'TA':(FR_LABEL.test(category)?'FR':'OTHER'); if(mode==='OTHER') return;
-    const {course,ruleset}=parseCourseAndRules(subcat);
-    if(!course || !(ruleset==="Restricted"||ruleset==="Unrestricted")) return;
-    const rowObj={
-      Player:r[SRC_IDX.Player], Time:r[SRC_IDX.Time],
-      Machine:r[SRC_IDX.Machine], Rider:r[SRC_IDX.Rider],
-      "SRC Link":r[SRC_IDX.Link], "Video":r[SRC_IDX.Video]
+  // Group SRC by course/mode/rules
+  const srcByCourse = new Map();
+  srcRows.slice(1).forEach(r => {
+    const category = r[SRC_IDX.Category] ?? '';
+    const subcat   = r[SRC_IDX.Subcategory] ?? '';
+    if (!category || !subcat) return;
+
+    // Only TA or FR (ignore plain "Air Ride")
+    const mode = TA_LABEL.test(category) ? 'TA' : (FR_LABEL.test(category) ? 'FR' : 'OTHER');
+    if (mode === 'OTHER') return;
+
+    const { course, rules } = parseCourseAndRules(subcat);
+    if (!course || !(rules === 'Restricted' || rules === 'Unrestricted')) return;
+
+    const rowObj = {
+      Player: r[SRC_IDX.Player],
+      Time:   r[SRC_IDX.Time],
+      Machine:r[SRC_IDX.Machine],
+      Rider:  r[SRC_IDX.Rider],
+      Link:   r[SRC_IDX.Link],
+      Video:  r[SRC_IDX.Video],
+      _ms:    toMillis(r[SRC_IDX.Time])
     };
-    if(!srcByCourse.has(course)) srcByCourse.set(course,{TA:{Restricted:[],Unrestricted:[]}, FR:{Restricted:[],Unrestricted:[]}});
-    srcByCourse.get(course)[mode][ruleset].push(rowObj);
+    if (!srcByCourse.has(course)) {
+      srcByCourse.set(course, { TA:{Restricted:[],Unrestricted:[]}, FR:{Restricted:[],Unrestricted:[]} });
+    }
+    srcByCourse.get(course)[mode][rules].push(rowObj);
   });
 
-  /* Speedrider TA/FR indices */
-  const srTaByCourse=buildSrIndex(srTaRows);
-  const srFrByCourse=buildSrIndex(srFrRows);
+  // Sort SRC buckets by time ascending
+  for (const course of srcByCourse.keys()){
+    ['TA','FR'].forEach(m => ['Restricted','Unrestricted'].forEach(rule => {
+      srcByCourse.get(course)[m][rule].sort((a,b) => a._ms - b._ms);
+    }));
+  }
 
-  /* Build left nav + sections in requested order */
-  const content=document.getElementById('content');
-  const nav=document.getElementById('course-nav');
+  // Speedrider indices
+  const srTaByCourse = buildSrIndex(srTaRows);
+  const srFrByCourse = buildSrIndex(srFrRows);
 
-  const courseSet=new Set([...srcByCourse.keys(),...srTaByCourse.keys(),...srFrByCourse.keys()]);
-  const orderedCourses=COURSE_ORDER.filter(c=>courseSet.has(c));
+  // Build TOC + sections (explicit order; skip courses with absolutely no data)
+  const content = document.getElementById('content');
+  const nav     = document.getElementById('course-nav');
 
-  nav.innerHTML=orderedCourses.map(course=>`<a href="#${makeAnchorId(course)}">${course}</a>`).join("");
+  const courseSet = new Set([...srcByCourse.keys(), ...srTaByCourse.keys(), ...srFrByCourse.keys()]);
+  const orderedCourses = COURSE_ORDER.filter(c => courseSet.has(c));
 
-  const sectionIds=[];
-  orderedCourses.forEach(courseName=>{
-    const id=makeAnchorId(courseName); sectionIds.push(id);
-    const srcCourse=srcByCourse.get(courseName)||{TA:{Restricted:[],Unrestricted:[]}, FR:{Restricted:[],Unrestricted:[]}};
-    const srTaCourse=srTaByCourse.get(courseName)||[];
-    const srFrCourse=srFrByCourse.get(courseName)||[];
+  nav.innerHTML = orderedCourses.map(course => {
+    const id = makeAnchorId(course);
+    return `<a href="#${id}">${course}</a>`;
+  }).join("");
 
-    const sec=document.createElement('section'); sec.className='course';
-    const bannerImg=BANNERS[courseName] ? `<img class="course-banner" src="${BANNERS[courseName]}" alt="${courseName} banner">` : '';
-    sec.innerHTML=`
+  const sectionIds = [];
+  orderedCourses.forEach(courseName => {
+    const id = makeAnchorId(courseName);
+    sectionIds.push(id);
+
+    const srcCourse = srcByCourse.get(courseName) || { TA:{Restricted:[],Unrestricted:[]}, FR:{Restricted:[],Unrestricted:[]} };
+    const srTaCourse = srTaByCourse.get(courseName) || [];
+    const srFrCourse = srFrByCourse.get(courseName) || [];
+
+    const sec = document.createElement('section');
+    sec.className = 'course';
+
+    const bannerPath = BANNERS[courseName] || '';
+    const bannerImg  = bannerPath ? `<img class="course-banner" src="${bannerPath}" alt="${courseName} banner">` : '';
+
+    sec.innerHTML = `
       <span id="${id}" class="anchor"></span>
       <figure class="banner-wrap">
         ${bannerImg}
@@ -312,27 +375,28 @@ async function loadAll(){
     `;
     content.appendChild(sec);
 
-    // SRC tables
-    renderSrcTableSortable(`${id}-ta-r`, srcCourse.TA.Restricted);
-    renderSrcTableSortable(`${id}-ta-u`, srcCourse.TA.Unrestricted);
-    renderSrcTableSortable(`${id}-fr-r`, srcCourse.FR.Restricted);
-    renderSrcTableSortable(`${id}-fr-u`, srcCourse.FR.Unrestricted);
+    // SRC tables (all 4 always rendered)
+    renderSrcTable(`${id}-ta-r`, srcCourse.TA.Restricted);
+    renderSrcTable(`${id}-ta-u`, srcCourse.TA.Unrestricted);
+    renderSrcTable(`${id}-fr-r`, srcCourse.FR.Restricted);
+    renderSrcTable(`${id}-fr-u`, srcCourse.FR.Unrestricted);
 
-    // Speedrider strips
+    // Speedrider strips (TA above FR)
     renderSpeedriderStrip(`${id}-sr-ta`, srTaCourse);
     renderSpeedriderStrip(`${id}-sr-fr`, srFrCourse);
   });
 
   setupScrollSpy(sectionIds);
 
-  // Smooth scroll on left nav
-  nav.querySelectorAll('a').forEach(a=>{
-    a.addEventListener('click',e=>{
+  // Smooth scroll
+  nav.querySelectorAll('a').forEach(a => {
+    a.addEventListener('click', e => {
       e.preventDefault();
-      const target=document.querySelector(a.getAttribute('href'));
-      if(target) target.scrollIntoView({behavior:'smooth', block:'start'});
+      const target = document.querySelector(a.getAttribute('href'));
+      if (target) target.scrollIntoView({ behavior:'smooth', block:'start' });
     });
   });
 }
 
 document.addEventListener('DOMContentLoaded', loadAll);
+``
