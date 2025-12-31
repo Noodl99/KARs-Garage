@@ -58,7 +58,18 @@ body{
 .site-header{padding:16px 0 8px}
 .site-header .brand{margin:0; font-weight:800; font-size:2rem}
 .site-header .tagline{margin:6px 0 10px; color:var(--muted)}
-.accent{border:none; height:4px; background:var(--accent)}
+
+/* Full-bleed red underline */
+.accent--fullbleed{
+  width:100vw;
+  height:4px;
+  background:var(--accent);
+  border:none;
+  margin:0;
+  /* pull full-width line out of container horizontally */
+  margin-left:calc((100vw - 100%) / -2);
+  margin-right:calc((100vw - 100%) / -2);
+}
 
 .layout{display:grid; grid-template-columns:150px 1fr; gap:32px}
 @media (max-width:900px){.layout{grid-template-columns:1fr}}
@@ -84,15 +95,17 @@ body{
 .tables-grid{display:grid; gap:12px; margin-top:12px; grid-template-columns:repeat(2,minmax(0,1fr))}
 .table-card{background:none; border:none; padding:0}
 .table-card h3{margin:0 0 10px; font-size:18px; font-weight:700}
+
+/* Table uses auto layout so Player/Time/Machine/Rider can fully expand */
 .table{
   width:100%;
   border-collapse:collapse;
-  table-layout:fixed; /* fixed layout enables ellipsis columns */
+  table-layout:auto; /* ← allows core columns to show entire text */
   border:1px solid var(--border); border-radius:8px; overflow:hidden
 }
 .table th, .table td{
   border-right:1px solid var(--border);
-  font-size:12px; white-space:nowrap;
+  font-size:12px; white-space:nowrap; /* no wrapping */
 }
 .table th{
   background:#000; color:#fff; text-align:left; font-weight:700;
@@ -103,16 +116,23 @@ body{
 .table tr:nth-child(even) td{background:#fbfbfb}
 .table thead tr th:last-child, .table tbody tr td:last-child{border-right:none}
 
-/* Core columns 1–4 shown fully on one line */
+/* Core columns (1–4) must display all text, one line, without clipping */
 .table td:nth-child(1),
 .table td:nth-child(2),
 .table td:nth-child(3),
-.table td:nth-child(4){overflow:hidden; text-overflow:clip}
+.table td:nth-child(4){
+  overflow:visible; /* allow full text, no cut-off */
+  text-overflow:clip;
+}
 
-/* Links (columns 5–6) show ellipsis */
+/* Links: columns 5–6 keep fixed width and ellipsis */
 .table th:nth-child(5), .table td:nth-child(5),
-.table th:nth-child(6), .table td:nth-child(6){width:240px; max-width:240px}
-.table td:nth-child(5), .table td:nth-child(6){overflow:hidden; text-overflow:ellipsis}
+.table th:nth-child(6), .table td:nth-child(6){
+  width:240px; max-width:240px;
+}
+.table td:nth-child(5), .table td:nth-child(6){
+  overflow:hidden; text-overflow:ellipsis;
+}
 .table a{color:var(--link); text-decoration:none; display:inline-block; max-width:100%; white-space:nowrap; overflow:hidden; text-overflow:ellipsis}
 .table a:hover{color:var(--link-hover); text-decoration:underline}
 
@@ -123,3 +143,8 @@ body{
 .sr-time{font-weight:700; font-size:1rem; margin:0 0 8px; border-left:4px solid var(--accent); padding-left:8px}
 .sr-item{font-size:.9rem; margin:4px 0}
 .sr-item .label{display:inline-block; width:72px; color:#666}
+.sr-item a{color:var(--link); text-decoration:none}
+.sr-item a:hover{color:var(--link-hover); text-decoration:underline}
+
+/* Utility */
+.muted{color:#777}

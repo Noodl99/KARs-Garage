@@ -1,6 +1,6 @@
 
 /* KARs Garage — Air Ride (native HTML; no iframes)
-   - Restores "AIR RIDE" page header and cadence line
+   - Page header + cadence restored; full-bleed underline via CSS
    - Parses SRC Column C Subcategory ("Course + Ruleset"), ignoring plain "Air Ride" category
    - Renders TA/FR (Restricted/Unrestricted) tables; never omits sections
    - Speedrider TA/FR strips from the two published CSV tabs
@@ -120,7 +120,7 @@ function toMillis(t){
 /* Render SRC table (non-scroll; link ellipsis via CSS widths) */
 function renderSrcTable(mountId, rows){
   const mount = document.getElementById(mountId); if (!mount) return;
-  const COLS = ["Player","Time","Machine","Rider","Link","Video"];
+  const COLS = ["Player","Time","Machine","Rider","SRC Link","Video"]; // label fixed
 
   let html = '<table class="table"><thead><tr>';
   COLS.forEach(c => { html += `<th data-col="${c}">${c}<span class="sort-ind"></span></th>`; });
@@ -131,8 +131,16 @@ function renderSrcTable(mountId, rows){
     sorted.forEach(r => {
       html += '<tr>';
       COLS.forEach(col => {
-        let val = r[col] ?? '';
-        if (col === 'Link' || col === 'Video') val = linkCell(val);
+        let val;
+        switch (col) {
+          case 'Player':   val = r.Player;   break;
+          case 'Time':     val = r.Time;     break;
+          case 'Machine':  val = r.Machine;  break;
+          case 'Rider':    val = r.Rider;    break;
+          case 'SRC Link': val = linkCell(r.Link);  break;
+          case 'Video':    val = linkCell(r.Video); break;
+          default:         val = r[col] ?? '';
+        }
         html += `<td>${val ?? ''}</td>`;
       });
       html += '</tr>';
@@ -326,7 +334,7 @@ async function loadAll(){
     const id = makeAnchorId(courseName);
     sectionIds.push(id);
 
-    const srcCourse = srcByCourse.get(courseName) || { TA:{Restricted:[],Unrestricted:[]}, FR:{Restricted:[],Unrestricted:[]} };
+    const srcCourse  = srcByCourse.get(courseName) || { TA:{Restricted:[],Unrestricted:[]}, FR:{Restricted:[],Unrestricted:[]} };
     const srTaCourse = srTaByCourse.get(courseName) || [];
     const srFrCourse = srFrByCourse.get(courseName) || [];
 
@@ -334,7 +342,7 @@ async function loadAll(){
     sec.className = 'course';
 
     const bannerPath = BANNERS[courseName] || '';
-    const bannerImg  = bannerPath ? `<img class="course-banner" src="${bannerPath}" alt="${courseName} banner">` : '';
+    const bannerImg  = bannerPath ? `<img class="course-banner" src="${bannerPath}" alt="${courseName} banner" />` : '';
 
     sec.innerHTML = `
       <span id="${id}" class="anchor"></span>
