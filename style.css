@@ -54,19 +54,12 @@ body{
 @media (max-width:900px){.tile-grid{grid-template-columns:1fr}}
 
 /* ===== Air Ride layout ===== */
-/* Page header ("AIR RIDE" + cadence + red underline) */
+/* Page header ("AIR RIDE" + cadence + full-bleed red underline) */
 .site-header{padding:16px 0 8px}
 .site-header .brand{margin:0; font-weight:800; font-size:2rem}
 .site-header .tagline{margin:6px 0 10px; color:var(--muted)}
-
-/* Full-bleed red underline */
 .accent--fullbleed{
-  width:100vw;
-  height:4px;
-  background:var(--accent);
-  border:none;
-  margin:0;
-  /* pull full-width line out of container horizontally */
+  width:100vw; height:4px; background:var(--accent); border:none; margin:0;
   margin-left:calc((100vw - 100%) / -2);
   margin-right:calc((100vw - 100%) / -2);
 }
@@ -91,16 +84,17 @@ body{
   text-shadow:0 2px 6px rgba(0,0,0,.55);
 }
 
-/* SRC tables: compact, not scrollable; one-line core columns */
-.tables-grid{display:grid; gap:12px; margin-top:12px; grid-template-columns:repeat(2,minmax(0,1fr))}
+/* SRC tables: compact, not scrollable; fixed column plan prevents overflow */
+.tables-grid{display:grid; gap:12px; margin-top:12px; grid-template-columns:1fr 1fr}
 .table-card{background:none; border:none; padding:0}
 .table-card h3{margin:0 0 10px; font-size:18px; font-weight:700}
 
-/* Table uses auto layout so Player/Time/Machine/Rider can fully expand */
+/* Table: fixed layout with colgroup widths; keeps each table inside its column */
 .table{
   width:100%;
+  max-width:100%;
   border-collapse:collapse;
-  table-layout:auto; /* ← allows core columns to show entire text */
+  table-layout:fixed; /* so colgroup widths are respected */
   border:1px solid var(--border); border-radius:8px; overflow:hidden
 }
 .table th, .table td{
@@ -116,23 +110,19 @@ body{
 .table tr:nth-child(even) td{background:#fbfbfb}
 .table thead tr th:last-child, .table tbody tr td:last-child{border-right:none}
 
-/* Core columns (1–4) must display all text, one line, without clipping */
+/* Core columns 1–4: show entire text on one line (no clipping) */
 .table td:nth-child(1),
 .table td:nth-child(2),
 .table td:nth-child(3),
 .table td:nth-child(4){
-  overflow:visible; /* allow full text, no cut-off */
+  overflow:visible;  /* visible so text isn't cut off; stays within table width via colgroup */
   text-overflow:clip;
 }
 
-/* Links: columns 5–6 keep fixed width and ellipsis */
+/* Link columns (5–6): fixed width + ellipsis */
 .table th:nth-child(5), .table td:nth-child(5),
-.table th:nth-child(6), .table td:nth-child(6){
-  width:240px; max-width:240px;
-}
-.table td:nth-child(5), .table td:nth-child(6){
-  overflow:hidden; text-overflow:ellipsis;
-}
+.table th:nth-child(6), .table td:nth-child(6){ width:240px; max-width:240px; }
+.table td:nth-child(5), .table td:nth-child(6){ overflow:hidden; text-overflow:ellipsis; }
 .table a{color:var(--link); text-decoration:none; display:inline-block; max-width:100%; white-space:nowrap; overflow:hidden; text-overflow:ellipsis}
 .table a:hover{color:var(--link-hover); text-decoration:underline}
 

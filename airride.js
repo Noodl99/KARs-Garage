@@ -1,24 +1,19 @@
 
-/* KARs Garage — Air Ride (native HTML; no iframes)
-   - Page header + cadence restored; full-bleed underline via CSS
-   - Parses SRC Column C Subcategory ("Course + Ruleset"), ignoring plain "Air Ride" category
-   - Renders TA/FR (Restricted/Unrestricted) tables; never omits sections
-   - Speedrider TA/FR strips from the two published CSV tabs
-   - Ensures link ellipsis and non-scrolling tables (CSS handles widths)
+/* KARs Garage — Air Ride
+   - Fixes SRC Link truncation (proper <a> tag)
+   - Adds <colgroup> to each table to enforce a fixed column width plan
+   - Keeps Player/Time/Machine/Rider one-line, visible, and prevents table overflow
 */
 
-/* === DATA SOURCES === */
 const SRC_CSV   = "https://docs.google.com/spreadsheets/d/e/2PACX-1vRLdSEHHpUNrBHTlJlEZLBJmJpbBuxrnJ4AXQk_vqzhVoyliOzaM-uEAw-WXNskMOhcjZq7HWLctrBN/pub?output=csv";
 const SR_TA_CSV = "https://docs.google.com/spreadsheets/d/e/2PACX-1vRLLtoztu41AtY4reRXwNd00WqxhlFyTbn3RKoBwssrf1fXFGAZxO2b1dB62-0lrUOz4yi1dLuJrmml/pub?gid=1618721256&single=true&output=csv";
 const SR_FR_CSV = "https://docs.google.com/spreadsheets/d/e/2PACX-1vRLLtoztu41AtY4reRXwNd00WqxhlFyTbn3RKoBwssrf1fXFGAZxO2b1dB62-0lrUOz4yi1dLuJrmml/pub?gid=109124482&single=true&output=csv";
 
-/* === LABELS === */
 const TA_LABEL = /time\s*attack/i;
 const FR_LABEL = /free\s*run/i;
 const RESTRICTED   = /restricted/i;
 const UNRESTRICTED = /unrestricted/i;
 
-/* === COURSE ORDER === */
 const COURSE_ORDER = [
   "Floria Fields","Waveflow Waters","Airtopia Ruins","Crystalline Fissure","Steamgust Forge",
   "Cavernous Corners","Cyberion Highway","Mount Amberfalls","Galactic Nova","Fantasy Meadows",
@@ -26,7 +21,6 @@ const COURSE_ORDER = [
   "Machine Passage","Checker Knights","Nebula Belt"
 ];
 
-/* === BANNERS (img paths) — includes Celestial Valley === */
 const BANNERS = {
   "Airtopia Ruins":   "/images/Airtopia_banner.webp",
   "Beanstalk Park":   "/images/beanstalk_banner.webp",
@@ -48,7 +42,7 @@ const BANNERS = {
   "Waveflow Waters":  "/images/Waveflow_Banner.webp"
 };
 
-/* === CSV parsing === */
+/* CSV parsing */
 function parseCSV(text){
   const rows = [];
   let row = [], cur = '', inQuotes = false;
@@ -69,7 +63,7 @@ function parseCSV(text){
   return rows.filter(r => r.length && r.some(v => String(v).trim().length));
 }
 
-/* === Helpers === */
+/* Helpers */
 function idxOf(header, colName){
   const i = header.findIndex(h => String(h).trim().toLowerCase() === String(colName).toLowerCase());
   return i < 0 ? null : i;
@@ -78,13 +72,16 @@ function makeAnchorId(name){
   return String(name).toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-+|-+$/g,'');
 }
 function stripPrefix(u){ return String(u ?? '').replace(/^https?:\/\/(www\.)?/i,''); }
+
+/* FIX: proper <a> tag so CSS ellipsis applies */
 function linkCell(url){
-  const u = String(url ?? '').trim(); if (!u) return '';
+  const u = String(url ?? '').trim();
+  if (!u) return '';
   const label = stripPrefix(u);
   return `<a href="${u}" target="_blank" rel="noopener">${label}</a>`;
 }
 
-/* Subcategory: "Course + Ruleset" (normalize any variant that contains restricted/unrestricted) */
+/* Subcategory: "Course + Ruleset" */
 function parseCourseAndRules(subRaw){
   const s = String(subRaw ?? '').trim().replace(/\s*\+$/, ''); // drop trailing '+'
   if (!s) return { course:"", rules:"" };
@@ -97,7 +94,7 @@ function parseCourseAndRules(subRaw){
   return { course, rules };
 }
 
-/* Time parser for default sort (fastest first) */
+/* Time parser */
 function toMillis(t){
   const s = String(t || '').trim();
   let m;
@@ -117,12 +114,24 @@ function toMillis(t){
   return Number.POSITIVE_INFINITY;
 }
 
-/* Render SRC table (non-scroll; link ellipsis via CSS widths) */
+/* Render SRC table with fixed column plan */
 function renderSrcTable(mountId, rows){
   const mount = document.getElementById(mountId); if (!mount) return;
-  const COLS = ["Player","Time","Machine","Rider","SRC Link","Video"]; // label fixed
+  const COLS = ["Player","Time","Machine","Rider","SRC Link","Video"];
 
-  let html = '<table class="table"><thead><tr>';
+  // Column width plan: % of table width; Link/Video are fixed by CSS too
+  const colgroup = `
+    <colgroup>
+      <col style="width:18%">
+      <col style="width:14%">
+      <col style="width:18%">
+      <col style="width:18%">
+      <col style="width:16%">
+      <col style="width:16%">
+    </colgroup>
+  `;
+
+  let html = `<table class="table">${colgroup}<thead><tr>`;
   COLS.forEach(c => { html += `<th data-col="${c}">${c}<span class="sort-ind"></span></th>`; });
   html += '</tr></thead><tbody>';
 
@@ -130,19 +139,12 @@ function renderSrcTable(mountId, rows){
     const sorted = rows.slice().sort((a,b) => (a._ms - b._ms));
     sorted.forEach(r => {
       html += '<tr>';
-      COLS.forEach(col => {
-        let val;
-        switch (col) {
-          case 'Player':   val = r.Player;   break;
-          case 'Time':     val = r.Time;     break;
-          case 'Machine':  val = r.Machine;  break;
-          case 'Rider':    val = r.Rider;    break;
-          case 'SRC Link': val = linkCell(r.Link);  break;
-          case 'Video':    val = linkCell(r.Video); break;
-          default:         val = r[col] ?? '';
-        }
-        html += `<td>${val ?? ''}</td>`;
-      });
+      html += `<td>${r.Player ?? ''}</td>`;
+      html += `<td>${r.Time ?? ''}</td>`;
+      html += `<td>${r.Machine ?? ''}</td>`;
+      html += `<td>${r.Rider ?? ''}</td>`;
+      html += `<td>${linkCell(r.Link)}</td>`;
+      html += `<td>${linkCell(r.Video)}</td>`;
       html += '</tr>';
     });
   } else {
@@ -152,7 +154,7 @@ function renderSrcTable(mountId, rows){
   html += '</tbody></table>';
   mount.innerHTML = html;
 
-  // Click-sort (kept simple)
+  // Click-sort
   const ths = mount.querySelectorAll('th'); let sortState = {};
   ths.forEach(th => {
     th.addEventListener('click', () => {
@@ -161,9 +163,10 @@ function renderSrcTable(mountId, rows){
       sortState = { col, dir };
       const tbody = mount.querySelector('tbody');
       const rowsEl = Array.from(tbody.querySelectorAll('tr')).filter(tr => !tr.querySelector('.muted'));
+      const idx = COLS.indexOf(col) + 1;
       rowsEl.sort((rA, rB) => {
-        const a = rA.querySelector(`td:nth-child(${COLS.indexOf(col)+1})`).textContent.trim();
-        const b = rB.querySelector(`td:nth-child(${COLS.indexOf(col)+1})`).textContent.trim();
+        const a = rA.querySelector(`td:nth-child(${idx})`).textContent.trim();
+        const b = rB.querySelector(`td:nth-child(${idx})`).textContent.trim();
         let cmp;
         if (col === 'Time'){ cmp = toMillis(a) - toMillis(b); }
         else { cmp = a.localeCompare(b, undefined, { numeric:true, sensitivity:'base' }); }
@@ -176,7 +179,7 @@ function renderSrcTable(mountId, rows){
   });
 }
 
-/* Speedrider strips (TA/FR) */
+/* Speedrider strips */
 function renderSpeedriderStrip(mountId, entries){
   const mount = document.getElementById(mountId); if (!mount) return;
   if (!entries || entries.length === 0){ mount.innerHTML = '<p class="muted">No data</p>'; return; }
@@ -249,11 +252,9 @@ function buildSrIndex(rows){
 
 /* === MAIN === */
 async function loadAll(){
-  // Footer year
   const y = document.getElementById('year');
   if (y) y.textContent = new Date().getFullYear();
 
-  // Fetch CSVs
   const [srcRes, srTaRes, srFrRes] = await Promise.all([
     fetch(SRC_CSV, { cache:'no-cache' }),
     fetch(SR_TA_CSV, { cache:'no-cache' }),
@@ -264,7 +265,6 @@ async function loadAll(){
   const srTaRows = parseCSV(srTaText);
   const srFrRows = parseCSV(srFrText);
 
-  // SRC indexes
   const srcHeader = srcRows[0].map(h => String(h).trim());
   const SRC_IDX = {
     Category:    idxOf(srcHeader,"Category"),
@@ -277,14 +277,12 @@ async function loadAll(){
     Video:       idxOf(srcHeader,"Video")
   };
 
-  // Group SRC by course/mode/rules
   const srcByCourse = new Map();
   srcRows.slice(1).forEach(r => {
     const category = r[SRC_IDX.Category] ?? '';
     const subcat   = r[SRC_IDX.Subcategory] ?? '';
     if (!category || !subcat) return;
 
-    // Only TA or FR (ignore plain "Air Ride")
     const mode = TA_LABEL.test(category) ? 'TA' : (FR_LABEL.test(category) ? 'FR' : 'OTHER');
     if (mode === 'OTHER') return;
 
@@ -306,18 +304,15 @@ async function loadAll(){
     srcByCourse.get(course)[mode][rules].push(rowObj);
   });
 
-  // Sort SRC buckets by time ascending
   for (const course of srcByCourse.keys()){
     ['TA','FR'].forEach(m => ['Restricted','Unrestricted'].forEach(rule => {
       srcByCourse.get(course)[m][rule].sort((a,b) => a._ms - b._ms);
     }));
   }
 
-  // Speedrider indices
   const srTaByCourse = buildSrIndex(srTaRows);
   const srFrByCourse = buildSrIndex(srFrRows);
 
-  // Build TOC + sections (explicit order; skip courses with absolutely no data)
   const content = document.getElementById('content');
   const nav     = document.getElementById('course-nav');
 
@@ -326,7 +321,7 @@ async function loadAll(){
 
   nav.innerHTML = orderedCourses.map(course => {
     const id = makeAnchorId(course);
-    return `<a href="#${id}">${course}</a>`;
+    return `#${id}${course}</a>`;
   }).join("");
 
   const sectionIds = [];
@@ -342,7 +337,7 @@ async function loadAll(){
     sec.className = 'course';
 
     const bannerPath = BANNERS[courseName] || '';
-    const bannerImg  = bannerPath ? `<img class="course-banner" src="${bannerPath}" alt="${courseName} banner" />` : '';
+    const bannerImg  = bannerPath ? `${bannerPath}` : '';
 
     sec.innerHTML = `
       <span id="${id}" class="anchor"></span>
@@ -396,7 +391,6 @@ async function loadAll(){
 
   setupScrollSpy(sectionIds);
 
-  // Smooth scroll
   nav.querySelectorAll('a').forEach(a => {
     a.addEventListener('click', e => {
       e.preventDefault();
@@ -407,4 +401,3 @@ async function loadAll(){
 }
 
 document.addEventListener('DOMContentLoaded', loadAll);
-``
