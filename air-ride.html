@@ -7,7 +7,8 @@
   <title>KARs Garage — Air Ride</title>
 
   <!-- Favicon -->
-  <link rel="icon" type="image/webp" href="/icons/garage-icon-black.webp" />
+  <link rel="icon" type="image/png" href="/icons/garage-icon-white.png" />
+  <link rel="icon" type="image/webp" href="/icons/garage-icon-white.webp" />
 
   <!-- Fonts (fallback Inter) -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -24,11 +25,11 @@
   <!-- Fixed top bar -->
   <header class="topbar fixed">
     <div class="container bar-inner">
-      <img class="brand-logo-img" src="/icons/garage-icon-black.webp" alt="KARs Garage icon" />
+      <img class="brand-logo-img" src="/icons/garage-icon-white.webp" alt="KARs Garage" />
       <div class="brand-name">KARs Garage</div>
       <nav class="site-nav">
         <a href="/">Home</a>
-        <a href="/air-ride.html" class="active">Air Ride</a>
+        <a class="active" href="/air-ride.html">Air Ride</a>
       </nav>
     </div>
   </header>
@@ -45,14 +46,10 @@
   <!-- Page layout: left sidebar (courses) + main content -->
   <div class="container layout">
     <aside class="sidebar" aria-label="Course navigation">
-      <nav id="course-nav">
-        <!-- JS injects underlined links here -->
-      </nav>
+      <nav id="course-nav"><!-- JS injects underlined links here --></nav>
     </aside>
 
-    <main id="content" class="content">
-      <!-- JS injects course sections here (banner + SRC tables + Speedrider strips) -->
-    </main>
+    <main id="content" class="content"><!-- JS injects course sections here --></main>
   </div>
 
   <!-- Footer -->
@@ -62,8 +59,6 @@
     </div>
   </footer>
 
-  <script>
-    document.getElementById('year').textContent = new Date().getFullYear();
-  </script>
+  <script>document.getElementById('year').textContent = new Date().getFullYear();</script>
 </body>
 </html>
