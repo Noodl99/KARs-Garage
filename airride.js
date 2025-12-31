@@ -1,25 +1,19 @@
 
 /* KARs Garage — Air Ride (native HTML; no iframes)
-   - Page header + cadence are in air-ride.html; underline full-bleed via CSS.
-   - Parses SRC Column C Subcategory ("Course + Ruleset"), ignores plain "Air Ride" category.
-   - Renders TA/FR (Restricted/Unrestricted) tables; never omits sections.
-   - Speedrider TA/FR strips from the two published CSV tabs.
-   - Link columns (SRC Link, Video) ellipsize; core columns (Player/Time/Machine/Rider) stay one line.
-   - Fixed column plan via <colgroup>; widened Time column to prevent bleed; Time cells hide overflow.
+   - Corrects banner rendering (actual <img class="course-banner" ...>)
+   - Fixes linkCell() to output proper <a href="...">...</a> anchors
+   - Keeps: colgroup widths, widened Time column, ellipsis for SRC Link/Video, one-line core columns
 */
 
-/* === DATA SOURCES === */
 const SRC_CSV   = "https://docs.google.com/spreadsheets/d/e/2PACX-1vRLdSEHHpUNrBHTlJlEZLBJmJpbBuxrnJ4AXQk_vqzhVoyliOzaM-uEAw-WXNskMOhcjZq7HWLctrBN/pub?output=csv";
 const SR_TA_CSV = "https://docs.google.com/spreadsheets/d/e/2PACX-1vRLLtoztu41AtY4reRXwNd00WqxhlFyTbn3RKoBwssrf1fXFGAZxO2b1dB62-0lrUOz4yi1dLuJrmml/pub?gid=1618721256&single=true&output=csv";
 const SR_FR_CSV = "https://docs.google.com/spreadsheets/d/e/2PACX-1vRLLtoztu41AtY4reRXwNd00WqxhlFyTbn3RKoBwssrf1fXFGAZxO2b1dB62-0lrUOz4yi1dLuJrmml/pub?gid=109124482&single=true&output=csv";
 
-/* === LABELS === */
 const TA_LABEL = /time\s*attack/i;
 const FR_LABEL = /free\s*run/i;
 const RESTRICTED   = /restricted/i;
 const UNRESTRICTED = /unrestricted/i;
 
-/* === COURSE ORDER === */
 const COURSE_ORDER = [
   "Floria Fields","Waveflow Waters","Airtopia Ruins","Crystalline Fissure","Steamgust Forge",
   "Cavernous Corners","Cyberion Highway","Mount Amberfalls","Galactic Nova","Fantasy Meadows",
@@ -27,7 +21,6 @@ const COURSE_ORDER = [
   "Machine Passage","Checker Knights","Nebula Belt"
 ];
 
-/* === BANNERS (img paths) — includes Celestial Valley === */
 const BANNERS = {
   "Airtopia Ruins":   "/images/Airtopia_banner.webp",
   "Beanstalk Park":   "/images/beanstalk_banner.webp",
@@ -49,7 +42,7 @@ const BANNERS = {
   "Waveflow Waters":  "/images/Waveflow_Banner.webp"
 };
 
-/* === CSV parsing === */
+/* CSV parsing */
 function parseCSV(text){
   const rows = [];
   let row = [], cur = '', inQuotes = false;
@@ -70,7 +63,7 @@ function parseCSV(text){
   return rows.filter(r => r.length && r.some(v => String(v).trim().length));
 }
 
-/* === Helpers === */
+/* Helpers */
 function idxOf(header, colName){
   const i = header.findIndex(h => String(h).trim().toLowerCase() === String(colName).toLowerCase());
   return i < 0 ? null : i;
@@ -79,6 +72,8 @@ function makeAnchorId(name){
   return String(name).toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-+|-+$/g,'');
 }
 function stripPrefix(u){ return String(u ?? '').replace(/^https?:\/\/(www\.)?/i,''); }
+
+/* FIX: proper <a> so CSS ellipsis applies */
 function linkCell(url){
   const u = String(url ?? '').trim();
   if (!u) return '';
@@ -99,13 +94,13 @@ function parseCourseAndRules(subRaw){
   return { course, rules };
 }
 
-/* Time parser (fastest first) */
+/* Time parser */
 function toMillis(t){
   const s = String(t || '').trim();
   let m;
   if ((m = s.match(/^(\d+)'(\d{2})"(\d{2,3})$/))) {
     const mm = +m[1], ss = +m[2], frac = +m[3];
-    const ms = m[3].length === 2 ? frac * 10 : frac; // hundredths vs ms
+    const ms = m[3].length === 2 ? frac * 10 : frac;
     return (mm*60 + ss) * 1000 + ms;
   }
   if ((m = s.match(/^(\d+):(\d{2})\.(\d{3})$/))) {
@@ -122,11 +117,9 @@ function toMillis(t){
 /* Render SRC table with fixed column plan via <colgroup> */
 function renderSrcTable(mountId, rows){
   const mount = document.getElementById(mountId); if (!mount) return;
-
-  // Column labels (SRC Link fixed per your spec)
   const COLS = ["Player","Time","Machine","Rider","SRC Link","Video"];
 
-  // Column width plan: widen Time to 16% to prevent the slight bleed you observed.
+  // Column width plan (Time widened to 16%)
   const colgroup = `
     <colgroup>
       <col style="width:18%">
@@ -146,12 +139,10 @@ function renderSrcTable(mountId, rows){
     const sorted = rows.slice().sort((a,b) => (a._ms - b._ms));
     sorted.forEach(r => {
       html += '<tr>';
-      // Player / Time / Machine / Rider: plain text cells (full one-line)
       html += `<td>${r.Player ?? ''}</td>`;
-      html += `<td class="td--time">${r.Time ?? ''}</td>`; // Time cells get overflow protection via CSS
+      html += `<td class="td--time">${r.Time ?? ''}</td>`;
       html += `<td>${r.Machine ?? ''}</td>`;
       html += `<td>${r.Rider ?? ''}</td>`;
-      // Links: anchors with ellipsis
       html += `<td>${linkCell(r.Link)}</td>`;
       html += `<td>${linkCell(r.Video)}</td>`;
       html += '</tr>';
@@ -350,6 +341,7 @@ async function loadAll(){
       ? `${bannerPath}`
       : '';
 
+    // FIX: render the banner as an actual <img>
     sec.innerHTML = `
       <span id="${id}" class="anchor"></span>
       <figure class="banner-wrap">
@@ -387,6 +379,17 @@ async function loadAll(){
 
       <hr class="section-divider" />
     `;
+
+    // Replace the plain path with an actual <img> element
+    const fig = sec.querySelector('.banner-wrap');
+    if (bannerPath) {
+      const img = document.createElement('img');
+      img.className = 'course-banner';
+      img.src = bannerPath;
+      img.alt = `${courseName} banner`;
+      fig.insertBefore(img, fig.firstChild);
+    }
+
     content.appendChild(sec);
 
     // SRC tables
