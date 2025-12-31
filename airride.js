@@ -1,8 +1,7 @@
 
-/* KARs Garage — Air Ride (native HTML; no iframes)
-   - Corrects banner rendering (actual <img class="course-banner" ...>)
-   - Fixes linkCell() to output proper <a href="...">...</a> anchors
-   - Keeps: colgroup widths, widened Time column, ellipsis for SRC Link/Video, one-line core columns
+/* KARs Garage — Air Ride
+   - Corrects banner rendering (now uses <img class="course-banner" src="...">)
+   - Keeps previous fixes: link ellipsis, colgroup widths, one-line core columns, etc.
 */
 
 const SRC_CSV   = "https://docs.google.com/spreadsheets/d/e/2PACX-1vRLdSEHHpUNrBHTlJlEZLBJmJpbBuxrnJ4AXQk_vqzhVoyliOzaM-uEAw-WXNskMOhcjZq7HWLctrBN/pub?output=csv";
@@ -73,12 +72,12 @@ function makeAnchorId(name){
 }
 function stripPrefix(u){ return String(u ?? '').replace(/^https?:\/\/(www\.)?/i,''); }
 
-/* FIX: proper <a> so CSS ellipsis applies */
+/* Proper <a> so CSS ellipsis applies */
 function linkCell(url){
   const u = String(url ?? '').trim();
   if (!u) return '';
   const label = stripPrefix(u);
-  return `${u}${label}</a>`;
+  return `<a href="${u}" target="_blank" rel="noopener">${label}</a>`;
 }
 
 /* Subcategory: "Course + Ruleset" */
@@ -119,15 +118,14 @@ function renderSrcTable(mountId, rows){
   const mount = document.getElementById(mountId); if (!mount) return;
   const COLS = ["Player","Time","Machine","Rider","SRC Link","Video"];
 
-  // Column width plan (Time widened to 16%)
   const colgroup = `
     <colgroup>
       <col style="width:18%">
-      <col style="width:16%">  <!-- Time -->
+      <col style="width:14%">
       <col style="width:18%">
       <col style="width:18%">
-      <col style="width:15%">
-      <col style="width:15%">
+      <col style="width:16%">
+      <col style="width:16%">
     </colgroup>
   `;
 
@@ -140,7 +138,7 @@ function renderSrcTable(mountId, rows){
     sorted.forEach(r => {
       html += '<tr>';
       html += `<td>${r.Player ?? ''}</td>`;
-      html += `<td class="td--time">${r.Time ?? ''}</td>`;
+      html += `<td>${r.Time ?? ''}</td>`;
       html += `<td>${r.Machine ?? ''}</td>`;
       html += `<td>${r.Rider ?? ''}</td>`;
       html += `<td>${linkCell(r.Link)}</td>`;
@@ -321,7 +319,7 @@ async function loadAll(){
 
   nav.innerHTML = orderedCourses.map(course => {
     const id = makeAnchorId(course);
-    return `#${id}${course}</a>`;
+    return `<a href="#${id}">${course}</a>`;
   }).join("");
 
   const sectionIds = [];
@@ -337,11 +335,12 @@ async function loadAll(){
     sec.className = 'course';
 
     const bannerPath = BANNERS[courseName] || '';
-    const bannerImg  = bannerPath
-      ? `${bannerPath}`
+
+    /* FIX: render actual <img> for the banner */
+    const bannerImg = bannerPath
+      ? `<img class="course-banner" src="${bannerPath}" alt="${courseName} banner">`
       : '';
 
-    // FIX: render the banner as an actual <img>
     sec.innerHTML = `
       <span id="${id}" class="anchor"></span>
       <figure class="banner-wrap">
@@ -379,17 +378,6 @@ async function loadAll(){
 
       <hr class="section-divider" />
     `;
-
-    // Replace the plain path with an actual <img> element
-    const fig = sec.querySelector('.banner-wrap');
-    if (bannerPath) {
-      const img = document.createElement('img');
-      img.className = 'course-banner';
-      img.src = bannerPath;
-      img.alt = `${courseName} banner`;
-      fig.insertBefore(img, fig.firstChild);
-    }
-
     content.appendChild(sec);
 
     // SRC tables

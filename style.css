@@ -21,8 +21,7 @@ body{
   padding-top:var(--topbar-h); /* space for fixed topbar */
 }
 .container{max-width:var(--maxw); margin:0 auto; padding:0 var(--container-pad)}
-
-/* ===== Fixed top bar ===== */
+/* Fixed top bar */
 .topbar.fixed{position:fixed; top:0; left:0; right:0; z-index:1000; background:#000; color:#fff; height:var(--topbar-h)}
 .bar-inner{display:flex; align-items:center; gap:12px; height:var(--topbar-h)}
 .brand-logo-img{width:24px; height:24px}
@@ -31,7 +30,7 @@ body{
 .site-nav a.active{border-bottom-color:var(--accent)}
 .site-nav a:hover{color:#ddd}
 
-/* ===== Footer ===== */
+/* Footer */
 .site-footer{border-top:1px solid var(--border); padding:12px 0; color:var(--muted)}
 #year{white-space:nowrap}
 
@@ -54,18 +53,17 @@ body{
 .tile-roadtrip{background:url('/images/road-trip.png') center/cover no-repeat; aspect-ratio:2.3948/1}
 @media (max-width:900px){.tile-grid{grid-template-columns:1fr}}
 
-/* ===== Air Ride page header ===== */
+/* ===== Air Ride layout ===== */
+/* Page header ("AIR RIDE" + cadence + full-bleed red underline) */
 .site-header{padding:16px 0 8px}
 .site-header .brand{margin:0; font-weight:800; font-size:2rem}
 .site-header .tagline{margin:6px 0 10px; color:var(--muted)}
-/* Full-bleed underline below cadence */
 .accent--fullbleed{
   width:100vw; height:4px; background:var(--accent); border:none; margin:0;
   margin-left:calc((100vw - 100%) / -2);
   margin-right:calc((100vw - 100%) / -2);
 }
 
-/* ===== Air Ride layout (TOC + content) ===== */
 .layout{display:grid; grid-template-columns:150px 1fr; gap:32px}
 @media (max-width:900px){.layout{grid-template-columns:1fr}}
 .sidebar{padding:8px 0; margin-left:-32px}
@@ -77,7 +75,7 @@ body{
 .anchor{position:relative; top:-80px}
 .section-divider{border:none; height:2px; background:#eee; margin:18px 0}
 
-/* ===== Course banner ===== */
+/* Banner: 100px height, cover, vertically centered title */
 .banner-wrap{position:relative; width:100%; height:100px; margin:8px 0 12px 0}
 .course-banner{width:100%; height:100%; object-fit:cover; border:none; border-radius:8px}
 .banner-title{
@@ -86,7 +84,7 @@ body{
   text-shadow:0 2px 6px rgba(0,0,0,.55);
 }
 
-/* ===== SRC tables area ===== */
+/* SRC tables: compact, not scrollable; fixed column plan prevents overflow */
 .tables-grid{display:grid; gap:12px; margin-top:12px; grid-template-columns:1fr 1fr}
 .table-card{background:none; border:none; padding:0}
 .table-card h3{margin:0 0 10px; font-size:18px; font-weight:700}
@@ -97,7 +95,7 @@ body{
   max-width:100%;
   border-collapse:collapse;
   table-layout:fixed; /* so colgroup widths are respected */
-  border:1px solid var(--border); border-radius:8px; overflow:hidden;
+  border:1px solid var(--border); border-radius:8px; overflow:hidden
 }
 .table th, .table td{
   border-right:1px solid var(--border);
@@ -106,36 +104,29 @@ body{
 .table th{
   background:#000; color:#fff; text-align:left; font-weight:700;
   line-height:27px; padding:4px 10px; cursor:pointer; position:relative;
-  border-top-left-radius:8px; border-top-right-radius:8px;
 }
 .table th .sort-ind{position:absolute; right:8px; top:50%; transform:translateY(-50%); font-size:.9rem; color:#fff; opacity:.8}
 .table td{background:#fff; color:var(--text); line-height:22px; padding:4px 10px}
 .table tr:nth-child(even) td{background:#fbfbfb}
 .table thead tr th:last-child, .table tbody tr td:last-child{border-right:none}
 
-/* Core columns: Player / Time / Machine / Rider (single line, no clipping) */
+/* Core columns 1–4: show entire text on one line (no clipping) */
 .table td:nth-child(1),
+.table td:nth-child(2),
 .table td:nth-child(3),
 .table td:nth-child(4){
   overflow:visible;  /* visible so text isn't cut off; stays within table width via colgroup */
   text-overflow:clip;
 }
-/* Time column: hide overflow slightly to prevent bleed into next column */
-.table td.td--time{overflow:hidden; text-overflow:clip}
 
 /* Link columns (5–6): fixed width + ellipsis */
 .table th:nth-child(5), .table td:nth-child(5),
 .table th:nth-child(6), .table td:nth-child(6){ width:240px; max-width:240px; }
 .table td:nth-child(5), .table td:nth-child(6){ overflow:hidden; text-overflow:ellipsis; }
-
-/* Anchor truncation */
-.table a{
-  color:var(--link); text-decoration:none; display:inline-block;
-  max-width:100%; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
-}
+.table a{color:var(--link); text-decoration:none; display:inline-block; max-width:100%; white-space:nowrap; overflow:hidden; text-overflow:ellipsis}
 .table a:hover{color:var(--link-hover); text-decoration:underline}
 
-/* ===== Speedrider strips (TA above FR) ===== */
+/* Speedrider strips (TA above FR) */
 .table-card.wide{grid-column:1/-1}
 .sr-strip{display:flex; gap:12px; overflow-x:auto; padding-bottom:8px}
 .sr-col{flex:0 0 180px; background:#fff; border:1px solid var(--border); border-radius:8px; padding:10px}
@@ -145,5 +136,5 @@ body{
 .sr-item a{color:var(--link); text-decoration:none}
 .sr-item a:hover{color:var(--link-hover); text-decoration:underline}
 
-/* ===== Utility ===== */
+/* Utility */
 .muted{color:#777}
