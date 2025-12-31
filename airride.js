@@ -1,5 +1,5 @@
 
-/* KARs Garage — Air Ride subpage (updated) */
+/* KARs Garage — Air Ride subpage */
 
 /* SRC CSV */
 const SRC_CSV  = "https://docs.google.com/spreadsheets/d/e/2PACX-1vRLdSEHHpUNrBHTlJlEZLBJmJpbBuxrnJ4AXQk_vqzhVoyliOzaM-uEAw-WXNskMOhcjZq7HWLctrBN/pub?output=csv";
@@ -71,11 +71,7 @@ function parseCSV(text){
 function idxOf(header, colName){const i=header.findIndex(h=>String(h).trim().toLowerCase()===String(colName).toLowerCase()); return i<0?null:i;}
 function makeAnchorId(name){return String(name).toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-+|-+$/g,'');}
 function stripPrefix(u){return String(u||'').replace(/^https?:\/\/(www\.)?/i,'');}
-function linkCell(url){
-  const u=String(url||'').trim(); if(!u) return '';
-  const label=stripPrefix(u);
-  return `<a href="${u}" target="_blank" rel="noopener">${label}</a>`;
-}
+function linkCell(url){const u=String(url||'').trim(); if(!u) return ''; const label=stripPrefix(u); return `<a href="${u}" target="_blank" rel="noopener">${label}</a>`;}
 function parseCourseAndRules(subcatRaw){
   const s=String(subcatRaw||'').trim(); if(!s) return {course:"",ruleset:""};
   const parts=s.split(/\s*\+\s*/); let course=(parts[0]||"").trim(); let ruleset=(parts[1]||"").trim();
@@ -96,24 +92,23 @@ function toSecondsFlexible(raw){
   return NaN;
 }
 
-/* Render SRC tables (sortable) */
+/* Render SRC table with sortable headers and horizontal scroll */
 function renderSrcTableSortable(mountId, rows){
   const mount=document.getElementById(mountId); if(!mount) return;
   if(!rows || rows.length===0){mount.innerHTML='<p class="muted">No data</p>'; return;}
 
-  // Default sort: Time ascending (fastest first)
   rows=rows.slice().sort((a,b)=>{
     const ax=toSecondsFlexible(a.Time), bx=toSecondsFlexible(b.Time);
     return (isNaN(ax)?Infinity:ax)-(isNaN(bx)?Infinity:bx);
   });
 
-  let html='<table class="table"><thead><tr>';
+  let html='<div class="table-scroll"><table class="table"><thead><tr>';
   SRC_COLS.forEach(c=>{html+=`<th data-col="${c}">${c}<span class="sort-ind"></span></th>`;});
   html+='</tr></thead><tbody>';
 
   rows.forEach(r=>{
     html+='<tr>';
-    SRC_COLS.forEach(col=>{
+    SRC_COLS.forEach((col,idx)=>{
       let val=r[col]??'';
       if(col==="SRC Link" || col==="Video") val=linkCell(val);
       html+=`<td>${val??''}</td>`;
@@ -121,10 +116,9 @@ function renderSrcTableSortable(mountId, rows){
     html+='</tr>';
   });
 
-  html+='</tbody></table>';
+  html+='</tbody></table></div>';
   mount.innerHTML=html;
 
-  // Sorting handlers
   const ths=mount.querySelectorAll('th'); let sortState={};
   ths.forEach(th=>{
     th.addEventListener('click',()=>{
@@ -180,7 +174,7 @@ function setupScrollSpy(sectionIds){
   sectionIds.forEach(id=>{const sec=document.getElementById(id); if(sec) observer.observe(sec);});
 }
 
-/* Build Speedrider index (sorted by time sec) */
+/* Build Speedrider index */
 function buildSrIndex(rows){
   const header=rows[0].map(h=>String(h).trim());
   const IDX={
@@ -324,7 +318,7 @@ async function loadAll(){
     renderSrcTableSortable(`${id}-fr-r`, srcCourse.FR.Restricted);
     renderSrcTableSortable(`${id}-fr-u`, srcCourse.FR.Unrestricted);
 
-    // Speedrider strips (TA above FR)
+    // Speedrider strips
     renderSpeedriderStrip(`${id}-sr-ta`, srTaCourse);
     renderSpeedriderStrip(`${id}-sr-fr`, srFrCourse);
   });
@@ -342,4 +336,3 @@ async function loadAll(){
 }
 
 document.addEventListener('DOMContentLoaded', loadAll);
-``

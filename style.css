@@ -2,11 +2,15 @@
 :root{
   --bg:#ffffff; --text:#000000; --muted:#333333;
   --panel:#f7f7f7; --border:#e5e5e5; --accent:#ff5252;
-  --link:#ff5252; --link-hover:#d60000; --maxw:1200px;
+  --link:#ff5252; --link-hover:#d60000;
+  --maxw:1440px;            /* ← widen page content area here */
+  --container-pad:24px;     /* ← side padding for containers */
   --topbar-h:56px;
 }
 
-/* Base */
+/* Reserve scroll space for fixed topbar on anchor jumps */
+html { scroll-padding-top: calc(var(--topbar-h) + 12px); }
+
 *{box-sizing:border-box}
 html,body{height:100%}
 body{
@@ -15,7 +19,7 @@ body{
   line-height:1.45;
   padding-top:var(--topbar-h); /* space for fixed topbar */
 }
-.container{max-width:var(--maxw); margin:0 auto; padding:0 16px}
+.container{max-width:var(--maxw); margin:0 auto; padding:0 var(--container-pad)}  /* ← adjust margins here */
 
 /* Fixed top bar */
 .topbar.fixed{position:fixed; top:0; left:0; right:0; z-index:1000; background:#000; color:#fff; height:var(--topbar-h)}
@@ -50,49 +54,60 @@ body{
 @media (max-width:900px){.tile-grid{grid-template-columns:1fr}}
 
 /* Air Ride layout */
-/* Narrower left sidebar pushed farther left */
-.layout{display:grid; grid-template-columns:120px 1fr; gap:24px}
+/* Left TOC widened and pushed further left */
+.layout{display:grid; grid-template-columns:150px 1fr; gap:32px}  /* ← change 150px to adjust TOC width */
 @media (max-width:900px){.layout{grid-template-columns:1fr}}
-.sidebar{padding:8px 0; margin-left:-24px}
-#course-nav{position:sticky; top:12px}
+.sidebar{padding:8px 0; margin-left:-32px} /* ← push TOC further left if needed */
+#course-nav{position:sticky; top:calc(var(--topbar-h) + 12px)} /* stays below fixed topbar */
 #course-nav a{display:block; padding:6px 2px; color:var(--text); text-decoration:none; border-bottom:2px solid transparent}
 #course-nav a:hover{border-bottom-color:#999}
 #course-nav a.active{border-bottom-color:var(--accent)} /* red underline for current section */
 
-.course{margin:12px 0 44px}
+.course{margin:12px 0 32px}
 .anchor{position:relative; top:-80px}
 .section-divider{border:none; height:2px; background:#eee; margin:18px 0}
 
-/* Banner: full bleed, white title overlay; remove border rectangle */
-.banner-wrap{position:relative; width:100%; height:150px; margin:8px 0 12px 0}
+/* Banner: 100px height, cover, vertically centered title */
+.banner-wrap{position:relative; width:100%; height:100px; margin:8px 0 12px 0}
 .course-banner{width:100%; height:100%; object-fit:cover; border:none; border-radius:8px}
 .banner-title{
-  position:absolute; left:16px; bottom:8px;
+  position:absolute; left:16px; top:50%; transform:translateY(-50%);
   color:#fff; font-weight:800; font-size:60px; letter-spacing:.02em;
   text-shadow:0 2px 6px rgba(0,0,0,.55);
 }
 
-/* SRC tables (no wrapped text) */
-.tables-grid{display:grid; gap:16px; margin-top:12px; grid-template-columns:repeat(2,minmax(0,1fr))}
-.table-card{background:var(--panel); border:1px solid var(--border); border-radius:8px; padding:12px}
-.table-card h3{margin:0 0 12px; font-size:18px; font-weight:700}
+/* SRC tables: compact, no card chrome */
+.tables-grid{display:grid; gap:12px; margin-top:12px; grid-template-columns:repeat(2,minmax(0,1fr))}
+.table-card{background:none; border:none; padding:0} /* remove gray boxes around tables */
+.table-card h3{margin:0 0 10px; font-size:18px; font-weight:700}
 
-.table{width:100%; border-collapse:collapse; table-layout:fixed; border:1px solid var(--border); border-radius:8px; overflow:hidden}
-.table th,.table td{
-  border-right:1px solid var(--border);
-  padding:6px 10px; /* ~30px row height with line-height */
-  font-size:12px; line-height:30px; /* height targeting */
-  white-space:nowrap; overflow:hidden; text-overflow:ellipsis; /* no wrap */
+/* Table core */
+.table-scroll{overflow-x:auto} /* allows full single-line data without truncation */
+.table{
+  width:100%; border-collapse:collapse; table-layout:auto;  /* auto layout for visible one-line data */
+  border:1px solid var(--border); border-radius:8px; overflow:hidden
 }
-.table th{background:#000; color:#fff; text-align:left; font-weight:700; cursor:pointer; position:relative}
+.table th, .table td{
+  border-right:1px solid var(--border);
+  font-size:12px; white-space:nowrap;
+}
+.table th{
+  background:#000; color:#fff; text-align:left; font-weight:700;
+  line-height:27px; padding:4px 10px; cursor:pointer; position:relative;
+}
 .table th .sort-ind{position:absolute; right:8px; top:50%; transform:translateY(-50%); font-size:.9rem; color:#fff; opacity:.8}
-.table td{background:#fff; color:var(--text)}
+.table td{background:#fff; color:var(--text); line-height:22px; padding:4px 10px}
 .table tr:nth-child(even) td{background:#fbfbfb}
-.table thead tr th:last-child,.table tbody tr td:last-child{border-right:none}
+.table thead tr th:last-child, .table tbody tr td:last-child{border-right:none}
+
+/* Links: allow trailing “…” only for SRC Link/Video columns */
+.table td:nth-child(5), .table td:nth-child(6){
+  overflow:hidden; text-overflow:ellipsis; max-width:280px;
+}
 .table a{color:var(--link); text-decoration:none; display:inline-block; max-width:100%; white-space:nowrap; overflow:hidden; text-overflow:ellipsis}
 .table a:hover{color:var(--link-hover); text-decoration:underline}
 
-/* Speedrider horizontal strips stacked vertically (TA above FR) */
+/* Speedrider strips stacked vertically (TA above FR) */
 .table-card.wide{grid-column:1/-1}
 .sr-strip{display:flex; gap:12px; overflow-x:auto; padding-bottom:8px}
 .sr-col{flex:0 0 180px; background:#fff; border:1px solid var(--border); border-radius:8px; padding:10px}
@@ -101,4 +116,3 @@ body{
 .sr-item .label{display:inline-block; width:72px; color:#666}
 .sr-item a{color:var(--link); text-decoration:none}
 .sr-item a:hover{color:var(--link-hover); text-decoration:underline}
-``
