@@ -2,18 +2,17 @@
 <!doctype html>
 <html lang="en">
 <head>
-  <meta charset="utf-8">
+  <meta charset="utf-8" />
   <title>KARs Garage — Home</title>
-  <meta name="viewport" content="width=device-width,initial-scale=1">
-  <link rel="icon" type="image/png" href="/icons/garage-icon-white.png">
-  <link rel="preload" href="/images/kars-garage-hero.png" as="image">
-  <link rel="stylesheet" href="/style.css">
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <link rel="icon" href="/icons/garage-icon-white.png" />
+  <link rel="stylesheet" href="/style.css" />
 </head>
 <body>
   <!-- Fixed top bar -->
   <header class="topbar fixed">
     <div class="container bar-inner">
-      <img class="brand-logo-img" src="/icons/garage-icon-white.png" alt="KARs Garage icon" width="24" height="24">
+      <img class="brand-logo-img" src="/icons/garage-icon-white.png" alt="Garage icon" />
       <div class="brand-name">KARs Garage</div>
       <nav class="site-nav" aria-label="Primary">
         <a href="/" class="active">Home</a>
@@ -22,18 +21,19 @@
     </div>
   </header>
 
-  <main class="container">
-    <!-- Hero -->
-    <section class="hero--home">
-      <div class="hero-bg hero-bg--top" aria-hidden="true"></div>
-      <div class="hero-content">
-        <h1 class="hero-title--76">KIRBY AIR RIDERS GARAGE</h1>
-      </div>
-    </section>
+  <!-- FULL-BLEED HERO (edge-to-edge) -->
+  <section class="hero hero--home" aria-label="Home hero">
+    <div class="hero-bg hero-bg--top" aria-hidden="true"></div>
+    <div class="hero-content hero-content--center">
+      <h1 class="hero-title--76">KIRBY AIR RIDERS GARAGE</h1>
+    </div>
+  </section>
 
-    <!-- Tiles (artwork already contains labels) -->
-    <section aria-label="Modes">
-      <div class="tile-grid">
+  <main>
+    <!-- Normal content uses the container -->
+    <section class="container" aria-label="Modes">
+      <!-- Tiles — shrunk 25% -->
+      <div class="tile-grid tile-grid--shrink">
         <a class="tile tile-airride" href="/air-ride.html" aria-label="Air Ride"></a>
         <a class="tile tile-topride" href="#" aria-label="Top Ride"></a>
         <a class="tile tile-citytrial" href="#" aria-label="City Trial"></a>
@@ -46,6 +46,7 @@
     <div class="container">© <span id="year"></span> KARs Garage</div>
   </footer>
 
-  <script src="/script.js" defer></script>
+  <script src="/script.js"></script>
 </body>
 </html>
+``

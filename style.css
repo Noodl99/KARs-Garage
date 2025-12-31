@@ -1,16 +1,17 @@
 
 :root{
   --bg:#ffffff; --text:#000000; --muted:#333333;
-  --panel:#f7f7f7; --border:#e5e5e5; --accent:#ff5252;
+  --panel:#f7f7f7; --border:#e5e5e5;
+  --accent:#ff5252;
   --link:#ff5252; --link-hover:#d60000;
-  --maxw:1440px;            /* ← widen page content area here */
-  --container-pad:24px;     /* ← side padding for containers */
+  --maxw:1440px;              /* ← global content width */
+  --container-pad:24px;       /* ← side padding for containers */
   --topbar-h:56px;
+  --tile-scale:.75;           /* ← 25% shrink for home tiles */
 }
 
 /* Reserve scroll space for fixed topbar on anchor jumps */
 html { scroll-padding-top: calc(var(--topbar-h) + 12px); }
-
 *{box-sizing:border-box}
 html,body{height:100%}
 body{
@@ -19,8 +20,7 @@ body{
   line-height:1.45;
   padding-top:var(--topbar-h); /* space for fixed topbar */
 }
-.container{max-width:var(--maxw); margin:0 auto; padding:0 var(--container-pad)}  /* ← adjust margins here */
-
+.container{max-width:var(--maxw); margin:0 auto; padding:0 var(--container-pad)}
 /* Fixed top bar */
 .topbar.fixed{position:fixed; top:0; left:0; right:0; z-index:1000; background:#000; color:#fff; height:var(--topbar-h)}
 .bar-inner{display:flex; align-items:center; gap:12px; height:var(--topbar-h)}
@@ -30,22 +30,22 @@ body{
 .site-nav a.active{border-bottom-color:var(--accent)}
 .site-nav a:hover{color:#ddd}
 
-/* Headers & footer */
-.site-header{padding:16px 0 8px}
-.brand{margin:0; font-weight:700; font-size:2rem}
-.tagline{margin:6px 0 10px; color:var(--muted)}
-.accent{border:none; height:4px; background:var(--accent)}
+/* Footer */
 .site-footer{border-top:1px solid var(--border); padding:12px 0; color:var(--muted)}
 #year{white-space:nowrap}
 
-/* Home hero & tiles */
-.hero--home{position:relative; min-height:280px; display:flex; align-items:center}
+/* ===== Home hero (full-bleed, edge-to-edge) ===== */
+.hero{position:relative; min-height:280px; display:flex; align-items:center; justify-content:center}
+.hero--home{width:100vw; margin-left:calc((100vw - 100%) / -2); margin-right:calc((100vw - 100%) / -2)}
 .hero-bg{position:absolute; inset:0; background:url('/images/kars-garage-hero.png') center top / cover no-repeat}
 .hero-bg--top{background-position:center top}
 .hero-content{position:relative; z-index:1}
+.hero-content--center{text-align:center}
 .hero-title--76{margin:48px 0; font-size:76px; font-weight:800; color:#fff; text-shadow:0 2px 8px rgba(0,0,0,.4)}
 
-.tile-grid{display:grid; gap:18px; margin:24px 0; grid-template-columns:repeat(2,minmax(0,1fr))}
+/* ===== Home tiles (25% smaller) ===== */
+.tile-grid{display:grid; gap:18px; margin:24px auto; grid-template-columns:repeat(2,minmax(0,1fr)); max-width:var(--maxw); padding:0 var(--container-pad)}
+.tile-grid--shrink{transform:scale(var(--tile-scale)); transform-origin:top center}
 .tile{display:block; border:none; border-radius:16px; text-decoration:none; position:relative; overflow:hidden; box-shadow:none}
 .tile-airride{background:url('/images/air-ride.png') center/cover no-repeat; aspect-ratio:17/9}
 .tile-topride{background:url('/images/top-ride.png') center/cover no-repeat; aspect-ratio:17/9}
@@ -53,16 +53,20 @@ body{
 .tile-roadtrip{background:url('/images/road-trip.png') center/cover no-repeat; aspect-ratio:2.3948/1}
 @media (max-width:900px){.tile-grid{grid-template-columns:1fr}}
 
-/* Air Ride layout */
-/* Left TOC widened and pushed further left */
-.layout{display:grid; grid-template-columns:150px 1fr; gap:32px}  /* ← change 150px to adjust TOC width */
-@media (max-width:900px){.layout{grid-template-columns:1fr}}
-.sidebar{padding:8px 0; margin-left:-32px} /* ← push TOC further left if needed */
-#course-nav{position:sticky; top:calc(var(--topbar-h) + 12px)} /* stays below fixed topbar */
-#course-nav a{display:block; padding:6px 2px; color:var(--text); text-decoration:none; border-bottom:2px solid transparent}
-#course-nav a:hover{border-bottom-color:#999}
-#course-nav a.active{border-bottom-color:var(--accent)} /* red underline for current section */
+/* ===== Air Ride layout ===== */
+/* Page header ("AIR RIDE" + cadence + red underline) */
+.site-header{padding:16px 0 8px}
+.site-header .brand{margin:0; font-weight:800; font-size:2rem}
+.site-header .tagline{margin:6px 0 10px; color:var(--muted)}
+.accent{border:none; height:4px; background:var(--accent)}
 
+.layout{display:grid; grid-template-columns:150px 1fr; gap:32px}
+@media (max-width:900px){.layout{grid-template-columns:1fr}}
+.sidebar{padding:8px 0; margin-left:-32px}
+#course-nav{position:sticky; top:calc(var(--topbar-h) + 12px)}
+#course-nav a{display:block; padding:6px 2px; color:var(--text); text-decoration:underline; text-decoration-color:transparent; border-bottom:2px solid transparent}
+#course-nav a:hover{border-bottom-color:#999}
+#course-nav a.active{border-bottom-color:var(--accent)}
 .course{margin:12px 0 32px}
 .anchor{position:relative; top:-80px}
 .section-divider{border:none; height:2px; background:#eee; margin:18px 0}
@@ -76,15 +80,14 @@ body{
   text-shadow:0 2px 6px rgba(0,0,0,.55);
 }
 
-/* SRC tables: compact, no card chrome */
+/* SRC tables: compact, not scrollable; one-line core columns */
 .tables-grid{display:grid; gap:12px; margin-top:12px; grid-template-columns:repeat(2,minmax(0,1fr))}
-.table-card{background:none; border:none; padding:0} /* remove gray boxes around tables */
+.table-card{background:none; border:none; padding:0}
 .table-card h3{margin:0 0 10px; font-size:18px; font-weight:700}
-
-/* Table core */
-.table-scroll{overflow-x:auto} /* allows full single-line data without truncation */
 .table{
-  width:100%; border-collapse:collapse; table-layout:auto;  /* auto layout for visible one-line data */
+  width:100%;
+  border-collapse:collapse;
+  table-layout:fixed; /* fixed layout enables ellipsis columns */
   border:1px solid var(--border); border-radius:8px; overflow:hidden
 }
 .table th, .table td{
@@ -100,19 +103,23 @@ body{
 .table tr:nth-child(even) td{background:#fbfbfb}
 .table thead tr th:last-child, .table tbody tr td:last-child{border-right:none}
 
-/* Links: allow trailing “…” only for SRC Link/Video columns */
-.table td:nth-child(5), .table td:nth-child(6){
-  overflow:hidden; text-overflow:ellipsis; max-width:280px;
-}
+/* Core columns 1–4 shown fully on one line */
+.table td:nth-child(1),
+.table td:nth-child(2),
+.table td:nth-child(3),
+.table td:nth-child(4){overflow:hidden; text-overflow:clip}
+
+/* Links (columns 5–6) show ellipsis */
+.table th:nth-child(5), .table td:nth-child(5),
+.table th:nth-child(6), .table td:nth-child(6){width:240px; max-width:240px}
+.table td:nth-child(5), .table td:nth-child(6){overflow:hidden; text-overflow:ellipsis}
 .table a{color:var(--link); text-decoration:none; display:inline-block; max-width:100%; white-space:nowrap; overflow:hidden; text-overflow:ellipsis}
 .table a:hover{color:var(--link-hover); text-decoration:underline}
 
-/* Speedrider strips stacked vertically (TA above FR) */
+/* Speedrider strips (TA above FR) */
 .table-card.wide{grid-column:1/-1}
 .sr-strip{display:flex; gap:12px; overflow-x:auto; padding-bottom:8px}
 .sr-col{flex:0 0 180px; background:#fff; border:1px solid var(--border); border-radius:8px; padding:10px}
 .sr-time{font-weight:700; font-size:1rem; margin:0 0 8px; border-left:4px solid var(--accent); padding-left:8px}
 .sr-item{font-size:.9rem; margin:4px 0}
 .sr-item .label{display:inline-block; width:72px; color:#666}
-.sr-item a{color:var(--link); text-decoration:none}
-.sr-item a:hover{color:var(--link-hover); text-decoration:underline}

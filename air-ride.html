@@ -2,17 +2,17 @@
 <!doctype html>
 <html lang="en">
 <head>
-  <meta charset="utf-8">
+  <meta charset="utf-8" />
   <title>KARs Garage — Air Ride</title>
-  <meta name="viewport" content="width=device-width,initial-scale=1">
-  <link rel="icon" type="image/png" href="/icons/garage-icon-white.png">
-  <link rel="stylesheet" href="/style.css">
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <link rel="icon" href="/icons/garage-icon-white.png" />
+  <link rel="stylesheet" href="/style.css" />
 </head>
 <body>
   <!-- Fixed top bar -->
   <header class="topbar fixed">
     <div class="container bar-inner">
-      <img class="brand-logo-img" src="/icons/garage-icon-white.png" alt="KARs Garage icon" width="24" height="24">
+      <img class="brand-logo-img" src="/icons/garage-icon-white.png" alt="Garage icon" />
       <div class="brand-name">KARs Garage</div>
       <nav class="site-nav" aria-label="Primary">
         <a href="/">Home</a>
@@ -21,13 +21,18 @@
     </div>
   </header>
 
+  <!-- Page header restored: title + cadence + red underline -->
+  <section class="container site-header" aria-label="Page header">
+    <h1 class="brand">AIR RIDE</h1>
+    <p class="tagline">Updates daily at 12 am, 6 am, 12 pm, and 6 pm EST</p>
+    <hr class="accent" />
+  </section>
+
+  <!-- Layout: left TOC + content -->
   <main class="container layout">
-    <!-- Left sidebar TOC -->
     <aside class="sidebar" aria-label="Courses">
       <nav id="course-nav"></nav>
     </aside>
-
-    <!-- Course content sections will be injected here -->
     <section id="content"></section>
   </main>
 
@@ -35,7 +40,6 @@
     <div class="container">© <span id="year"></span> KARs Garage • Air Ride</div>
   </footer>
 
-  <script src="/airride.js" defer></script>
+  <script src="/airride.js"></script>
 </body>
 </html>
-``
