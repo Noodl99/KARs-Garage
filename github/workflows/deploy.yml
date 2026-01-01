@@ -1,0 +1,22 @@
+
+name: Deploy to GitHub Pages
+on:
+  push:
+    branches: [ main ]  # Runs whenever you push to main
+  workflow_dispatch:     # Allows manual trigger from Actions tab
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      # If you have a build step (like npm run build), add it here.
+      # For pure HTML/CSS/JS, skip build and deploy directly.
+
+      - name: Deploy to GitHub Pages
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: .   # Root folder of your site

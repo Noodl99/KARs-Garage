@@ -49,8 +49,7 @@ body{
 .tile-grid{display:grid; gap:18px; margin:24px auto; grid-template-columns:repeat(2,minmax(0,1fr)); max-width:var(--maxw); padding:0 var(--container-pad)}
 .tile-grid--shrink{transform:scale(var(--tile-scale)); transform-origin:top center}
 .tile{display:block; border:none; border-radius:16px; text-decoration:none; position:relative; overflow:hidden; box-shadow:none}
-
-/* IMPORTANT: relative paths match your screenshot filenames */
+/* IMPORTANT: relative paths match your filenames */
 .tile-airride{background:url('images/air-ride.png') center/cover no-repeat; aspect-ratio:17/9}
 .tile-topride{background:url('images/top-ride.png') center/cover no-repeat; aspect-ratio:17/9}
 .tile-citytrial{background:url('images/city-trial.png') center/cover no-repeat; aspect-ratio:17/9}
@@ -151,4 +150,3 @@ body{
 
 /* ===== Utility ===== */
 .muted{color:#777}
-``

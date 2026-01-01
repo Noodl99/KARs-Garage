@@ -1,7 +1,7 @@
 
 /* KARs Garage — Air Ride (GitHub Pages-friendly)
-   - FIXED: TOC anchors (<a href="#...">) render correctly.
-   - FIXED: linkCell() outputs proper <a> tags with cleaned labels.
+   - FIXED: TOC anchors now render as <a href="#id">Course</a>.
+   - FIXED: linkCell() outputs proper anchors with trimmed labels.
    - Banners use relative 'images/...' paths (case-sensitive).
 */
 
