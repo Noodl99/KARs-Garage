@@ -1,8 +1,8 @@
 
-/* KARs Garage — Air Ride (GitHub Pages-friendly)
-   - FIXED: TOC anchors now render as <a href="#id">Course</a>.
-   - FIXED: linkCell() outputs proper anchors with trimmed labels.
-   - Banners use relative 'images/...' paths (case-sensitive).
+/* KARs Garage — Air Ride (simple, GitHub Pages-friendly)
+   - Sidebar TOC uses real <a href="#...">Course</a>
+   - linkCell() outputs a proper <a> with a trimmed label
+   - Banner images use relative 'images/...'
 */
 
 const SRC_CSV   = "https://docs.google.com/spreadsheets/d/e/2PACX-1vRLdSEHHpUNrBHTlJlEZLBJmJpbBuxrnJ4AXQk_vqzhVoyliOzaM-uEAw-WXNskMOhcjZq7HWLctrBN/pub?output=csv";
@@ -21,7 +21,6 @@ const COURSE_ORDER = [
   "Machine Passage","Checker Knights","Nebula Belt"
 ];
 
-/* Filenames from your /images folder (case-sensitive) */
 const BANNERS = {
   "Airtopia Ruins":     "images/airtopia_banner.webp",
   "Beanstalk Park":     "images/beanstalk_banner.webp",
@@ -43,7 +42,7 @@ const BANNERS = {
   "Waveflow Waters":    "images/Waveflow_Banner.webp"
 };
 
-/* CSV parsing */
+/* --- CSV parsing (minimal) --- */
 function parseCSV(text){
   const rows = [];
   let row = [], cur = '', inQuotes = false;
@@ -64,7 +63,7 @@ function parseCSV(text){
   return rows.filter(r => r.length && r.some(v => String(v).trim().length));
 }
 
-/* Helpers */
+/* --- Helpers --- */
 function idxOf(header, colName){
   const i = header.findIndex(h => String(h).trim().toLowerCase() === String(colName).toLowerCase());
   return i < 0 ? null : i;
@@ -72,9 +71,11 @@ function idxOf(header, colName){
 function makeAnchorId(name){
   return String(name).toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-+|-+$/g,'');
 }
-function stripPrefix(u){ return String(u ?? '').replace(/^https?:\/\/(www\.)?/i,''); }
+function stripPrefix(url){
+  return String(url ?? '').replace(/^https?:\/\/(www\.)?/i,'');
+}
 
-/* FIXED: proper <a> tag + cleaned label */
+/* CLICKABLE ANCHOR with trimmed label */
 function linkCell(url){
   const u = String(url ?? '').trim();
   if (!u) return '';
@@ -82,6 +83,7 @@ function linkCell(url){
   return `${u}${label}</a>`;
 }
 
+/* Subcategory "Course + Ruleset" */
 function parseCourseAndRules(subRaw){
   const s = String(subRaw ?? '').trim().replace(/\s*\+$/, ''); // drop trailing '+'
   if (!s) return { course:"", rules:"" };
@@ -94,6 +96,7 @@ function parseCourseAndRules(subRaw){
   return { course, rules };
 }
 
+/* Parse time into ms so we can sort */
 function toMillis(t){
   const s = String(t || '').trim();
   let m;
@@ -113,11 +116,12 @@ function toMillis(t){
   return Number.POSITIVE_INFINITY;
 }
 
-/* Render SRC table with fixed column plan via <colgroup> */
+/* --- Table renderer --- */
 function renderSrcTable(mountId, rows){
   const mount = document.getElementById(mountId); if (!mount) return;
   const COLS = ["Player","Time","Machine","Rider","SRC Link","Video"];
 
+  // Width plan
   const colgroup = `
     <colgroup>
       <col style="width:18%">
@@ -212,7 +216,7 @@ function setupScrollSpy(sectionIds){
   sectionIds.forEach(id => { const sec = document.getElementById(id); if (sec) observer.observe(sec); });
 }
 
-/* Speedrider index (sorted fastest → slowest by Time (sec)) */
+/* Build Speedrider index */
 function buildSrIndex(rows){
   const header = rows[0].map(h => String(h).trim());
   const IDX = {
@@ -248,11 +252,12 @@ function buildSrIndex(rows){
   return byCourse;
 }
 
-/* === MAIN === */
+/* --- MAIN --- */
 async function loadAll(){
   const y = document.getElementById('year');
   if (y) y.textContent = new Date().getFullYear();
 
+  // Fetch CSVs
   const [srcRes, srTaRes, srFrRes] = await Promise.all([
     fetch(SRC_CSV, { cache:'no-cache' }),
     fetch(SR_TA_CSV, { cache:'no-cache' }),
@@ -263,6 +268,7 @@ async function loadAll(){
   const srTaRows = parseCSV(srTaText);
   const srFrRows = parseCSV(srFrText);
 
+  // Parse headers
   const srcHeader = srcRows[0].map(h => String(h).trim());
   const SRC_IDX = {
     Category:    idxOf(srcHeader,"Category"),
@@ -275,6 +281,7 @@ async function loadAll(){
     Video:       idxOf(srcHeader,"Video")
   };
 
+  // Bucket SRC by course + mode + rules
   const srcByCourse = new Map();
   srcRows.slice(1).forEach(r => {
     const category = r[SRC_IDX.Category] ?? '';
@@ -302,23 +309,26 @@ async function loadAll(){
     srcByCourse.get(course)[mode][rules].push(rowObj);
   });
 
-  // Sort SRC buckets fastest → slowest
+  // Sort SRC lists fastest → slowest
   for (const course of srcByCourse.keys()){
     ['TA','FR'].forEach(m => ['Restricted','Unrestricted'].forEach(rule => {
       srcByCourse.get(course)[m][rule].sort((a,b) => a._ms - b._ms);
     }));
   }
 
+  // Speedrider indices
   const srTaByCourse = buildSrIndex(srTaRows);
   const srFrByCourse = buildSrIndex(srFrRows);
 
+  // Mount points
   const content = document.getElementById('content');
   const nav     = document.getElementById('course-nav');
 
+  // Course ordering
   const courseSet = new Set([...srcByCourse.keys(), ...srTaByCourse.keys(), ...srFrByCourse.keys()]);
   const orderedCourses = COURSE_ORDER.filter(c => courseSet.has(c));
 
-  /* FIXED: proper <a> links in the TOC */
+  // TOC: real <a href="#...">Course Name</a>
   nav.innerHTML = orderedCourses.map(course => {
     const id = makeAnchorId(course);
     return `#${id}">${course}</a>`;
@@ -333,11 +343,12 @@ async function loadAll(){
     const srTaCourse = srTaByCourse.get(courseName) || [];
     const srFrCourse = srFrByCourse.get(courseName) || [];
 
+    // Section skeleton
     const sec = document.createElement('section');
     sec.className = 'course';
 
+    // Banner
     const bannerPath = BANNERS[courseName] || '';
-
     sec.innerHTML = `
       <span id="${id}" class="anchor"></span>
       <figure class="banner-wrap">
@@ -375,7 +386,7 @@ async function loadAll(){
       <hr class="section-divider" />
     `;
 
-    /* Inject banner <img> if present */
+    // Inject banner image
     const fig = sec.querySelector('.banner-wrap');
     if (bannerPath) {
       const img = document.createElement('img');
@@ -387,18 +398,20 @@ async function loadAll(){
 
     content.appendChild(sec);
 
+    // Render tables
     renderSrcTable(`${id}-ta-r`, srcCourse.TA.Restricted);
     renderSrcTable(`${id}-ta-u`, srcCourse.TA.Unrestricted);
     renderSrcTable(`${id}-fr-r`, srcCourse.FR.Restricted);
     renderSrcTable(`${id}-fr-u`, srcCourse.FR.Unrestricted);
 
+    // Speedrider strips
     renderSpeedriderStrip(`${id}-sr-ta`, srTaCourse);
     renderSpeedriderStrip(`${id}-sr-fr`, srFrCourse);
   });
 
   setupScrollSpy(sectionIds);
 
-  // Smooth scroll on TOC clicks
+  // Smooth scroll for TOC clicks
   nav.querySelectorAll('a').forEach(a => {
     a.addEventListener('click', e => {
       e.preventDefault();
