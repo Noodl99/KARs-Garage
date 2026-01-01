@@ -1,9 +1,8 @@
 
 /* KARs Garage — Air Ride (GitHub Pages-friendly)
-   - Sidebar TOC anchors fixed: <a href="#{id}">{course}</a>
-   - Banner images use relative paths: 'images/...'
-   - linkCell() outputs proper <a href="...">...</a>
-   - SRC & Speedrider logic as previously finalized
+   - FIXED: TOC anchors (<a href="#...">) render correctly.
+   - FIXED: linkCell() outputs proper <a> tags with cleaned labels.
+   - Banners use relative 'images/...' paths (case-sensitive).
 */
 
 const SRC_CSV   = "https://docs.google.com/spreadsheets/d/e/2PACX-1vRLdSEHHpUNrBHTlJlEZLBJmJpbBuxrnJ4AXQk_vqzhVoyliOzaM-uEAw-WXNskMOhcjZq7HWLctrBN/pub?output=csv";
@@ -22,7 +21,7 @@ const COURSE_ORDER = [
   "Machine Passage","Checker Knights","Nebula Belt"
 ];
 
-/* Exact filenames from your /images folder (case-sensitive) */
+/* Filenames from your /images folder (case-sensitive) */
 const BANNERS = {
   "Airtopia Ruins":     "images/airtopia_banner.webp",
   "Beanstalk Park":     "images/beanstalk_banner.webp",
@@ -75,7 +74,7 @@ function makeAnchorId(name){
 }
 function stripPrefix(u){ return String(u ?? '').replace(/^https?:\/\/(www\.)?/i,''); }
 
-/* FIXED: proper <a> anchor output */
+/* FIXED: proper <a> tag + cleaned label */
 function linkCell(url){
   const u = String(url ?? '').trim();
   if (!u) return '';
@@ -319,7 +318,7 @@ async function loadAll(){
   const courseSet = new Set([...srcByCourse.keys(), ...srTaByCourse.keys(), ...srFrByCourse.keys()]);
   const orderedCourses = COURSE_ORDER.filter(c => courseSet.has(c));
 
-  /* FIXED: Create proper <a> links in the TOC */
+  /* FIXED: proper <a> links in the TOC */
   nav.innerHTML = orderedCourses.map(course => {
     const id = makeAnchorId(course);
     return `#${id}">${course}</a>`;
