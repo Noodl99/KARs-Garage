@@ -8,11 +8,11 @@
   --container-pad:24px;
   --topbar-h:56px;
 
-  /* Speedrider tuning */
+  /* Speedrider tuning (smaller, less crowded) */
   --sr-left-w:140px;
   --sr-col-w:148px;
   --sr-row-pad:2px;
-  --sr-font:.92rem;
+  --sr-font:12px;          /* ← requested 12px */
   --sr-line:1.25;
 }
 
@@ -48,6 +48,16 @@ body{
 .hero-content{position:relative; z-index:1}
 .hero-content--center{text-align:center}
 .hero-title--76{margin:48px 0; font-size:76px; font-weight:800; color:#fff; text-shadow:0 2px 8px rgba(0,0,0,.4)}
+
+/* ===== Home tiles ===== */
+.tile-grid{display:grid; gap:18px; margin:24px auto; grid-template-columns:repeat(2,minmax(0,1fr)); max-width:var(--maxw); padding:0 var(--container-pad)}
+.tile-grid--shrink{transform:scale(.75); transform-origin:top center}
+.tile{display:block; border:none; border-radius:16px; text-decoration:none; position:relative; overflow:hidden; box-shadow:none}
+.tile-airride{background:url('images/air-ride.png') center/cover no-repeat; aspect-ratio:17/9}
+.tile-topride{background:url('images/top-ride.png') center/cover no-repeat; aspect-ratio:17/9}
+.tile-citytrial{background:url('images/city-trial.png') center/cover no-repeat; aspect-ratio:17/9}
+.tile-roadtrip{background:url('images/road-trip.png') center/cover no-repeat; aspect-ratio:2.3948/1}
+@media (max-width:900px){.tile-grid{grid-template-columns:1fr}}
 
 /* ===== Air Ride page header ===== */
 .site-header{padding:16px 0 8px}
@@ -179,14 +189,14 @@ body{
 
 /* Inner content — equal row heights to match header */
 .sr-time{
-  font-weight:700; font-size:1rem; margin:0;
+  font-weight:700; font-size:var(--sr-font); margin:0;
   padding:var(--sr-row-pad) 0 0 8px; border-left:4px solid var(--accent);
   line-height:var(--sr-line);
 }
 .sr-row{
-  font-size:.9rem; margin:0; padding:var(--sr-row-pad) 0;
+  font-size:var(--sr-font); margin:0; padding:var(--sr-row-pad) 0;
   white-space:normal; overflow:hidden; text-overflow:ellipsis; line-height:var(--sr-line);
-  display:flex; align-items:center;
+  display:inline-flex; align-items:center;
 }
 .sr-row a{
   color:var(--link); text-decoration:none; display:inline-block;

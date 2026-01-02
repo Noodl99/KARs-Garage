@@ -1,5 +1,6 @@
 
 /* KARs Garage — Air Ride
+   - Read column C "Subcategory" and classify rules correctly (UNRESTRICTED first)
    - Sidebar TOC with legacy divider (before Fantasy Meadows)
    - Proper <a> anchors and trimmed labels
    - Speedrider: compact, aligned, sortable horizontally (◀ ▶ arrows)
@@ -11,9 +12,10 @@ const SR_FR_CSV= "https://docs.google.com/spreadsheets/d/e/2PACX-1vRLLtoztu41AtY
 
 const TA_LABEL   = /time\s*attack/i;
 const FR_LABEL   = /free\s*run/i;
-const RESTRICTED = /restricted/i;
-const UNRESTRICTED = /unrestricted/i;
+const RESTRICTED = /(?:^|[^a-z])restricted(?:$|[^a-z])/i;     // word-boundary-ish
+const UNRESTRICTED = /(?:^|[^a-z])unrestricted(?:$|[^a-z])/i;
 
+/* Course order for TOC */
 const COURSE_ORDER = [
   "Floria Fields","Waveflow Waters","Airtopia Ruins","Crystalline Fissure","Steamgust Forge",
   "Cavernous Corners","Cyberion Highway","Mount Amberfalls","Galactic Nova","Fantasy Meadows",
@@ -21,6 +23,7 @@ const COURSE_ORDER = [
   "Machine Passage","Checker Knights","Nebula Belt"
 ];
 
+/* Banner paths (relative, case-sensitive) */
 const BANNERS = {
   "Airtopia Ruins": "images/airtopia_banner.webp",
   "Beanstalk Park": "images/beanstalk_banner.webp",
@@ -82,15 +85,16 @@ function linkCell(url){
   return `<a href="${u}" target="_blank" rel="noopener">${label}</a>`;
 }
 
-/* Build SRC category link for empty tables + group code from your screenshot */
+/* Build SRC category link for empty tables + group code from your screenshots */
 function slugifyCourse(name){
   return String(name).trim().toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-+|-+$/g,'');
 }
 const SRC_GROUP_X = {
   "TA-Restricted":    "l_dy123jpd-z27qqvgk-ylq4rkmn.le2r4npl-kn0e5z38.192m988q",
-  "TA-Unrestricted":  "l_dy123jpd-z27qqvgk-ylq4rkmn.q5v5n41-kn0e5z38.1pvp0d81",
-  "FR-Restricted":    "l_dy123jpd-zdnjyxk-gmxx7j8.qnvps9dl-q1q6eg41.qjek4mkq",
-  "FR-Unrestricted":  "l_dy123jpd-zdnjyxk-gmxx7j8.qnvps9dl-q1q6eg41.q75r4d1"
+  "TA-Unrestricted":  "l_dy123jpd-z27qqvgk-ylq4rkmn.q5vn54rl-kn0e5z38.1pyp0d81",
+  "FR-Restricted":    "l_dy123jpd-zdnjjyqk-gmxx7rj8.qyzpy5d1-ql6964jl.q75j4rd1",
+  "FR-Unrestricted":  "l_dy123jpd-zdnjjyqk-gmxx7rj8.qyzpy5d1-ql6964jl.q75j4rd1"
+  /* If any group codes vary per course, paste those here and I'll split by course+rules. */
 };
 function buildSrcCategoryUrl(course, mode, rules){
   const courseSlug = slugifyCourse(course);
@@ -329,33 +333,39 @@ async function loadAll(){
   const srTaRows = parseCSV(srTaText);
   const srFrRows = parseCSV(srFrText);
 
-  // Parse headers
+  // Parse headers (note: Subcategory is column C in your CSV)
   const srcHeader = srcRows[0].map(h => String(h).trim());
   const SRC_IDX = {
-    Category:   idxOf(srcHeader,"Category"),
-    Subcategory:idxOf(srcHeader,"Subcategory"),
-    Machine:    idxOf(srcHeader,"Machine"),
-    Rider:      idxOf(srcHeader,"Rider"),
-    Player:     idxOf(srcHeader,"Player"),
-    Time:       idxOf(srcHeader,"Time"),
-    Link:       idxOf(srcHeader,"Link"),
-    Video:      idxOf(srcHeader,"Video")
+    Category:    idxOf(srcHeader,"Category"),
+    Subcategory: idxOf(srcHeader,"Subcategory"),   // ← critical: read column C
+    Machine:     idxOf(srcHeader,"Machine"),
+    Rider:       idxOf(srcHeader,"Rider"),
+    Player:      idxOf(srcHeader,"Player"),
+    Time:        idxOf(srcHeader,"Time"),
+    Link:        idxOf(srcHeader,"Link"),
+    Video:       idxOf(srcHeader,"Video")
   };
 
   // Bucket SRC by course + mode + rules
   const srcByCourse = new Map();
   srcRows.slice(1).forEach(r => {
     const category = r[SRC_IDX.Category] ?? '';
-    const subcat   = r[SRC_IDX.Subcategory] ?? '';
+    const subcat   = r[SRC_IDX.Subcategory] ?? '';     // column C
     if (!category || !subcat) return;
 
     const mode = TA_LABEL.test(category) ? 'TA' : (FR_LABEL.test(category) ? 'FR' : 'OTHER');
     if (mode === 'OTHER') return;
 
-    const parts = String(subcat ?? '').trim().replace(/\s*\+$/, '').split(/\s*\+\s*/);
+    // Subcategory is "Course + Ruleset"
+    const parts = String(subcat).trim().replace(/\s*\+$/, '').split(/\s*\+\s*/);
     const course = (parts[0] ?? '').trim();
     const rulesText = (parts[1] ?? '').trim() || subcat;
-    const rules = RESTRICTED.test(rulesText) ? 'Restricted' : (UNRESTRICTED.test(rulesText) ? 'Unrestricted' : '');
+
+    // IMPORTANT: check UNRESTRICTED first (since it contains 'restricted')
+    let rules = '';
+    if (UNRESTRICTED.test(rulesText)) rules = 'Unrestricted';
+    else if (RESTRICTED.test(rulesText)) rules = 'Restricted';
+
     if (!course || !rules) return;
 
     const rowObj = {
