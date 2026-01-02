@@ -1,6 +1,51 @@
 
 <!doctype html>
 <html lang="en">
-	<script src="script.js?v=7"></script>
+<head>
+  <meta charset="utf-8" />
+  <title>KARs Garage — Home</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+
+  <!-- Favicon -->
+  <link rel="icon" href="icons/garage-icon-white.png" type="image/png" />
+
+  <!-- Styles -->
+  <link rel="stylesheet" href="style.css?v=7" />
+</head>
+<body>
+  <!-- Fixed top bar -->
+  <header class="topbar fixed">
+    <div class="container bar-inner">
+      <img class="brand-logo-img" src="icons/garage-icon-white.png" alt="KARs Garage icon" />
+      <div class="brand-name">KARs Garage</div>
+      <nav class="site-nav" aria-label="Primary">
+        <a href="./" class="active">Home</a>
+        <a href="air-ride.html">Air Ride</a>
+      </nav>
+    </div>
+  </header>
+
+  <!-- Home hero -->
+  <section class="hero hero--home">
+    <div class="hero-bg hero-bg--top" aria-hidden="true"></div>
+    <div class="hero-content hero-content--center">
+      <h1 class="hero-title--76">KIRBY AIR RIDERS GARAGE</h1>
+    </div>
+  </section>
+
+  <!-- Tiles (relative paths, case-sensitive) -->
+  <div class="tile-grid tile-grid--shrink">
+    <a class="tile tile-airride" href="air-ride.html" aria-label="Air Ride"></a>
+    <a class="tile tile-topride" href="#" aria-label="Top Ride (coming soon)"></a>
+    <a class="tile tile-citytrial" href="#" aria-label="City Trial (coming soon)"></a>
+    <a class="tile tile-roadtrip" href="#" aria-label="Road Trip (coming soon)"></a>
+  </div>
+
+  <footer class="site-footer">
+    <div class="container">© <span id="year"></span> KARs Garage</div>
+  </footer>
+
+  <!-- Script -->
+  <script src="script.js?v=7"></script>
 </body>
 </html>
