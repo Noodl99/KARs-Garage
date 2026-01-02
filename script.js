@@ -11,11 +11,11 @@ document.addEventListener('DOMContentLoaded', () => {
   const path = location.pathname.replace(/\/+$/, '') || '/';
   document.querySelectorAll('.site-nav a').forEach(a => {
     const href = a.getAttribute('href');
-    if ((href === '/' && path === '/') || href === path || (href === './' && (path.endsWith('/') || path.endsWith('/index.html')))) {
+    const isHome = href === './' || href === '/' || href === '';
+    if ((isHome && (path.endsWith('/') || path.endsWith('/index.html'))) || href === path) {
       a.classList.add('active');
     } else {
       a.classList.remove('active');
     }
   });
 });
-``

@@ -111,7 +111,7 @@ body{
 .table th .sort-ind{position:absolute; right:8px; top:50%; transform:translateY(-50%); font-size:.9rem; color:#fff; opacity:.8}
 .table td{background:#fff; color:var(--text); line-height:22px; padding:4px 10px}
 
-/* Updated: alternate row color #f3f3f3 */
+/* Alternate row color #f3f3f3 */
 .table tbody tr:nth-child(odd) td{background:#fff}
 .table tbody tr:nth-child(even) td{background:#f3f3f3}
 
@@ -134,37 +134,50 @@ body{
 }
 .table a:hover{color:var(--link-hover); text-decoration:underline}
 
-/* ===== Speedrider strips =====
-   New: single left label column, record columns to the right
-*/
+/* ===== Speedrider strips (aligned grid, compact, sortable) ===== */
 .table-card.wide{grid-column:1/-1}
-.sr-strip{display:flex; gap:12px; overflow-x:auto; padding-bottom:8px}
 
-/* Left labels column */
+/* Whole strip: left header + record columns with zero gap */
+.sr-strip{display:flex; gap:0; overflow-x:auto; padding-bottom:8px}
+
+/* Left labels column — smaller font, tight line-height, rounded */
 .sr-left{
-  flex:0 0 160px; background:#000; color:#fff; border-radius:12px;
-  padding:10px; align-self:stretch;
+  flex:0 0 160px;
+  display:grid; grid-template-rows:repeat(5,auto); row-gap:0;
+  background:#000; color:#fff; border-radius:12px;
+  padding:10px;
+  font-size:.95rem; line-height:1.2;
 }
-.sr-left .sr-left-row{margin:8px 0; font-weight:700}
+.sr-left .sr-left-row{
+  margin:4px 0; font-weight:700; display:flex; align-items:center; justify-content:space-between;
+  cursor:pointer; user-select:none;
+}
+.sr-left .sr-left-row .sr-sort-ind{margin-left:8px; opacity:.85;}
 
-/* Record columns */
+/* Record columns — compact width, squared edges in-between */
+.sr-records{display:flex; gap:0;}
 .sr-col{
-  flex:0 0 180px; background:#fff; border:1px solid var(--border); border-radius:12px;
+  flex:0 0 160px;
+  display:grid; grid-template-rows:repeat(5,auto); row-gap:0;
+  background:#fff;
+  border-left:1px solid var(--border);
   padding:10px;
 }
+/* First/last rounded edges for the “pinched” look */
+.sr-col.first{border-top-left-radius:12px; border-bottom-left-radius:12px;}
+.sr-col.last{border-top-right-radius:12px; border-bottom-right-radius:12px;}
+
+/* Inner content */
 .sr-time{
   font-weight:700; font-size:1rem; margin:0 0 8px;
   border-left:4px solid var(--accent); padding-left:8px;
 }
-.sr-row{font-size:.9rem; margin:6px 0}
-
-/* Alternate shading within strips to echo tables */
-.sr-col:nth-child(even){background:#f3f3f3}
-
-/* Link in record column */
-.sr-row a{color:var(--link); text-decoration:none}
+.sr-row{font-size:.9rem; margin:4px 0; white-space:normal; overflow:visible; text-overflow:clip;}
+.sr-row a{color:var(--link); text-decoration:none; display:inline-block; max-width:100%; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;}
 .sr-row a:hover{color:var(--link-hover); text-decoration:underline}
+
+/* Alternating shading of record columns to echo tables */
+.sr-col:nth-child(even){background:#f3f3f3}
 
 /* Utility */
 .muted{color:#777}
-``
