@@ -1,6 +1,6 @@
 
 /* KARs Garage — Air Ride (GitHub Pages-friendly)
-   - Fixes: real <a> for TOC and links, proper script/link tags
+   - Real <a> tags for TOC and links (was missing previously)
    - Sidebar TOC with legacy divider
    - Speedrider strips: aligned grid, compact, sortable horizontally
 */
@@ -436,7 +436,7 @@ async function loadAll(){
       <hr class="section-divider" />
     `;
 
-    // Inject banner image (actual <img> tag)
+    // Inject banner image
     const fig = sec.querySelector('.banner-wrap');
     if (bannerPath) {
       const img = document.createElement('img');
@@ -487,4 +487,3 @@ function setupScrollSpy(sectionIds){
 }
 
 document.addEventListener('DOMContentLoaded', loadAll);
-``
