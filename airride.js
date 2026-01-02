@@ -3,6 +3,7 @@
  * - Valid <a> tags for SRC/Video cells and "Be the first!" links
  * - URL normalization and readable labels
  * - Empty-state sentence: "No runs submitted for this category. Be the first!"
+ * - Validator to ensure URL matches table (mode/course/rules) and has &x= params
  * - Speedrider sort triangles hidden until user clicks (like SRC tables)
  * - Red accent before times removed
  * - Correct rules parsing from column C "Subcategory" (check UNRESTRICTED first)
@@ -213,6 +214,26 @@ function buildSrcCategoryUrl(course, mode, rules){
   return byRule[course] || '';
 }
 
+/* Validate that a URL matches table context and includes &x=params */
+function urlSeemsCorrectFor(ctx, url){
+  if (!url) return false;
+  // Expect ...levels-air-ride-{time-attack|free-run}-{course}-{restricted|unrestricted}
+  const m = url.match(/levels-air-ride-(time-attack|free-run)-([a-z-]+)-(restricted|unrestricted)/i);
+  if (!m) return false;
+  const modeSlug   = m[1].toLowerCase();
+  const courseSlug = m[2].toLowerCase();
+  const rulesSlug  = m[3].toLowerCase();
+
+  const wantMode   = (ctx.mode === 'TA' ? 'time-attack' : 'free-run');
+  const wantCourse = ctx.course.toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-+|-+$/g,'');
+  const wantRules  = ctx.rules.toLowerCase(); // 'restricted' | 'unrestricted'
+
+  // Require &x= params presence
+  const hasX = /[?&]x=[^&]+/i.test(url);
+
+  return (modeSlug === wantMode && courseSlug === wantCourse && rulesSlug === wantRules && hasX);
+}
+
 /* Parse time to ms for sorting */
 function toMillis(t){
   const s = String(t ?? '').trim();
@@ -264,9 +285,10 @@ function renderSrcTable(mountId, rows, ctx){
       html += '</tr>';
     });
   } else {
-    // Build the "Be the first!" link using exact mapping
+    // Build the "Be the first!" link using exact mapping and validate it
     const mappedUrl = buildSrcCategoryUrl(ctx.course, ctx.mode, ctx.rules);
-    const beFirst   = mappedUrl ? `${mappedUrl}Be the first!</a>` : '';
+    const safeUrl   = urlSeemsCorrectFor(ctx, mappedUrl) ? mappedUrl : '';
+    const beFirst   = safeUrl ? `${safeUrl}Be the first!</a>` : ''; // only "Be the first!" is linked
 
     html += `<tr><td class="empty" colspan="${COLS.length}">
       <span class="empty-msg">
@@ -622,3 +644,4 @@ function setupScrollSpy(sectionIds){
 }
 
 document.addEventListener('DOMContentLoaded', loadAll);
+``
