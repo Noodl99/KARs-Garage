@@ -5,14 +5,18 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>KARs Garage — Home</title>
-  <link rel="icon" href="images/kars-icon.png" />
+
+  <!-- Favicon (32x32 or 48x48 PNG recommended) -->
+  <link rel="icon" type="image/png" href="images/kars-icon.png" />
+
+  <!-- Styles -->
   <link rel="stylesheet" href="style.css" />
 </head>
 <body>
   <!-- Fixed top bar -->
-  <header class="topbar fixed">
+  <header class="topbar fixed" role="banner">
     <div class="container bar-inner">
-      <img class="brand-logo-img" src="images/kars-icon.png" alt="" />
+      <img src="images/kars-icon.png" alt="" class="brand-logo-img" aria-hidden="true" />
       <strong class="brand-name">KARs Garage</strong>
       <nav class="site-nav" aria-label="Main">
         <a href="./">Home</a>
@@ -23,8 +27,8 @@
 
   <!-- Home hero -->
   <main>
-    <section class="hero hero--home">
-      <div class="hero-bg hero-bg--top"></div>
+    <section class="hero hero--home" aria-label="Hero">
+      <div class="hero-bg hero-bg--top" style="background-image:url('images/kars-garage-hero.png');"></div>
       <div class="hero-content hero-content--center">
         <h1 class="hero-title--76">KIRBY AIR RIDERS GARAGE</h1>
       </div>
@@ -39,12 +43,13 @@
     </section>
   </main>
 
-  <footer class="site-footer">
+  <footer class="site-footer" role="contentinfo">
     <div class="container">
       <span>© <span id="year"></span> KARs Garage</span>
     </div>
   </footer>
 
+  <!-- Scripts -->
   <script src="script.js"></script>
 </body>
 </html>
