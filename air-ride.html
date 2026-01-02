@@ -5,14 +5,18 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>KARs Garage — Air Ride</title>
-  <link rel="icon" href="images/kars-icon.png" />
+
+  <!-- Favicon -->
+  <link rel="icon" type="image/png" href="images/kars-icon.png" />
+
+  <!-- Styles -->
   <link rel="stylesheet" href="style.css" />
 </head>
 <body>
   <!-- Fixed top bar -->
-  <header class="topbar fixed">
+  <header class="topbar fixed" role="banner">
     <div class="container bar-inner">
-      <img class="brand-logo-img" src="images/kars-icon.png" alt="" />
+      <img src="images/kars-icon.png" alt="" class="brand-logo-img" aria-hidden="true" />
       <strong class="brand-name">KARs Garage</strong>
       <nav class="site-nav" aria-label="Main">
         <a href="./">Home</a>
@@ -45,13 +49,13 @@
     <section id="content" aria-label="Course sections"></section>
   </div>
 
-  <footer class="site-footer">
+  <footer class="site-footer" role="contentinfo">
     <div class="container">
       <span>© <span id="year"></span> KARs Garage • Air Ride</span>
     </div>
   </footer>
 
-  <!-- Load JS last -->
+  <!-- Scripts (load helpers first, then page logic) -->
   <script src="script.js"></script>
   <script src="airride.js"></script>
 </body>
