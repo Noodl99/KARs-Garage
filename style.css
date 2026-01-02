@@ -4,12 +4,11 @@
   --panel:#f7f7f7; --border:#e5e5e5;
   --accent:#ff5252;
   --link:#ff5252; --link-hover:#d60000;
-  --maxw:1440px; /* ← global content width */
-  --container-pad:24px; /* ← side padding for containers */
+  --maxw:1440px;
+  --container-pad:24px;
   --topbar-h:56px;
-  --tile-scale:.75; /* ← 25% shrink for home tiles */
+  --tile-scale:.75;
 }
-/* Reserve scroll space for fixed topbar on anchor jumps */
 html { scroll-padding-top: calc(var(--topbar-h) + 12px); }
 *{box-sizing:border-box}
 html,body{height:100%}
@@ -17,7 +16,7 @@ body{
   margin:0; color:var(--text); background:var(--bg);
   font-family:"Google Sans","Avenir Next","Metropolis",Inter,system-ui,-apple-system,Segoe UI,Roboto,"Helvetica Neue",Arial,sans-serif;
   line-height:1.45;
-  padding-top:var(--topbar-h); /* space for fixed topbar */
+  padding-top:var(--topbar-h);
 }
 .container{max-width:var(--maxw); margin:0 auto; padding:0 var(--container-pad)}
 
@@ -34,21 +33,19 @@ body{
 .site-footer{border-top:1px solid var(--border); padding:12px 0; color:var(--muted)}
 #year{white-space:nowrap}
 
-/* ===== Home hero (full-bleed, edge-to-edge) ===== */
+/* ===== Home hero ===== */
 .hero{position:relative; min-height:280px; display:flex; align-items:center; justify-content:center}
 .hero--home{width:100vw; margin-left:calc((100vw - 100%) / -2); margin-right:calc((100vw - 100%) / -2)}
-/* IMPORTANT: relative path (no leading slash) */
 .hero-bg{position:absolute; inset:0; background:url('images/kars-garage-hero.png') center top / cover no-repeat}
 .hero-bg--top{background-position:center top}
 .hero-content{position:relative; z-index:1}
 .hero-content--center{text-align:center}
 .hero-title--76{margin:48px 0; font-size:76px; font-weight:800; color:#fff; text-shadow:0 2px 8px rgba(0,0,0,.4)}
 
-/* ===== Home tiles (25% smaller) ===== */
+/* ===== Home tiles ===== */
 .tile-grid{display:grid; gap:18px; margin:24px auto; grid-template-columns:repeat(2,minmax(0,1fr)); max-width:var(--maxw); padding:0 var(--container-pad)}
 .tile-grid--shrink{transform:scale(var(--tile-scale)); transform-origin:top center}
 .tile{display:block; border:none; border-radius:16px; text-decoration:none; position:relative; overflow:hidden; box-shadow:none}
-/* IMPORTANT: relative paths match your filenames */
 .tile-airride{background:url('images/air-ride.png') center/cover no-repeat; aspect-ratio:17/9}
 .tile-topride{background:url('images/top-ride.png') center/cover no-repeat; aspect-ratio:17/9}
 .tile-citytrial{background:url('images/city-trial.png') center/cover no-repeat; aspect-ratio:17/9}
@@ -59,7 +56,6 @@ body{
 .site-header{padding:16px 0 8px}
 .site-header .brand{margin:0; font-weight:800; font-size:2rem}
 .site-header .tagline{margin:6px 0 10px; color:var(--muted)}
-/* Full-bleed underline below cadence */
 .accent--fullbleed{
   width:100vw; height:4px; background:var(--accent); border:none; margin:0;
   margin-left:calc((100vw - 100%) / -2);
@@ -74,6 +70,10 @@ body{
 #course-nav a{display:block; padding:6px 2px; color:var(--text); text-decoration:underline; text-decoration-color:transparent; border-bottom:2px solid transparent}
 #course-nav a:hover{border-bottom-color:#999}
 #course-nav a.active{border-bottom-color:var(--accent)}
+/* Legacy divider (1px #c7c7c7) */
+#course-nav .legacy-sep{height:1px; background:#c7c7c7; margin:6px 0}
+
+/* Course sections */
 .course{margin:12px 0 32px}
 .anchor{position:relative; top:-80px}
 .section-divider{border:none; height:2px; background:#eee; margin:18px 0}
@@ -87,22 +87,21 @@ body{
   text-shadow:0 2px 6px rgba(0,0,0,.55);
 }
 
-/* ===== SRC tables area ===== */
+/* ===== SRC tables ===== */
 .tables-grid{display:grid; gap:12px; margin-top:12px; grid-template-columns:1fr 1fr}
 .table-card{background:none; border:none; padding:0}
 .table-card h3{margin:0 0 10px; font-size:18px; font-weight:700}
 
-/* Table: fixed layout with colgroup widths; keeps each table inside its column */
 .table{
   width:100%;
   max-width:100%;
   border-collapse:collapse;
-  table-layout:fixed; /* so colgroup widths are respected */
+  table-layout:fixed;
   border:1px solid var(--border); border-radius:8px; overflow:hidden;
 }
 .table th, .table td{
   border-right:1px solid var(--border);
-  font-size:12px; white-space:nowrap; /* no wrapping */
+  font-size:12px; white-space:nowrap;
 }
 .table th{
   background:#000; color:#fff; text-align:left; font-weight:700;
@@ -111,41 +110,61 @@ body{
 }
 .table th .sort-ind{position:absolute; right:8px; top:50%; transform:translateY(-50%); font-size:.9rem; color:#fff; opacity:.8}
 .table td{background:#fff; color:var(--text); line-height:22px; padding:4px 10px}
-.table tr:nth-child(even) td{background:#fbfbfb}
+
+/* Updated: alternate row color #f3f3f3 */
+.table tbody tr:nth-child(odd) td{background:#fff}
+.table tbody tr:nth-child(even) td{background:#f3f3f3}
+
 .table thead tr th:last-child, .table tbody tr td:last-child{border-right:none}
 
-/* Core columns: Player / Time / Machine / Rider (single line, no clipping) */
-.table td:nth-child(1),
-.table td:nth-child(3),
-.table td:nth-child(4){
-  overflow:visible;
-  text-overflow:clip;
+/* Core columns: Player / Time / Machine / Rider */
+.table td:nth-child(1), .table td:nth-child(3), .table td:nth-child(4){
+  overflow:visible; text-overflow:clip;
 }
-
-/* Time column: hide overflow slightly to prevent bleed into next column */
+/* Time column: hide slight overflow */
 .table td.td--time{overflow:hidden; text-overflow:clip}
 
 /* Link columns (5–6): fixed width + ellipsis */
 .table th:nth-child(5), .table td:nth-child(5),
 .table th:nth-child(6), .table td:nth-child(6){ width:240px; max-width:240px; }
 .table td:nth-child(5), .table td:nth-child(6){ overflow:hidden; text-overflow:ellipsis; }
-
-/* Anchor truncation */
 .table a{
   color:var(--link); text-decoration:none; display:inline-block;
   max-width:100%; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
 }
 .table a:hover{color:var(--link-hover); text-decoration:underline}
 
-/* ===== Speedrider strips (TA above FR) ===== */
+/* ===== Speedrider strips =====
+   New: single left label column, record columns to the right
+*/
 .table-card.wide{grid-column:1/-1}
 .sr-strip{display:flex; gap:12px; overflow-x:auto; padding-bottom:8px}
-.sr-col{flex:0 0 180px; background:#fff; border:1px solid var(--border); border-radius:8px; padding:10px}
-.sr-time{font-weight:700; font-size:1rem; margin:0 0 8px; border-left:4px solid var(--accent); padding-left:8px}
-.sr-item{font-size:.9rem; margin:4px 0}
-.sr-item .label{display:inline-block; width:72px; color:#666}
-.sr-item a{color:var(--link); text-decoration:none}
-.sr-item a:hover{color:var(--link-hover); text-decoration:underline}
 
-/* ===== Utility ===== */
+/* Left labels column */
+.sr-left{
+  flex:0 0 160px; background:#000; color:#fff; border-radius:12px;
+  padding:10px; align-self:stretch;
+}
+.sr-left .sr-left-row{margin:8px 0; font-weight:700}
+
+/* Record columns */
+.sr-col{
+  flex:0 0 180px; background:#fff; border:1px solid var(--border); border-radius:12px;
+  padding:10px;
+}
+.sr-time{
+  font-weight:700; font-size:1rem; margin:0 0 8px;
+  border-left:4px solid var(--accent); padding-left:8px;
+}
+.sr-row{font-size:.9rem; margin:6px 0}
+
+/* Alternate shading within strips to echo tables */
+.sr-col:nth-child(even){background:#f3f3f3}
+
+/* Link in record column */
+.sr-row a{color:var(--link); text-decoration:none}
+.sr-row a:hover{color:var(--link-hover); text-decoration:underline}
+
+/* Utility */
 .muted{color:#777}
+``

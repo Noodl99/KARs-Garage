@@ -1,8 +1,9 @@
 
-/* KARs Garage — Air Ride (simple, GitHub Pages-friendly)
-   - Sidebar TOC uses real <a href="#...">Course</a>
-   - linkCell() outputs a proper <a> with a trimmed label
+/* KARs Garage — Air Ride (GitHub Pages-friendly)
+   - Sidebar TOC with legacy divider
+   - linkCell() outputs proper <a> with trimmed label
    - Banner images use relative 'images/...'
+   - Speedrider strips: single left label column + record columns
 */
 const SRC_CSV  = "https://docs.google.com/spreadsheets/d/e/2PACX-1vRLdSEHHpUNrBHTlJlEZLBJmJpbBuxrnJ4AXQk_vqzhVoyliOzaM-uEAw-WXNskMOhcjZq7HWLctrBN/pub?output=csv";
 const SR_TA_CSV= "https://docs.google.com/spreadsheets/d/e/2PACX-1vRLLtoztu41AtY4reRXwNd00WqxhlFyTbn3RKoBwssrf1fXFGAZxO2b1dB62-0lrUOz4yi1dLuJrmml/pub?gid=1618721256&single=true&output=csv";
@@ -41,7 +42,7 @@ const BANNERS = {
   "Waveflow Waters": "images/Waveflow_Banner.webp"
 };
 
-/* --- CSV parsing (minimal) --- */
+/* --- CSV parsing --- */
 function parseCSV(text){
   const rows = [];
   let row = [], cur = '', inQuotes = false;
@@ -68,15 +69,12 @@ function idxOf(header, colName){
   return i < 0 ? null : i;
 }
 function makeAnchorId(name){
-  return String(name)
-    .toLowerCase()
-    .replace(/[^a-z0-9]+/g,'-')
-    .replace(/^-+|-+$/g,'');
+  return String(name).toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-+|-+$/g,'');
 }
 function stripPrefix(url){
   return String(url ?? '').replace(/^https?:\/\/(www\.)?/i,'');
 }
-/* CLICKABLE ANCHOR with trimmed label */
+/* Proper clickable anchor with trimmed label */
 function linkCell(url){
   const u = String(url ?? '').trim();
   if (!u) return '';
@@ -86,7 +84,7 @@ function linkCell(url){
 
 /* Subcategory "Course + Ruleset" */
 function parseCourseAndRules(subRaw){
-  const s = String(subRaw ?? '').trim().replace(/\s*\+$/, ''); // drop trailing '+'
+  const s = String(subRaw ?? '').trim().replace(/\s*\+$/, '');
   if (!s) return { course:"", rules:"" };
   const parts = s.split(/\s*\+\s*/);
   const course = (parts[0] ?? '').trim();
@@ -97,20 +95,20 @@ function parseCourseAndRules(subRaw){
   return { course, rules };
 }
 
-/* Parse time into ms so we can sort */
+/* Parse time to ms for sorting */
 function toMillis(t){
   const s = String(t ?? '').trim();
   let m;
-  if ((m = s.match(/^(\d+)'(\d{2})"(\d{2,3})$/))){ // m'ss"ff or m'ss"fff
+  if ((m = s.match(/^(\d+)'(\d{2})"(\d{2,3})$/))){
     const mm = +m[1], ss = +m[2], frac = +m[3];
     const ms = m[3].length === 2 ? frac * 10 : frac;
     return (mm*60 + ss) * 1000 + ms;
   }
-  if ((m = s.match(/^(\d+):(\d{2})\.(\d{3})$/))){   // m:ss.mmm
+  if ((m = s.match(/^(\d+):(\d{2})\.(\d{3})$/))){
     const mm = +m[1], ss = +m[2], ms = +m[3];
     return (mm*60 + ss) * 1000 + ms;
   }
-  if ((m = s.match(/^(\d+):(\d{2}):(\d{2})\.(\d{3})$/))){ // h:mm:ss.mmm
+  if ((m = s.match(/^(\d+):(\d{2}):(\d{2})\.(\d{3})$/))){
     const hh = +m[1], mm = +m[2], ss = +m[3], ms = +m[4];
     return ((hh*3600)+(mm*60)+ss)*1000 + ms;
   }
@@ -121,7 +119,6 @@ function toMillis(t){
 function renderSrcTable(mountId, rows){
   const mount = document.getElementById(mountId); if (!mount) return;
   const COLS = ["Player","Time","Machine","Rider","SRC Link","Video"];
-  // Width plan
   const colgroup = `
     <colgroup>
       <col style="width:18%">
@@ -137,7 +134,7 @@ function renderSrcTable(mountId, rows){
   html += '</tr></thead><tbody>';
   if (rows && rows.length){
     const sorted = rows.slice().sort((a,b) => (a._ms - b._ms));
-    sorted.forEach(r => {
+    sorted.forEach((r, i) => {
       html += '<tr>';
       html += `<td>${r.Player ?? ''}</td>`;
       html += `<td class="td--time">${r.Time ?? ''}</td>`;
@@ -178,21 +175,36 @@ function renderSrcTable(mountId, rows){
   });
 }
 
-/* Speedrider strips */
+/* --- Speedrider strips (single labels column) --- */
 function renderSpeedriderStrip(mountId, entries){
   const mount = document.getElementById(mountId); if (!mount) return;
   if (!entries || entries.length === 0){ mount.innerHTML = '<p class="muted">No data</p>'; return; }
+
+  // Build the left labels column once
   let html = '<div class="sr-strip">';
+  html += `
+    <div class="sr-left">
+      <div class="sr-left-row">Time</div>
+      <div class="sr-left-row">Machine</div>
+      <div class="sr-left-row">Rider</div>
+      <div class="sr-left-row">Player</div>
+      <div class="sr-left-row">Link</div>
+    </div>
+  `;
+
+  // Each entry becomes a compact column to the right
   entries.forEach(e => {
     html += `
       <div class="sr-col">
         <div class="sr-time">${e.Time ?? ''}</div>
-        <div class="sr-item"><span class="label">Machine</span> ${e.Machine ?? ''}</div>
-        <div class="sr-item"><span class="label">Rider</span> ${e.Rider ?? ''}</div>
-        <div class="sr-item"><span class="label">Player</span> ${e.Player ?? ''}</div>
-        <div class="sr-item"><span class="label">Link</span> ${linkCell(e["Player Link"] ?? '')}</div>
-      </div>`;
+        <div class="sr-row">${e.Machine ?? ''}</div>
+        <div class="sr-row">${e.Rider ?? ''}</div>
+        <div class="sr-row">${e.Player ?? ''}</div>
+        <div class="sr-row">${linkCell(e["Player Link"] ?? '')}</div>
+      </div>
+    `;
   });
+
   html += '</div>';
   mount.innerHTML = html;
 }
@@ -254,7 +266,7 @@ async function loadAll(){
   const y = document.getElementById('year');
   if (y) y.textContent = new Date().getFullYear();
 
-  // Fetch CSVs (no-cache to avoid CDN staleness)
+  // Fetch CSVs (no-cache)
   const [srcRes, srTaRes, srFrRes] = await Promise.all([
     fetch(SRC_CSV,  { cache:'no-cache' }),
     fetch(SR_TA_CSV,{ cache:'no-cache' }),
@@ -306,7 +318,7 @@ async function loadAll(){
     srcByCourse.get(course)[mode][rules].push(rowObj);
   });
 
-  // Sort SRC lists fastest → slowest
+  // Sort SRC lists
   for (const course of srcByCourse.keys()){
     ['TA','FR'].forEach(m => ['Restricted','Unrestricted'].forEach(rule => {
       srcByCourse.get(course)[m][rule].sort((a,b) => a._ms - b._ms);
@@ -321,15 +333,20 @@ async function loadAll(){
   const content = document.getElementById('content');
   const nav     = document.getElementById('course-nav');
 
-  // Course ordering
+  // Course ordering and TOC (with legacy divider)
   const courseSet = new Set([...srcByCourse.keys(), ...srTaByCourse.keys(), ...srFrByCourse.keys()]);
   const orderedCourses = COURSE_ORDER.filter(c => courseSet.has(c));
 
-  // TOC: real <a href="#...">Course Name</a>
-  nav.innerHTML = orderedCourses.map(course => {
+  let navHtml = '';
+  orderedCourses.forEach(course => {
     const id = makeAnchorId(course);
-    return `<a href="#${id}">${course}</a>`;
-  }).join("");
+    // Insert 1px divider BEFORE "Fantasy Meadows"
+    if (course === 'Fantasy Meadows'){
+      navHtml += '<div class="legacy-sep" aria-hidden="true"></div>';
+    }
+    navHtml += `<a href="#${id}">${course}</a>`;
+  });
+  nav.innerHTML = navHtml;
 
   const sectionIds = [];
   orderedCourses.forEach(courseName => {
@@ -340,7 +357,7 @@ async function loadAll(){
     const srTaCourse = srTaByCourse.get(courseName) ?? [];
     const srFrCourse = srFrByCourse.get(courseName) ?? [];
 
-    // Section skeleton
+    // Section
     const sec = document.createElement('section');
     sec.className = 'course';
 
