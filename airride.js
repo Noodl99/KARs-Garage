@@ -1,9 +1,8 @@
 
 /* KARs Garage — Air Ride (GitHub Pages-friendly)
+   - Fixes: real <a> for TOC and links, proper script/link tags
    - Sidebar TOC with legacy divider
    - Speedrider strips: aligned grid, compact, sortable horizontally
-   - linkCell() outputs proper <a> with trimmed label
-   - Banner images use relative 'images/...'
 */
 const SRC_CSV  = "https://docs.google.com/spreadsheets/d/e/2PACX-1vRLdSEHHpUNrBHTlJlEZLBJmJpbBuxrnJ4AXQk_vqzhVoyliOzaM-uEAw-WXNskMOhcjZq7HWLctrBN/pub?output=csv";
 const SR_TA_CSV= "https://docs.google.com/spreadsheets/d/e/2PACX-1vRLLtoztu41AtY4reRXwNd00WqxhlFyTbn3RKoBwssrf1fXFGAZxO2b1dB62-0lrUOz4yi1dLuJrmml/pub?gid=1618721256&single=true&output=csv";
@@ -115,7 +114,7 @@ function toMillis(t){
   return Number.POSITIVE_INFINITY;
 }
 
-/* --- SRC tables (unchanged except alt-row color in CSS) --- */
+/* --- SRC tables --- */
 function renderSrcTable(mountId, rows){
   const mount = document.getElementById(mountId); if (!mount) return;
   const COLS = ["Player","Time","Machine","Rider","SRC Link","Video"];
@@ -182,7 +181,7 @@ function renderSpeedriderStrip(mountId, entries){
   const mount = document.getElementById(mountId); if (!mount) return;
   if (!entries || entries.length === 0){ mount.innerHTML = '<p class="muted">No data</p>'; return; }
 
-  // Store state (default: fastest time to the left)
+  // Default: fastest time to the left
   const sorted = entries.slice().sort((a,b) => {
     const ax = (typeof a._sec === 'number' && !isNaN(a._sec)) ? a._sec : Infinity;
     const bx = (typeof b._sec === 'number' && !isNaN(b._sec)) ? b._sec : Infinity;
@@ -190,7 +189,6 @@ function renderSpeedriderStrip(mountId, entries){
   });
   SR_STATE.set(mountId, { entries: sorted, sortKey:'time', dir:'asc' });
 
-  // Build strip
   mount.innerHTML = `
     <div class="sr-strip" data-mount="${mountId}">
       <div class="sr-left">
@@ -204,10 +202,9 @@ function renderSpeedriderStrip(mountId, entries){
     </div>
   `;
 
-  // Initial render of record columns
   paintSrRecords(mountId);
 
-  // Sorting handlers (click to sort by Machine/Rider/Player; Time toggles desc/asc)
+  // Sorting handlers
   const strip = mount.querySelector('.sr-strip');
   strip.querySelectorAll('.sr-left-row').forEach(row => {
     const key = row.getAttribute('data-sort');
@@ -231,7 +228,6 @@ function updateSrSortIndicators(strip, activeKey, dir){
 function sortSr(mountId, key, dir){
   const state = SR_STATE.get(mountId);
   const entries = state.entries.slice();
-
   const cmpStr = (a,b) => a.localeCompare(b, undefined, { numeric:true, sensitivity:'base' });
   let cmp;
   switch (key){
@@ -251,11 +247,9 @@ function sortSr(mountId, key, dir){
 }
 
 function paintSrRecords(mountId){
-  const mount = document.querySelector(`[data-mount="${mountId}"]`);
-  const list = mount.querySelector('.sr-records');
+  const strip = document.querySelector(`[data-mount="${mountId}"]`);
+  const list = strip.querySelector('.sr-records');
   const { entries } = SR_STATE.get(mountId);
-
-  // Build columns; mark first/last for rounded edges
   list.innerHTML = entries.map((e, i) => {
     const cls = (i === 0) ? 'sr-col first' : (i === entries.length - 1 ? 'sr-col last' : 'sr-col');
     return `
@@ -296,7 +290,6 @@ function buildSrIndex(rows){
     if (!byCourse.has(course)) byCourse.set(course, []);
     byCourse.get(course).push(entry);
   });
-  // default sort fastest → slowest inside each course (used later)
   byCourse.forEach(arr => {
     arr.sort((a,b) => {
       const ax = (typeof a._sec === 'number' && !isNaN(a._sec)) ? a._sec : Infinity;
@@ -379,14 +372,13 @@ async function loadAll(){
   const content = document.getElementById('content');
   const nav     = document.getElementById('course-nav');
 
-  // Course ordering and TOC (with legacy divider)
+  // Course ordering + TOC (with legacy divider)
   const courseSet = new Set([...srcByCourse.keys(), ...srTaByCourse.keys(), ...srFrByCourse.keys()]);
   const orderedCourses = COURSE_ORDER.filter(c => courseSet.has(c));
 
   let navHtml = '';
   orderedCourses.forEach(course => {
     const id = makeAnchorId(course);
-    // Insert 1px divider BEFORE "Fantasy Meadows"
     if (course === 'Fantasy Meadows'){
       navHtml += '<div class="legacy-sep" aria-hidden="true"></div>';
     }
@@ -444,7 +436,7 @@ async function loadAll(){
       <hr class="section-divider" />
     `;
 
-    // Inject banner image
+    // Inject banner image (actual <img> tag)
     const fig = sec.querySelector('.banner-wrap');
     if (bannerPath) {
       const img = document.createElement('img');
@@ -455,13 +447,13 @@ async function loadAll(){
     }
     content.appendChild(sec);
 
-    // Render tables
+    // Render SRC tables
     renderSrcTable(`${id}-ta-r`, srcCourse.TA.Restricted);
     renderSrcTable(`${id}-ta-u`, srcCourse.TA.Unrestricted);
     renderSrcTable(`${id}-fr-r`, srcCourse.FR.Restricted);
     renderSrcTable(`${id}-fr-u`, srcCourse.FR.Unrestricted);
 
-    // Speedrider strips (sortable)
+    // Render Speedrider strips (sortable)
     renderSpeedriderStrip(`${id}-sr-ta`, srTaCourse);
     renderSpeedriderStrip(`${id}-sr-fr`, srFrCourse);
   });
@@ -495,3 +487,4 @@ function setupScrollSpy(sectionIds){
 }
 
 document.addEventListener('DOMContentLoaded', loadAll);
+``
