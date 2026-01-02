@@ -3,60 +3,48 @@
 <html lang="en">
 <head>
   <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>KARs Garage — Air Ride</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
 
   <!-- Favicon -->
-  <link rel="icon" type="image/png" href="images/kars-icon.png" />
+  <link rel="icon" href="icons/garage-icon-white.png" type="image/png" />
 
   <!-- Styles -->
-  <link rel="stylesheet" href="style.css" />
+  <link rel="stylesheet" href="style.css?v=11" />
 </head>
 <body>
   <!-- Fixed top bar -->
-  <header class="topbar fixed" role="banner">
+  <header class="topbar fixed">
     <div class="container bar-inner">
-      <img src="images/kars-icon.png" alt="" class="brand-logo-img" aria-hidden="true" />
-      <strong class="brand-name">KARs Garage</strong>
-      <nav class="site-nav" aria-label="Main">
+      <img class="brand-logo-img" src="icons/garage-icon-white.png" alt="KARs Garage icon" />
+      <div class="brand-name">KARs Garage</div>
+      <nav class="site-nav" aria-label="Primary">
         <a href="./">Home</a>
-        <a href="air-ride.html">Air Ride</a>
+        <a href="air-ride.html" class="active">Air Ride</a>
       </nav>
     </div>
   </header>
 
-  <!-- Page header -->
-  <div class="container">
-    <header class="site-header">
-      <h1 class="brand">AIR RIDE</h1>
-      <p class="tagline">
-        Updates daily at 12am, 6am, 12pm, and 6pm EST.
-        Data pulled from
-        <a href="https://www.speedrun.com/kars" target="_blank" rel="noopener noreferrer">speedrun.com/kars</a>
-        and
-        <a href="https://speedrider.coresv.net/?lang=en" target="_blank" rel="noopener noreferrer">speedrider.coresv.net</a>.
-      </p>
-    </header>
-  </div>
-
-  <hr class="accent--fullbleed" />
+  <!-- Page header + cadence + full-bleed underline -->
+  <section class="container site-header" aria-label="Page header">
+    <h1 class="brand">AIR RIDE</h1>
+    <p class="tagline">Updates daily at 12am, 6am, 12pm, and 6pm EST</p>
+  </section>
+  <hr class="accent--fullbleed" aria-hidden="true" />
 
   <!-- Layout -->
-  <div class="container layout">
-    <aside class="sidebar">
-      <nav id="course-nav" aria-label="Courses"></nav>
+  <main class="container layout">
+    <aside class="sidebar" aria-label="Courses">
+      <nav id="course-nav"></nav>
     </aside>
-    <section id="content" aria-label="Course sections"></section>
-  </div>
+    <section id="content"></section>
+  </main>
 
-  <footer class="site-footer" role="contentinfo">
-    <div class="container">
-      <span>© <span id="year"></span> KARs Garage • Air Ride</span>
-    </div>
+  <footer class="site-footer">
+    <div class="container">© <span id="year"></span> KARs Garage • Air Ride</div>
   </footer>
 
-  <!-- Scripts (load helpers first, then page logic) -->
-  <script src="script.js"></script>
-  <script src="airride.js"></script>
+  <!-- Script -->
+  <script src="airride.js?v=11"></script>
 </body>
 </html>
