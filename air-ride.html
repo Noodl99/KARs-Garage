@@ -1,0 +1,58 @@
+
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>KARs Garage — Air Ride</title>
+  <link rel="icon" href="images/kars-icon.png" />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <!-- Fixed top bar -->
+  <header class="topbar fixed">
+    <div class="container bar-inner">
+      <img class="brand-logo-img" src="images/kars-icon.png" alt="" />
+      <strong class="brand-name">KARs Garage</strong>
+      <nav class="site-nav" aria-label="Main">
+        <a href="./">Home</a>
+        <a href="air-ride.html">Air Ride</a>
+      </nav>
+    </div>
+  </header>
+
+  <!-- Page header -->
+  <div class="container">
+    <header class="site-header">
+      <h1 class="brand">AIR RIDE</h1>
+      <p class="tagline">
+        Updates daily at 12am, 6am, 12pm, and 6pm EST.
+        Data pulled from
+        <a href="https://www.speedrun.com/kars" target="_blank" rel="noopener noreferrer">speedrun.com/kars</a>
+        and
+        <a href="https://speedrider.coresv.net/?lang=en" target="_blank" rel="noopener noreferrer">speedrider.coresv.net</a>.
+      </p>
+    </header>
+  </div>
+
+  <hr class="accent--fullbleed" />
+
+  <!-- Layout -->
+  <div class="container layout">
+    <aside class="sidebar">
+      <nav id="course-nav" aria-label="Courses"></nav>
+    </aside>
+    <section id="content" aria-label="Course sections"></section>
+  </div>
+
+  <footer class="site-footer">
+    <div class="container">
+      <span>© <span id="year"></span> KARs Garage • Air Ride</span>
+    </div>
+  </footer>
+
+  <!-- Load JS last -->
+  <script src="script.js"></script>
+  <script src="airride.js"></script>
+</body>
+</html>

@@ -1,0 +1,212 @@
+
+:root{
+  --bg:#ffffff; --text:#000000; --muted:#333333;
+  --panel:#f7f7f7; --border:#e5e5e5;
+  --accent:#ff5252;
+  --link:#ff5252; --link-hover:#d60000;
+  --maxw:1440px;
+  --container-pad:24px;
+  --topbar-h:56px;
+
+  /* Speedrider tuning (smaller, less crowded) */
+  --sr-left-w:140px;
+  --sr-col-w:148px;
+  --sr-row-pad:2px;
+  --sr-font:12px;          /* requested 12px */
+  --sr-line:1.25;
+}
+
+html { scroll-padding-top: calc(var(--topbar-h) + 12px); }
+*{box-sizing:border-box}
+html,body{height:100%}
+body{
+  margin:0; color:var(--text); background:var(--bg);
+  font-family:"Google Sans","Avenir Next","Metropolis",Inter,system-ui,-apple-system,Segoe UI,Roboto,"Helvetica Neue",Arial,sans-serif;
+  line-height:1.45;
+  padding-top:var(--topbar-h);
+}
+.container{max-width:var(--maxw); margin:0 auto; padding:0 var(--container-pad)}
+
+/* ===== Fixed top bar ===== */
+.topbar.fixed{position:fixed; top:0; left:0; right:0; z-index:1000; background:#000; color:#fff; height:var(--topbar-h)}
+.bar-inner{display:flex; align-items:center; gap:12px; height:var(--topbar-h)}
+.brand-logo-img{width:24px; height:24px}
+.brand-name{font-weight:700}
+.site-nav a{color:#fff; text-decoration:none; margin-left:16px; padding:8px 4px; border-bottom:2px solid transparent}
+.site-nav a.active{border-bottom-color:var(--accent)}
+.site-nav a:hover{color:#ddd}
+
+/* ===== Footer ===== */
+.site-footer{border-top:1px solid var(--border); padding:12px 0; color:var(--muted)}
+#year{white-space:nowrap}
+
+/* ===== Home hero ===== */
+.hero{position:relative; min-height:280px; display:flex; align-items:center; justify-content:center}
+.hero--home{width:100vw; margin-left:calc((100vw - 100%) / -2); margin-right:calc((100vw - 100%) / -2)}
+.hero-bg{position:absolute; inset:0; background:url('images/kars-garage-hero.png') center top / cover no-repeat}
+.hero-bg--top{background-position:center top}
+.hero-content{position:relative; z-index:1}
+.hero-content--center{text-align:center}
+.hero-title--76{margin:48px 0; font-size:76px; font-weight:800; color:#fff; text-shadow:0 2px 8px rgba(0,0,0,.4)}
+
+/* ===== Home tiles ===== */
+.tile-grid{display:grid; gap:18px; margin:24px auto; grid-template-columns:repeat(2,minmax(0,1fr)); max-width:var(--maxw); padding:0 var(--container-pad)}
+.tile-grid--shrink{transform:scale(.75); transform-origin:top center}
+.tile{display:block; border:none; border-radius:16px; text-decoration:none; position:relative; overflow:hidden; box-shadow:none}
+.tile-airride{background:url('images/air-ride.png') center/cover no-repeat; aspect-ratio:17/9}
+.tile-topride{background:url('images/top-ride.png') center/cover no-repeat; aspect-ratio:17/9}
+.tile-citytrial{background:url('images/city-trial.png') center/cover no-repeat; aspect-ratio:17/9}
+.tile-roadtrip{background:url('images/road-trip.png') center/cover no-repeat; aspect-ratio:2.3948/1}
+@media (max-width:900px){.tile-grid{grid-template-columns:1fr}}
+
+/* ===== Air Ride page header ===== */
+.site-header{padding:16px 0 8px}
+.site-header .brand{margin:0; font-weight:800; font-size:2rem}
+.site-header .tagline{margin:6px 0 10px; color:var(--muted)}
+.site-header .tagline a{color:var(--link); text-decoration:none}
+.site-header .tagline a:hover{color:var(--link-hover); text-decoration:underline}
+
+/* Full-bleed underline below cadence */
+.accent--fullbleed{
+  width:100vw; height:4px; background:var(--accent); border:none; margin:0;
+  margin-left:calc((100vw - 100%) / -2);
+  margin-right:calc((100vw - 100%) / -2);
+}
+
+/* ===== Air Ride layout (TOC + content) ===== */
+.layout{display:grid; grid-template-columns:150px 1fr; gap:32px}
+@media (max-width:900px){.layout{grid-template-columns:1fr}}
+.sidebar{padding:8px 0; margin-left:-32px}
+#course-nav{position:sticky; top:calc(var(--topbar-h) + 12px)}
+#course-nav a{display:block; padding:6px 2px; color:var(--text); text-decoration:underline; text-decoration-color:transparent; border-bottom:2px solid transparent}
+#course-nav a:hover{border-bottom-color:#999}
+#course-nav a.active{border-bottom-color:var(--accent)}
+/* Legacy divider (1px #c7c7c7) */
+#course-nav .legacy-sep{height:1px; background:#c7c7c7; margin:6px 0}
+
+/* Course sections */
+.course{margin:12px 0 32px}
+.anchor{position:relative; top:-80px}
+.section-divider{border:none; height:2px; background:#eee; margin:18px 0}
+
+/* ===== Course banner ===== */
+.banner-wrap{position:relative; width:100%; height:100px; margin:8px 0 12px 0}
+.course-banner{width:100%; height:100%; object-fit:cover; border:none; border-radius:8px}
+.banner-title{
+  position:absolute; left:16px; top:50%; transform:translateY(-50%);
+  color:#fff; font-weight:800; font-size:60px; letter-spacing:.02em;
+  text-shadow:0 2px 6px rgba(0,0,0,.55);
+}
+
+/* ===== SRC tables ===== */
+.tables-grid{display:grid; gap:12px; margin-top:12px; grid-template-columns:1fr 1fr}
+.table-card{background:none; border:none; padding:0}
+.table-card h3{margin:0 0 10px; font-size:18px; font-weight:700}
+
+.table{
+  width:100%;
+  max-width:100%;
+  border-collapse:collapse;
+  table-layout:fixed;
+  /* 1px #c7c7c7 border and rounded corners */
+  border:1px solid #c7c7c7; border-radius:8px; overflow:hidden;
+}
+.table th, .table td{
+  border-right:1px solid var(--border);
+  font-size:12px; white-space:nowrap;
+}
+.table th{
+  background:#000; color:#fff; text-align:left; font-weight:700;
+  line-height:27px; padding:4px 10px; cursor:pointer; position:relative;
+}
+.table th .sort-ind{position:absolute; right:8px; top:50%; transform:translateY(-50%); font-size:.9rem; color:#fff; opacity:.8}
+.table td{background:#fff; color:var(--text); line-height:22px; padding:4px 10px}
+
+/* Alternate row color #f3f3f3 */
+.table tbody tr:nth-child(odd) td{background:#fff}
+.table tbody tr:nth-child(even) td{background:#f3f3f3}
+
+.table thead tr th:last-child, .table tbody tr td:last-child{border-right:none}
+
+/* Empty state cell (centered, baseline-aligned message) */
+.table td.empty{ text-align:center; padding:12px 10px; }
+.table td.empty .empty-msg{
+  display:inline-flex; align-items:baseline; gap:6px;
+  line-height:22px;
+}
+.table td.empty a{ color:var(--link); text-decoration:none; }
+.table td.empty a:hover{ color:var(--link-hover); text-decoration:underline; }
+
+/* Core columns: Player / Time / Machine / Rider */
+.table td:nth-child(1), .table td:nth-child(3), .table td:nth-child(4){
+  overflow:visible; text-overflow:clip;
+}
+/* Time column: hide slight overflow */
+.table td.td--time{overflow:hidden; text-overflow:clip}
+
+/* Link columns (5–6): fixed width + ellipsis */
+.table th:nth-child(5), .table td:nth-child(5),
+.table th:nth-child(6), .table td:nth-child(6){ width:240px; max-width:240px; }
+.table td:nth-child(5), .table td:nth-child(6){ overflow:hidden; text-overflow:ellipsis; }
+.table a{
+  color:var(--link); text-decoration:none; display:inline-block;
+  max-width:100%; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
+}
+.table a:hover{color:var(--link-hover); text-decoration:underline}
+
+/* ===== Speedrider strips (aligned grid, compact, sortable) ===== */
+.table-card.wide{grid-column:1/-1}
+
+/* Whole strip: left header + record columns with zero gap */
+.sr-strip{display:flex; gap:0; overflow-x:auto; padding-bottom:8px}
+
+/* Left labels column — smaller font, tight line-height, rounded */
+.sr-left{
+  flex:0 0 var(--sr-left-w);
+  display:grid; grid-template-rows:repeat(5,min-content); row-gap:0;
+  background:#000; color:#fff; border-radius:12px;
+  padding:8px;
+  font-size:var(--sr-font); line-height:var(--sr-line);
+}
+.sr-left .sr-left-row{
+  margin:0; padding:var(--sr-row-pad) 0;
+  font-weight:700; display:flex; align-items:center; justify-content:space-between;
+  cursor:pointer; user-select:none; line-height:var(--sr-line);
+}
+.sr-left .sr-left-row .sr-sort-ind{margin-left:8px; opacity:.85;}
+
+/* Record columns — compact width, squared edges in-between */
+.sr-records{display:flex; gap:0;}
+.sr-col{
+  flex:0 0 var(--sr-col-w);
+  display:grid; grid-template-rows:repeat(5,min-content); row-gap:0;
+  background:#fff;
+  border-left:1px solid var(--border);
+  padding:8px;
+}
+.sr-col.first{border-top-left-radius:12px; border-bottom-left-radius:12px;}
+.sr-col.last{border-top-right-radius:12px; border-bottom-right-radius:12px;}
+
+/* Inner content — equal row heights to match header */
+.sr-time{
+  font-weight:700; font-size:var(--sr-font); margin:0;
+  padding:var(--sr-row-pad) 0 0 0; /* removed red accent bar */
+  line-height:var(--sr-line);
+}
+.sr-row{
+  font-size:var(--sr-font); margin:0; padding:var(--sr-row-pad) 0;
+  white-space:normal; overflow:hidden; text-overflow:ellipsis; line-height:var(--sr-line);
+  display:inline-flex; align-items:center;
+}
+.sr-row a{
+  color:var(--link); text-decoration:none; display:inline-block;
+  max-width:100%; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; line-height:var(--sr-line);
+}
+.sr-row a:hover{color:var(--link-hover); text-decoration:underline}
+
+/* Alternating shading of record columns to echo tables */
+.sr-col:nth-child(even){background:#f3f3f3}
+
+/* Utility */
+.muted{color:#777}
+``
