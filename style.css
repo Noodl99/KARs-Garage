@@ -7,15 +7,8 @@
   --maxw:1440px;
   --container-pad:24px;
   --topbar-h:56px;
-
-  /* Speedrider tuning (smaller, less crowded) */
-  --sr-left-w:140px;
-  --sr-col-w:148px;
-  --sr-row-pad:2px;
-  --sr-font:12px;          /* ← requested 12px */
-  --sr-line:1.25;
+  --tile-scale:.75;
 }
-
 html { scroll-padding-top: calc(var(--topbar-h) + 12px); }
 *{box-sizing:border-box}
 html,body{height:100%}
@@ -40,7 +33,7 @@ body{
 .site-footer{border-top:1px solid var(--border); padding:12px 0; color:var(--muted)}
 #year{white-space:nowrap}
 
-/* ===== Home hero ===== */
+/* ===== Home hero (reference for index.html) ===== */
 .hero{position:relative; min-height:280px; display:flex; align-items:center; justify-content:center}
 .hero--home{width:100vw; margin-left:calc((100vw - 100%) / -2); margin-right:calc((100vw - 100%) / -2)}
 .hero-bg{position:absolute; inset:0; background:url('images/kars-garage-hero.png') center top / cover no-repeat}
@@ -49,24 +42,10 @@ body{
 .hero-content--center{text-align:center}
 .hero-title--76{margin:48px 0; font-size:76px; font-weight:800; color:#fff; text-shadow:0 2px 8px rgba(0,0,0,.4)}
 
-/* ===== Home tiles ===== */
-.tile-grid{display:grid; gap:18px; margin:24px auto; grid-template-columns:repeat(2,minmax(0,1fr)); max-width:var(--maxw); padding:0 var(--container-pad)}
-.tile-grid--shrink{transform:scale(.75); transform-origin:top center}
-.tile{display:block; border:none; border-radius:16px; text-decoration:none; position:relative; overflow:hidden; box-shadow:none}
-.tile-airride{background:url('images/air-ride.png') center/cover no-repeat; aspect-ratio:17/9}
-.tile-topride{background:url('images/top-ride.png') center/cover no-repeat; aspect-ratio:17/9}
-.tile-citytrial{background:url('images/city-trial.png') center/cover no-repeat; aspect-ratio:17/9}
-.tile-roadtrip{background:url('images/road-trip.png') center/cover no-repeat; aspect-ratio:2.3948/1}
-@media (max-width:900px){.tile-grid{grid-template-columns:1fr}}
-
 /* ===== Air Ride page header ===== */
 .site-header{padding:16px 0 8px}
 .site-header .brand{margin:0; font-weight:800; font-size:2rem}
 .site-header .tagline{margin:6px 0 10px; color:var(--muted)}
-.site-header .tagline a{color:var(--link); text-decoration:none}
-.site-header .tagline a:hover{color:var(--link-hover); text-decoration:underline}
-
-/* Full-bleed underline below cadence */
 .accent--fullbleed{
   width:100vw; height:4px; background:var(--accent); border:none; margin:0;
   margin-left:calc((100vw - 100%) / -2);
@@ -108,8 +87,7 @@ body{
   max-width:100%;
   border-collapse:collapse;
   table-layout:fixed;
-  /* Requested: 1px #c7c7c7 border and rounded corners */
-  border:1px solid #c7c7c7; border-radius:8px; overflow:hidden;
+  border:1px solid var(--border); border-radius:8px; overflow:hidden;
 }
 .table th, .table td{
   border-right:1px solid var(--border);
@@ -118,6 +96,7 @@ body{
 .table th{
   background:#000; color:#fff; text-align:left; font-weight:700;
   line-height:27px; padding:4px 10px; cursor:pointer; position:relative;
+  border-top-left-radius:8px; border-top-right-radius:8px;
 }
 .table th .sort-ind{position:absolute; right:8px; top:50%; transform:translateY(-50%); font-size:.9rem; color:#fff; opacity:.8}
 .table td{background:#fff; color:var(--text); line-height:22px; padding:4px 10px}
@@ -127,15 +106,6 @@ body{
 .table tbody tr:nth-child(even) td{background:#f3f3f3}
 
 .table thead tr th:last-child, .table tbody tr td:last-child{border-right:none}
-
-/* Empty state cell (centered, baseline-aligned message) */
-.table td.empty{ text-align:center; padding:12px 10px; }
-.table td.empty .empty-msg{
-  display:inline-flex; align-items:baseline; gap:6px;
-  line-height:22px;
-}
-.table td.empty a{ color:var(--link); text-decoration:none; }
-.table td.empty a:hover{ color:var(--link-hover); text-decoration:underline; }
 
 /* Core columns: Player / Time / Machine / Rider */
 .table td:nth-child(1), .table td:nth-child(3), .table td:nth-child(4){
@@ -156,55 +126,36 @@ body{
 
 /* ===== Speedrider strips (aligned grid, compact, sortable) ===== */
 .table-card.wide{grid-column:1/-1}
-
-/* Whole strip: left header + record columns with zero gap */
 .sr-strip{display:flex; gap:0; overflow-x:auto; padding-bottom:8px}
-
-/* Left labels column — smaller font, tight line-height, rounded */
 .sr-left{
-  flex:0 0 var(--sr-left-w);
-  display:grid; grid-template-rows:repeat(5,min-content); row-gap:0;
+  flex:0 0 160px;
+  display:grid; grid-template-rows:repeat(5,auto); row-gap:0;
   background:#000; color:#fff; border-radius:12px;
-  padding:8px;
-  font-size:var(--sr-font); line-height:var(--sr-line);
+  padding:10px;
+  font-size:.95rem; line-height:1.2;
 }
 .sr-left .sr-left-row{
-  margin:0; padding:var(--sr-row-pad) 0;
-  font-weight:700; display:flex; align-items:center; justify-content:space-between;
-  cursor:pointer; user-select:none; line-height:var(--sr-line);
+  margin:4px 0; font-weight:700; display:flex; align-items:center; justify-content:space-between;
+  cursor:pointer; user-select:none;
 }
 .sr-left .sr-left-row .sr-sort-ind{margin-left:8px; opacity:.85;}
-
-/* Record columns — compact width, squared edges in-between */
 .sr-records{display:flex; gap:0;}
 .sr-col{
-  flex:0 0 var(--sr-col-w);
-  display:grid; grid-template-rows:repeat(5,min-content); row-gap:0;
+  flex:0 0 160px;
+  display:grid; grid-template-rows:repeat(5,auto); row-gap:0;
   background:#fff;
   border-left:1px solid var(--border);
-  padding:8px;
+  padding:10px;
 }
 .sr-col.first{border-top-left-radius:12px; border-bottom-left-radius:12px;}
 .sr-col.last{border-top-right-radius:12px; border-bottom-right-radius:12px;}
-
-/* Inner content — equal row heights to match header */
 .sr-time{
-  font-weight:700; font-size:var(--sr-font); margin:0;
-  padding:var(--sr-row-pad) 0 0 8px; border-left:4px solid var(--accent);
-  line-height:var(--sr-line);
+  font-weight:700; font-size:1rem; margin:0 0 8px;
+  border-left:4px solid var(--accent); padding-left:8px;
 }
-.sr-row{
-  font-size:var(--sr-font); margin:0; padding:var(--sr-row-pad) 0;
-  white-space:normal; overflow:hidden; text-overflow:ellipsis; line-height:var(--sr-line);
-  display:inline-flex; align-items:center;
-}
-.sr-row a{
-  color:var(--link); text-decoration:none; display:inline-block;
-  max-width:100%; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; line-height:var(--sr-line);
-}
+.sr-row{font-size:.9rem; margin:4px 0; white-space:normal; overflow:visible; text-overflow:clip;}
+.sr-row a{color:var(--link); text-decoration:none; display:inline-block; max-width:100%; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;}
 .sr-row a:hover{color:var(--link-hover); text-decoration:underline}
-
-/* Alternating shading of record columns to echo tables */
 .sr-col:nth-child(even){background:#f3f3f3}
 
 /* Utility */

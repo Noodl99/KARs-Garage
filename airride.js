@@ -1,10 +1,9 @@
 
 /* KARs Garage — Air Ride
-   - Read column C "Subcategory" and classify rules correctly (UNRESTRICTED first)
-   - Sidebar TOC with legacy divider (before Fantasy Meadows)
-   - Proper <a> anchors and trimmed labels
+   - Sidebar TOC with legacy divider
+   - Proper <a> anchors
    - Speedrider: compact, aligned, sortable horizontally (◀ ▶ arrows)
-   - SRC tables: empty state links to computed category URL + group &x param
+   - SRC tables: empty state links to computed category URL
 */
 const SRC_CSV  = "https://docs.google.com/spreadsheets/d/e/2PACX-1vRLdSEHHpUNrBHTlJlEZLBJmJpbBuxrnJ4AXQk_vqzhVoyliOzaM-uEAw-WXNskMOhcjZq7HWLctrBN/pub?output=csv";
 const SR_TA_CSV= "https://docs.google.com/spreadsheets/d/e/2PACX-1vRLLtoztu41AtY4reRXwNd00WqxhlFyTbn3RKoBwssrf1fXFGAZxO2b1dB62-0lrUOz4yi1dLuJrmml/pub?gid=1618721256&single=true&output=csv";
@@ -12,10 +11,9 @@ const SR_FR_CSV= "https://docs.google.com/spreadsheets/d/e/2PACX-1vRLLtoztu41AtY
 
 const TA_LABEL   = /time\s*attack/i;
 const FR_LABEL   = /free\s*run/i;
-const RESTRICTED = /(?:^|[^a-z])restricted(?:$|[^a-z])/i;     // word-boundary-ish
-const UNRESTRICTED = /(?:^|[^a-z])unrestricted(?:$|[^a-z])/i;
+const RESTRICTED = /restricted/i;
+const UNRESTRICTED = /unrestricted/i;
 
-/* Course order for TOC */
 const COURSE_ORDER = [
   "Floria Fields","Waveflow Waters","Airtopia Ruins","Crystalline Fissure","Steamgust Forge",
   "Cavernous Corners","Cyberion Highway","Mount Amberfalls","Galactic Nova","Fantasy Meadows",
@@ -23,7 +21,6 @@ const COURSE_ORDER = [
   "Machine Passage","Checker Knights","Nebula Belt"
 ];
 
-/* Banner paths (relative, case-sensitive) */
 const BANNERS = {
   "Airtopia Ruins": "images/airtopia_banner.webp",
   "Beanstalk Park": "images/beanstalk_banner.webp",
@@ -85,25 +82,15 @@ function linkCell(url){
   return `${u}${label}</a>`;
 }
 
-/* Build SRC category link for empty tables + group code from your screenshots */
+/* Build SRC category link for empty tables (pattern from your SRC URLs.txt) */
 function slugifyCourse(name){
   return String(name).trim().toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-+|-+$/g,'');
 }
-const SRC_GROUP_X = {
-  "TA-Restricted":    "l_dy123jpd-z27qqvgk-ylq4rkmn.le2r4npl-kn0e5z38.192m988q",
-  "TA-Unrestricted":  "l_dy123jpd-z27qqvgk-ylq4rkmn.q5vn54rl-kn0e5z38.1pyp0d81",
-  "FR-Restricted":    "l_dy123jpd-zdnjjyqk-gmxx7rj8.qyzpy5d1-ql6964jl.q75j4rd1",
-  "FR-Unrestricted":  "l_dy123jpd-zdnjjyqk-gmxx7rj8.qyzpy5d1-ql6964jl.q75j4rd1"
-  /* If any group codes vary per course, paste those here and I'll split by course+rules. */
-};
 function buildSrcCategoryUrl(course, mode, rules){
   const courseSlug = slugifyCourse(course);
   const modeSlug   = (mode === 'TA') ? 'time-attack' : 'free-run';
-  const ruleSlug   = String(rules).trim().toLowerCase(); // restricted | unrestricted
-  const groupKey   = `${mode}-${rules}`;
-  const groupX     = SRC_GROUP_X[groupKey] || "";
-  const base = `https://www.speedrun.com/kars?h=levels-air-ride-${modeSlug}-${courseSlug}-${ruleSlug}`;
-  return groupX ? `${base}&x=${groupX}` : base;
+  const ruleSlug   = String(rules).trim().toLowerCase(); // 'restricted' | 'unrestricted'
+  return `https://www.speedrun.com/kars?h=levels-air-ride-${modeSlug}-${courseSlug}-${ruleSlug}`;
 }
 
 /* Parse time to ms for sorting */
@@ -158,10 +145,8 @@ function renderSrcTable(mountId, rows, ctx){
   } else {
     const url = buildSrcCategoryUrl(ctx.course, ctx.mode, ctx.rules);
     html += `<tr><td class="empty" colspan="${COLS.length}">
-      <span class="empty-msg">
-        <span>No runs submitted for this category.</span>
-        ${url}Be the first!</a>
-      </span>
+      No runs submitted for this category.
+      ${url}Be the first!</a>
     </td></tr>`;
   }
   html += '</tbody></table>';
@@ -222,7 +207,7 @@ function renderSpeedriderStrip(mountId, entries){
 
   paintSrRecords(mountId);
 
-  // Sorting handlers (horizontal sort with ◀ ▶ arrows)
+  // Sorting handlers
   const strip = mount.querySelector('.sr-strip');
   strip.querySelectorAll('.sr-left-row').forEach(row => {
     const key = row.getAttribute('data-sort');
@@ -240,7 +225,7 @@ function renderSpeedriderStrip(mountId, entries){
 function updateSrSortIndicators(strip, activeKey, dir){
   strip.querySelectorAll('.sr-left-row .sr-sort-ind').forEach(ind => ind.textContent = '');
   const row = strip.querySelector(`.sr-left-row[data-sort="${activeKey}"] .sr-sort-ind`);
-  if (row) row.textContent = dir === 'asc' ? '◀' : '▶';
+  if (row) row.textContent = dir === 'asc' ? '◀' : '▶'; // left/right arrows for horizontal sort
 }
 
 function sortSr(mountId, key, dir){
@@ -308,6 +293,7 @@ function buildSrIndex(rows){
     if (!byCourse.has(course)) byCourse.set(course, []);
     byCourse.get(course).push(entry);
   });
+  // default sort fastest → slowest inside each course
   byCourse.forEach(arr => {
     arr.sort((a,b) => {
       const ax = (typeof a._sec === 'number' && !isNaN(a._sec)) ? a._sec : Infinity;
@@ -333,39 +319,33 @@ async function loadAll(){
   const srTaRows = parseCSV(srTaText);
   const srFrRows = parseCSV(srFrText);
 
-  // Parse headers (note: Subcategory is column C in your CSV)
+  // Parse headers
   const srcHeader = srcRows[0].map(h => String(h).trim());
   const SRC_IDX = {
-    Category:    idxOf(srcHeader,"Category"),
-    Subcategory: idxOf(srcHeader,"Subcategory"),   // ← critical: read column C
-    Machine:     idxOf(srcHeader,"Machine"),
-    Rider:       idxOf(srcHeader,"Rider"),
-    Player:      idxOf(srcHeader,"Player"),
-    Time:        idxOf(srcHeader,"Time"),
-    Link:        idxOf(srcHeader,"Link"),
-    Video:       idxOf(srcHeader,"Video")
+    Category:   idxOf(srcHeader,"Category"),
+    Subcategory:idxOf(srcHeader,"Subcategory"),
+    Machine:    idxOf(srcHeader,"Machine"),
+    Rider:      idxOf(srcHeader,"Rider"),
+    Player:     idxOf(srcHeader,"Player"),
+    Time:       idxOf(srcHeader,"Time"),
+    Link:       idxOf(srcHeader,"Link"),
+    Video:      idxOf(srcHeader,"Video")
   };
 
   // Bucket SRC by course + mode + rules
   const srcByCourse = new Map();
   srcRows.slice(1).forEach(r => {
     const category = r[SRC_IDX.Category] ?? '';
-    const subcat   = r[SRC_IDX.Subcategory] ?? '';     // column C
+    const subcat   = r[SRC_IDX.Subcategory] ?? '';
     if (!category || !subcat) return;
 
     const mode = TA_LABEL.test(category) ? 'TA' : (FR_LABEL.test(category) ? 'FR' : 'OTHER');
     if (mode === 'OTHER') return;
 
-    // Subcategory is "Course + Ruleset"
-    const parts = String(subcat).trim().replace(/\s*\+$/, '').split(/\s*\+\s*/);
+    const parts = String(subcat ?? '').trim().replace(/\s*\+$/, '').split(/\s*\+\s*/);
     const course = (parts[0] ?? '').trim();
     const rulesText = (parts[1] ?? '').trim() || subcat;
-
-    // IMPORTANT: check UNRESTRICTED first (since it contains 'restricted')
-    let rules = '';
-    if (UNRESTRICTED.test(rulesText)) rules = 'Unrestricted';
-    else if (RESTRICTED.test(rulesText)) rules = 'Restricted';
-
+    const rules = RESTRICTED.test(rulesText) ? 'Restricted' : (UNRESTRICTED.test(rulesText) ? 'Unrestricted' : '');
     if (!course || !rules) return;
 
     const rowObj = {
@@ -473,7 +453,7 @@ async function loadAll(){
     }
     content.appendChild(sec);
 
-    // Render SRC tables (pass context for empty-state link)
+    // Render SRC tables (now pass context for empty-state link)
     renderSrcTable(`${id}-ta-r`, srcCourse.TA.Restricted, { course:courseName, mode:'TA', rules:'Restricted' });
     renderSrcTable(`${id}-ta-u`, srcCourse.TA.Unrestricted, { course:courseName, mode:'TA', rules:'Unrestricted' });
     renderSrcTable(`${id}-fr-r`, srcCourse.FR.Restricted, { course:courseName, mode:'FR', rules:'Restricted' });
