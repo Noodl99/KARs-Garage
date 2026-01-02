@@ -12,7 +12,7 @@
   --sr-left-w:140px;
   --sr-col-w:148px;
   --sr-row-pad:2px;
-  --sr-font:12px;          /* ← requested 12px */
+  --sr-font:12px;          /* requested 12px */
   --sr-line:1.25;
 }
 
@@ -108,7 +108,7 @@ body{
   max-width:100%;
   border-collapse:collapse;
   table-layout:fixed;
-  /* Requested: 1px #c7c7c7 border and rounded corners */
+  /* 1px #c7c7c7 border and rounded corners */
   border:1px solid #c7c7c7; border-radius:8px; overflow:hidden;
 }
 .table th, .table td{
@@ -190,7 +190,7 @@ body{
 /* Inner content — equal row heights to match header */
 .sr-time{
   font-weight:700; font-size:var(--sr-font); margin:0;
-  padding:var(--sr-row-pad) 0 0 8px; border-left:4px solid var(--accent);
+  padding:var(--sr-row-pad) 0 0 0; /* removed red accent bar */
   line-height:var(--sr-line);
 }
 .sr-row{

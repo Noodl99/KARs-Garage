@@ -1,10 +1,9 @@
 
 /* KARs Garage — Air Ride
-   - Read column C "Subcategory" and classify rules correctly (UNRESTRICTED first)
-   - Sidebar TOC with legacy divider (before Fantasy Meadows)
-   - Proper <a> anchors and trimmed labels
-   - Speedrider: compact, aligned, sortable horizontally (◀ ▶ arrows)
-   - SRC tables: empty state links to computed category URL + group &x param
+   - "Be the first!" links: exact URLs by course + mode + ruleset (from SRC URLs.txt)
+   - Speedrider sort triangles hidden until user clicks (like SRC tables)
+   - Red accent before times removed
+   - Correct rules parsing from column C "Subcategory" (check UNRESTRICTED first)
 */
 const SRC_CSV  = "https://docs.google.com/spreadsheets/d/e/2PACX-1vRLdSEHHpUNrBHTlJlEZLBJmJpbBuxrnJ4AXQk_vqzhVoyliOzaM-uEAw-WXNskMOhcjZq7HWLctrBN/pub?output=csv";
 const SR_TA_CSV= "https://docs.google.com/spreadsheets/d/e/2PACX-1vRLLtoztu41AtY4reRXwNd00WqxhlFyTbn3RKoBwssrf1fXFGAZxO2b1dB62-0lrUOz4yi1dLuJrmml/pub?gid=1618721256&single=true&output=csv";
@@ -12,7 +11,7 @@ const SR_FR_CSV= "https://docs.google.com/spreadsheets/d/e/2PACX-1vRLLtoztu41AtY
 
 const TA_LABEL   = /time\s*attack/i;
 const FR_LABEL   = /free\s*run/i;
-const RESTRICTED = /(?:^|[^a-z])restricted(?:$|[^a-z])/i;     // word-boundary-ish
+const RESTRICTED   = /(?:^|[^a-z])restricted(?:$|[^a-z])/i;
 const UNRESTRICTED = /(?:^|[^a-z])unrestricted(?:$|[^a-z])/i;
 
 /* Course order for TOC */
@@ -23,7 +22,7 @@ const COURSE_ORDER = [
   "Machine Passage","Checker Knights","Nebula Belt"
 ];
 
-/* Banner paths (relative, case-sensitive) */
+/* Banners */
 const BANNERS = {
   "Airtopia Ruins": "images/airtopia_banner.webp",
   "Beanstalk Park": "images/beanstalk_banner.webp",
@@ -43,6 +42,95 @@ const BANNERS = {
   "Sky Sands": "images/Sky_Banner.webp",
   "Steamgust Forge": "images/Steamgust_Banner.webp",
   "Waveflow Waters": "images/Waveflow_Banner.webp"
+};
+
+/* --- "Be the first!" exact URLs (from SRC URLs.txt) --- */
+/* These are 1:1 copies, keyed by Course → URL per mode/ruleset. (Thanks for the file!)  [1](https://jrdunn-my.sharepoint.com/personal/victor_jrdunn_com/Documents/Microsoft%20Copilot%20Chat%20Files/SRC%20URLs.txt) */
+const SRC_EMPTY_LINKS = {
+  TA: {
+    Restricted: {
+      "Floria Fields": "https://www.speedrun.com/kars?h=levels-air-ride-time-attack-floria-fields-restricted&x=l_dy123jpd-z27qqvgk-ylq4rkmn.le2r4npl-kn0e5z38.192m988q",
+      "Waveflow Waters":"https://www.speedrun.com/kars?h=levels-air-ride-time-attack-waveflow-waters-restricted&x=l_dy123jpd-z27qqvgk-ylq4rkmn.q5vn54rl-kn0e5z38.192m988q",
+      "Airtopia Ruins":"https://www.speedrun.com/kars?h=levels-air-ride-time-attack-airtopia-ruins-restricted&x=l_dy123jpd-z27qqvgk-ylq4rkmn.lx5p8gj1-kn0e5z38.192m988q",
+      "Crystalline Fissure":"https://www.speedrun.com/kars?h=levels-air-ride-time-attack-crystalline-fissure-restricted&x=l_dy123jpd-z27qqvgk-ylq4rkmn.14oyv9wq-kn0e5z38.192m988q",
+      "Steamgust Forge":"https://www.speedrun.com/kars?h=levels-air-ride-time-attack-steamgust-forge-restricted&x=l_dy123jpd-z27qqvgk-ylq4rkmn.192m95jq-kn0e5z38.192m988q",
+      "Cavernous Corners":"https://www.speedrun.com/kars?h=levels-air-ride-time-attack-cavernous-corners-restricted&x=l_dy123jpd-z27qqvgk-ylq4rkmn.12vdwovq-kn0e5z38.192m988q",
+      "Cyberion Highway":"https://www.speedrun.com/kars?h=levels-air-ride-time-attack-cyberion-highway-restricted&x=l_dy123jpd-z27qqvgk-ylq4rkmn.1pyp04e1-kn0e5z38.192m988q",
+      "Mount Amberfalls":"https://www.speedrun.com/kars?h=levels-air-ride-time-attack-mount-amberfalls-restricted&x=l_dy123jpd-z27qqvgk-ylq4rkmn.qkej499q-kn0e5z38.192m988q",
+      "Galactic Nova":"https://www.speedrun.com/kars?h=levels-air-ride-time-attack-galactic-nova-restricted&x=l_dy123jpd-z27qqvgk-ylq4rkmn.q75j49n1-kn0e5z38.192m988q",
+      "Fantasy Meadows":"https://www.speedrun.com/kars?h=levels-air-ride-time-attack-fantasy-meadows-restricted&x=l_dy123jpd-z27qqvgk-ylq4rkmn.1gn84exl-kn0e5z38.192m988q",
+      "Celestial Valley":"https://www.speedrun.com/kars?h=levels-air-ride-time-attack-celestial-valley-restricted&x=l_dy123jpd-z27qqvgk-ylq4rkmn.qznp5v4q-kn0e5z38.192m988q",
+      "Sky Sands":"https://www.speedrun.com/kars?h=levels-air-ride-time-attack-sky-sands-restricted&x=l_dy123jpd-z27qqvgk-ylq4rkmn.lr3p0j0l-kn0e5z38.192m988q",
+      "Frozen Hillside":"https://www.speedrun.com/kars?h=levels-air-ride-time-attack-frozen-hillside-restricted&x=l_dy123jpd-z27qqvgk-ylq4rkmn.q75j49r1-kn0e5z38.192m988q",
+      "Magma Flows":"https://www.speedrun.com/kars?h=levels-air-ride-time-attack-magma-flows-restricted&x=l_dy123jpd-z27qqvgk-ylq4rkmn.1gn84eol-kn0e5z38.192m988q",
+      "Beanstalk Park":"https://www.speedrun.com/kars?h=levels-air-ride-time-attack-beanstalk-park-restricted&x=l_dy123jpd-z27qqvgk-ylq4rkmn.qznp5vkq-kn0e5z38.192m988q",
+      "Machine Passage":"https://www.speedrun.com/kars?h=levels-air-ride-time-attack-machine-passage-restricted&x=l_dy123jpd-z27qqvgk-ylq4rkmn.lr3p0jwl-kn0e5z38.192m988q",
+      "Checker Knights":"https://www.speedrun.com/kars?h=levels-air-ride-time-attack-checker-knights-restricted&x=l_dy123jpd-z27qqvgk-ylq4rkmn.1dkzyvgl-kn0e5z38.192m988q",
+      "Nebula Belt":"https://www.speedrun.com/kars?h=levels-air-ride-time-attack-nebula-belt-restricted&x=l_dy123jpd-z27qqvgk-ylq4rkmn.q8k6026q-kn0e5z38.192m988q"
+    },
+    Unrestricted: {
+      "Floria Fields":"https://www.speedrun.com/kars?h=levels-air-ride-time-attack-floria-fields-unrestricted&x=l_dy123jpd-z27qqvgk-ylq4rkmn.le2r4npl-kn0e5z38.1pyp0d81",
+      "Waveflow Waters":"https://www.speedrun.com/kars?h=levels-air-ride-time-attack-waveflow-waters-unrestricted&x=l_dy123jpd-z27qqvgk-ylq4rkmn.q5vn54rl-kn0e5z38.1pyp0d81",
+      "Airtopia Ruins":"https://www.speedrun.com/kars?h=levels-air-ride-time-attack-airtopia-ruins-unrestricted&x=l_dy123jpd-z27qqvgk-ylq4rkmn.lx5p8gj1-kn0e5z38.1pyp0d81",
+      "Crystalline Fissure":"https://www.speedrun.com/kars?h=levels-air-ride-time-attack-crystalline-fissure-unrestricted&x=l_dy123jpd-z27qqvgk-ylq4rkmn.14oyv9wq-kn0e5z38.1pyp0d81",
+      "Steamgust Forge":"https://www.speedrun.com/kars?h=levels-air-ride-time-attack-steamgust-forge-unrestricted&x=l_dy123jpd-z27qqvgk-ylq4rkmn.192m95jq-kn0e5z38.1pyp0d81",
+      "Cavernous Corners":"https://www.speedrun.com/kars?h=levels-air-ride-time-attack-cavernous-corners-unrestricted&x=l_dy123jpd-z27qqvgk-ylq4rkmn.12vdwovq-kn0e5z38.1pyp0d81",
+      "Cyberion Highway":"https://www.speedrun.com/kars?h=levels-air-ride-time-attack-cyberion-highway-unrestricted&x=l_dy123jpd-z27qqvgk-ylq4rkmn.1pyp04e1-kn0e5z38.1pyp0d81",
+      "Mount Amberfalls":"https://www.speedrun.com/kars?h=levels-air-ride-time-attack-mount-amberfalls-unrestricted&x=l_dy123jpd-z27qqvgk-ylq4rkmn.qkej499q-kn0e5z38.1pyp0d81",
+      "Galactic Nova":"https://www.speedrun.com/kars?h=levels-air-ride-time-attack-galactic-nova-unrestricted&x=l_dy123jpd-z27qqvgk-ylq4rkmn.q75j49n1-kn0e5z38.1pyp0d81",
+      "Fantasy Meadows":"https://www.speedrun.com/kars?h=levels-air-ride-time-attack-fantasy-meadows-unrestricted&x=l_dy123jpd-z27qqvgk-ylq4rkmn.1gn84exl-kn0e5z38.1pyp0d81",
+      "Celestial Valley":"https://www.speedrun.com/kars?h=levels-air-ride-time-attack-celestial-valley-unrestricted&x=l_dy123jpd-z27qqvgk-ylq4rkmn.qznp5v4q-kn0e5z38.1pyp0d81",
+      "Sky Sands":"https://www.speedrun.com/kars?h=levels-air-ride-time-attack-sky-sands-unrestricted&x=l_dy123jpd-z27qqvgk-ylq4rkmn.lr3p0j0l-kn0e5z38.1pyp0d81",
+      "Frozen Hillside":"https://www.speedrun.com/kars?h=levels-air-ride-time-attack-frozen-hillside-unrestricted&x=l_dy123jpd-z27qqvgk-ylq4rkmn.q75j49r1-kn0e5z38.1pyp0d81",
+      "Magma Flows":"https://www.speedrun.com/kars?h=levels-air-ride-time-attack-magma-flows-unrestricted&x=l_dy123jpd-z27qqvgk-ylq4rkmn.1gn84eol-kn0e5z38.1pyp0d81",
+      "Beanstalk Park":"https://www.speedrun.com/kars?h=levels-air-ride-time-attack-beanstalk-park-unrestricted&x=l_dy123jpd-z27qqvgk-ylq4rkmn.qznp5vkq-kn0e5z38.1pyp0d81",
+      "Machine Passage":"https://www.speedrun.com/kars?h=levels-air-ride-time-attack-machine-passage-unrestricted&x=l_dy123jpd-z27qqvgk-ylq4rkmn.lr3p0jwl-kn0e5z38.1pyp0d81",
+      "Checker Knights":"https://www.speedrun.com/kars?h=levels-air-ride-time-attack-checker-knights-unrestricted&x=l_dy123jpd-z27qqvgk-ylq4rkmn.1dkzyvgl-kn0e5z38.1pyp0d81",
+      "Nebula Belt":"https://www.speedrun.com/kars?h=levels-air-ride-time-attack-nebula-belt-unrestricted&x=l_dy123jpd-z27qqvgk-ylq4rkmn.q8k6026q-kn0e5z38.1pyp0d81"
+    }
+  },
+  FR: {
+    Restricted: {
+      "Floria Fields":"https://www.speedrun.com/kars?h=levels-air-ride-free-run-floria-fields-restricted&x=l_dy123jpd-zdnjjyqk-gnxq7rj8.qyzpy5d1-ql6964jl.qkej4mkq",
+      "Waveflow Waters":"https://www.speedrun.com/kars?h=levels-air-ride-free-run-waveflow-waters-restricted&x=l_dy123jpd-zdnjjyqk-gnxq7rj8.ln8w0dnl-ql6964jl.qkej4mkq",
+      "Airtopia Ruins":"https://www.speedrun.com/kars?h=levels-air-ride-free-run-airtopia-ruins-restricted&x=l_dy123jpd-zdnjjyqk-gnxq7rj8.10vzm0pl-ql6964jl.qkej4mkq",
+      "Crystalline Fissure":"https://www.speedrun.com/kars?h=levels-air-ride-free-run-crystalline-fissure-restricted&x=l_dy123jpd-zdnjjyqk-gnxq7rj8.qj704woq-ql6964jl.qkej4mkq",
+      "Steamgust Forge":"https://www.speedrun.com/kars?h=levels-air-ride-free-run-steamgust-forge-restricted&x=l_dy123jpd-zdnjjyqk-gnxq7rj8.q650xyol-ql6964jl.qkej4mkq",
+      "Cavernous Corners":"https://www.speedrun.com/kars?h=levels-air-ride-free-run-cavernous-corners-restricted&x=l_dy123jpd-zdnjjyqk-gnxq7rj8.lmok4801-ql6964jl.qkej4mkq",
+      "Cyberion Highway":"https://www.speedrun.com/kars?h=levels-air-ride-free-run-cyberion-highway-restricted&x=l_dy123jpd-zdnjjyqk-gnxq7rj8.1w4pde6q-ql6964jl.qkej4mkq",
+      "Mount Amberfalls":"https://www.speedrun.com/kars?h=levels-air-ride-free-run-mount-amberfalls-restricted&x=l_dy123jpd-zdnjjyqk-gnxq7rj8.qoxp3m4q-ql6964jl.qkej4mkq",
+      "Galactic Nova":"https://www.speedrun.com/kars?h=levels-air-ride-free-run-galactic-nova-restricted&x=l_dy123jpd-zdnjjyqk-gnxq7rj8.1398mwy1-ql6964jl.qkej4mkq",
+      "Fantasy Meadows":"https://www.speedrun.com/kars?h=levels-air-ride-free-run-fantasy-meadows-restricted&x=l_dy123jpd-zdnjjyqk-gnxq7rj8.qvvpr6yq-ql6964jl.qkej4mkq",
+      "Celestial Valley":"https://www.speedrun.com/kars?h=levels-air-ride-free-run-celestial-valley-restricted&x=l_dy123jpd-zdnjjyqk-gnxq7rj8.le2r4k6l-ql6964jl.qkej4mkq",
+      "Sky Sands":"https://www.speedrun.com/kars?h=levels-air-ride-free-run-sky-sands-restricted&x=l_dy123jpd-zdnjjyqk-gnxq7rj8.q5vn5ovl-ql6964jl.qkej4mkq",
+      "Frozen Hillside":"https://www.speedrun.com/kars?h=levels-air-ride-free-run-frozen-hillside-restricted&x=l_dy123jpd-zdnjjyqk-gnxq7rj8.lx5p8xg1-ql6964jl.qkej4mkq",
+      "Magma Flows":"https://www.speedrun.com/kars?h=levels-air-ride-free-run-magma-flows-restricted&x=l_dy123jpd-zdnjjyqk-gnxq7rj8.14oyvxkq-ql6964jl.qkej4mkq",
+      "Beanstalk Park":"https://www.speedrun.com/kars?h=levels-air-ride-free-run-beanstalk-park-restricted&x=l_dy123jpd-zdnjjyqk-gnxq7rj8.192m944q-ql6964jl.qkej4mkq",
+      "Machine Passage":"https://www.speedrun.com/kars?h=levels-air-ride-free-run-machine-passage-restricted&x=l_dy123jpd-zdnjjyqk-gnxq7rj8.12vdw52q-ql6964jl.qkej4mkq",
+      "Checker Knights":"https://www.speedrun.com/kars?h=levels-air-ride-free-run-checker-knights-restricted&x=l_dy123jpd-zdnjjyqk-gnxq7rj8.1pyp07n1-ql6964jl.qkej4mkq",
+      "Nebula Belt":"https://www.speedrun.com/kars?h=levels-air-ride-free-run-nebula-belt-restricted&x=l_dy123jpd-zdnjjyqk-gnxq7rj8.qkej4r4q-ql6964jl.qkej4mkq"
+    },
+    Unrestricted: {
+      "Floria Fields":"https://www.speedrun.com/kars?h=levels-air-ride-free-run-floria-fields-unrestricted&x=l_dy123jpd-zdnjjyqk-gnxq7rj8.qyzpy5d1-ql6964jl.q75j4rd1",
+      "Waveflow Waters":"https://www.speedrun.com/kars?h=levels-air-ride-free-run-waveflow-waters-unrestricted&x=l_dy123jpd-zdnjjyqk-gnxq7rj8.ln8w0dnl-ql6964jl.q75j4rd1",
+      "Airtopia Ruins":"https://www.speedrun.com/kars?h=levels-air-ride-free-run-airtopia-ruins-unrestricted&x=l_dy123jpd-zdnjjyqk-gnxq7rj8.10vzm0pl-ql6964jl.q75j4rd1",
+      "Crystalline Fissure":"https://www.speedrun.com/kars?h=levels-air-ride-free-run-crystalline-fissure-unrestricted&x=l_dy123jpd-zdnjjyqk-gnxq7rj8.qj704woq-ql6964jl.q75j4rd1",
+      "Steamgust Forge":"https://www.speedrun.com/kars?h=levels-air-ride-free-run-steamgust-forge-unrestricted&x=l_dy123jpd-zdnjjyqk-gnxq7rj8.q650xyol-ql6964jl.q75j4rd1",
+      "Cavernous Corners":"https://www.speedrun.com/kars?h=levels-air-ride-free-run-cavernous-corners-unrestricted&x=l_dy123jpd-zdnjjyqk-gnxq7rj8.lmok4801-ql6964jl.q75j4rd1",
+      "Cyberion Highway":"https://www.speedrun.com/kars?h=levels-air-ride-free-run-cyberion-highway-unrestricted&x=l_dy123jpd-zdnjjyqk-gnxq7rj8.1w4pde6q-ql6964jl.q75j4rd1",
+      "Mount Amberfalls":"https://www.speedrun.com/kars?h=levels-air-ride-free-run-mount-amberfalls-unrestricted&x=l_dy123jpd-zdnjjyqk-gnxq7rj8.qoxp3m4q-ql6964jl.q75j4rd1",
+      "Galactic Nova":"https://www.speedrun.com/kars?h=levels-air-ride-free-run-galactic-nova-unrestricted&x=l_dy123jpd-zdnjjyqk-gnxq7rj8.1398mwy1-ql6964jl.q75j4rd1",
+      "Fantasy Meadows":"https://www.speedrun.com/kars?h=levels-air-ride-free-run-fantasy-meadows-unrestricted&x=l_dy123jpd-zdnjjyqk-gnxq7rj8.qvvpr6yq-ql6964jl.q75j4rd1",
+      "Celestial Valley":"https://www.speedrun.com/kars?h=levels-air-ride-free-run-celestial-valley-unrestricted&x=l_dy123jpd-zdnjjyqk-gnxq7rj8.le2r4k6l-ql6964jl.q75j4rd1",
+      "Sky Sands":"https://www.speedrun.com/kars?h=levels-air-ride-free-run-sky-sands-unrestricted&x=l_dy123jpd-zdnjjyqk-gnxq7rj8.q5vn5ovl-ql6964jl.q75j4rd1",
+      "Frozen Hillside":"https://www.speedrun.com/kars?h=levels-air-ride-free-run-frozen-hillside-unrestricted&x=l_dy123jpd-zdnjjyqk-gnxq7rj8.lx5p8xg1-ql6964jl.q75j4rd1",
+      "Magma Flows":"https://www.speedrun.com/kars?h=levels-air-ride-free-run-magma-flows-unrestricted&x=l_dy123jpd-zdnjjyqk-gnxq7rj8.14oyvxkq-ql6964jl.q75j4rd1",
+      "Beanstalk Park":"https://www.speedrun.com/kars?h=levels-air-ride-free-run-beanstalk-park-unrestricted&x=l_dy123jpd-zdnjjyqk-gnxq7rj8.192m944q-ql6964jl.q75j4rd1",
+      "Machine Passage":"https://www.speedrun.com/kars?h=levels-air-ride-free-run-machine-passage-unrestricted&x=l_dy123jpd-zdnjjyqk-gnxq7rj8.12vdw52q-ql6964jl.q75j4rd1",
+      "Checker Knights":"https://www.speedrun.com/kars?h=levels-air-ride-free-run-checker-knights-unrestricted&x=l_dy123jpd-zdnjjyqk-gnxq7rj8.1pyp07n1-ql6964jl.q75j4rd1",
+      "Nebula Belt":"https://www.speedrun.com/kars?h=levels-air-ride-free-run-nebula-belt-unrestricted&x=l_dy123jpd-zdnjjyqk-gnxq7rj8.qkej4r4q-ql6964jl.q75j4rd1"
+    }
+  }
 };
 
 /* --- CSV parsing (minimal) --- */
@@ -77,33 +165,18 @@ function makeAnchorId(name){
 function stripPrefix(url){
   return String(url ?? '').replace(/^https?:\/\/(www\.)?/i,'');
 }
-/* Proper clickable anchor with trimmed label */
 function linkCell(url){
   const u = String(url ?? '').trim();
   if (!u) return '';
   const label = stripPrefix(u);
-  return `<a href="${u}" target="_blank" rel="noopener">${label}</a>`;
+  return `${u}${label}</a>`;
 }
 
-/* Build SRC category link for empty tables + group code from your screenshots */
-function slugifyCourse(name){
-  return String(name).trim().toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-+|-+$/g,'');
-}
-const SRC_GROUP_X = {
-  "TA-Restricted":    "l_dy123jpd-z27qqvgk-ylq4rkmn.le2r4npl-kn0e5z38.192m988q",
-  "TA-Unrestricted":  "l_dy123jpd-z27qqvgk-ylq4rkmn.q5vn54rl-kn0e5z38.1pyp0d81",
-  "FR-Restricted":    "l_dy123jpd-zdnjjyqk-gmxx7rj8.qyzpy5d1-ql6964jl.q75j4rd1",
-  "FR-Unrestricted":  "l_dy123jpd-zdnjjyqk-gmxx7rj8.qyzpy5d1-ql6964jl.q75j4rd1"
-  /* If any group codes vary per course, paste those here and I'll split by course+rules. */
-};
+/* Build empty-table link from exact map */
 function buildSrcCategoryUrl(course, mode, rules){
-  const courseSlug = slugifyCourse(course);
-  const modeSlug   = (mode === 'TA') ? 'time-attack' : 'free-run';
-  const ruleSlug   = String(rules).trim().toLowerCase(); // restricted | unrestricted
-  const groupKey   = `${mode}-${rules}`;
-  const groupX     = SRC_GROUP_X[groupKey] || "";
-  const base = `https://www.speedrun.com/kars?h=levels-air-ride-${modeSlug}-${courseSlug}-${ruleSlug}`;
-  return groupX ? `${base}&x=${groupX}` : base;
+  const byMode = SRC_EMPTY_LINKS[mode] || {};
+  const byRule = byMode[rules] || {};
+  return byRule[course] || '';
 }
 
 /* Parse time to ms for sorting */
@@ -157,10 +230,11 @@ function renderSrcTable(mountId, rows, ctx){
     });
   } else {
     const url = buildSrcCategoryUrl(ctx.course, ctx.mode, ctx.rules);
+    const linkHtml = url ? `${url}Be the first!</a>` : '';
     html += `<tr><td class="empty" colspan="${COLS.length}">
       <span class="empty-msg">
         <span>No runs submitted for this category.</span>
-        <a href="${url}" target="_blank" rel="noopener">Be the first!</a>
+        ${linkHtml}
       </span>
     </td></tr>`;
   }
@@ -199,7 +273,7 @@ function renderSpeedriderStrip(mountId, entries){
   const mount = document.getElementById(mountId); if (!mount) return;
   if (!entries || entries.length === 0){ mount.innerHTML = '<p class="muted">No data</p>'; return; }
 
-  // Default: fastest time to the left
+  // Default sort: fastest time to the left (no arrow shown until user clicks)
   const sorted = entries.slice().sort((a,b) => {
     const ax = (typeof a._sec === 'number' && !isNaN(a._sec)) ? a._sec : Infinity;
     const bx = (typeof b._sec === 'number' && !isNaN(b._sec)) ? b._sec : Infinity;
@@ -210,7 +284,7 @@ function renderSpeedriderStrip(mountId, entries){
   mount.innerHTML = `
     <div class="sr-strip" data-mount="${mountId}">
       <div class="sr-left">
-        <div class="sr-left-row" data-sort="time">Time <span class="sr-sort-ind">◀</span></div>
+        <div class="sr-left-row" data-sort="time">Time <span class="sr-sort-ind"></span></div>
         <div class="sr-left-row" data-sort="machine">Machine <span class="sr-sort-ind"></span></div>
         <div class="sr-left-row" data-sort="rider">Rider <span class="sr-sort-ind"></span></div>
         <div class="sr-left-row" data-sort="player">Player <span class="sr-sort-ind"></span></div>
@@ -333,11 +407,11 @@ async function loadAll(){
   const srTaRows = parseCSV(srTaText);
   const srFrRows = parseCSV(srFrText);
 
-  // Parse headers (note: Subcategory is column C in your CSV)
+  // Parse headers
   const srcHeader = srcRows[0].map(h => String(h).trim());
   const SRC_IDX = {
     Category:    idxOf(srcHeader,"Category"),
-    Subcategory: idxOf(srcHeader,"Subcategory"),   // ← critical: read column C
+    Subcategory: idxOf(srcHeader,"Subcategory"),   // Column C (course + rules)
     Machine:     idxOf(srcHeader,"Machine"),
     Rider:       idxOf(srcHeader,"Rider"),
     Player:      idxOf(srcHeader,"Player"),
@@ -350,22 +424,20 @@ async function loadAll(){
   const srcByCourse = new Map();
   srcRows.slice(1).forEach(r => {
     const category = r[SRC_IDX.Category] ?? '';
-    const subcat   = r[SRC_IDX.Subcategory] ?? '';     // column C
+    const subcat   = r[SRC_IDX.Subcategory] ?? '';
     if (!category || !subcat) return;
 
     const mode = TA_LABEL.test(category) ? 'TA' : (FR_LABEL.test(category) ? 'FR' : 'OTHER');
     if (mode === 'OTHER') return;
 
-    // Subcategory is "Course + Ruleset"
     const parts = String(subcat).trim().replace(/\s*\+$/, '').split(/\s*\+\s*/);
     const course = (parts[0] ?? '').trim();
     const rulesText = (parts[1] ?? '').trim() || subcat;
 
-    // IMPORTANT: check UNRESTRICTED first (since it contains 'restricted')
+    // IMPORTANT: check UNRESTRICTED first (contains "restricted")
     let rules = '';
     if (UNRESTRICTED.test(rulesText)) rules = 'Unrestricted';
     else if (RESTRICTED.test(rulesText)) rules = 'Restricted';
-
     if (!course || !rules) return;
 
     const rowObj = {
@@ -408,7 +480,7 @@ async function loadAll(){
     if (course === 'Fantasy Meadows'){
       navHtml += '<div class="legacy-sep" aria-hidden="true"></div>';
     }
-    navHtml += `<a href="#${id}">${course}</a>`;
+    navHtml += `#${id}${course}</a>`;
   });
   nav.innerHTML = navHtml;
 
