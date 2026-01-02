@@ -1,10 +1,9 @@
 
 /* KARs Garage — Air Ride
- * - Valid <a> tags for SRC/Video cells and "Be the first!" links
+ * - Proper <a> anchors for SRC/Video/Player links and "Be the first!"
  * - URL normalization and readable labels
  * - Empty-state sentence: "No runs submitted for this category. Be the first!"
  * - Speedrider sort triangles hidden until user clicks (like SRC tables)
- * - Red accent before times removed
  * - Correct rules parsing from column C "Subcategory" (check UNRESTRICTED first)
  */
 
@@ -25,7 +24,7 @@ const COURSE_ORDER = [
   "Machine Passage","Checker Knights","Nebula Belt"
 ];
 
-/* Banners */
+/* Banners (paths unchanged) */
 const BANNERS = {
   "Airtopia Ruins": "images/airtopia_banner.webp",
   "Beanstalk Park": "images/beanstalk_banner.webp",
@@ -197,7 +196,7 @@ function labelForUrl(u){
   }
 }
 
-/* Build an anchor cell — now with a proper opening <a> */
+/* Build an anchor cell — now CORRECT with opening <a> */
 function linkCell(url){
   const href = normalizeUrl(url);
   if (!href) return '';
@@ -264,7 +263,9 @@ function renderSrcTable(mountId, rows, ctx){
     });
   } else {
     const mappedUrl = buildSrcCategoryUrl(ctx.course, ctx.mode, ctx.rules);
-    const beFirst   = mappedUrl ? `${mappedUrl}Be the first!</a>` : '';
+    const beFirst   = mappedUrl
+      ? `${mappedUrl}Be the first!</a>`
+      : '';
     html += `<tr><td class="empty" colspan="${COLS.length}">
       <span class="empty-msg">
         No runs submitted for this category. ${beFirst}
@@ -445,7 +446,7 @@ async function loadAll(){
   const srcHeader = srcRows[0].map(h => String(h).trim());
   const SRC_IDX = {
     Category:    idxOf(srcHeader,"Category"),
-    Subcategory: idxOf(srcHeader,"Subcategory"),
+    Subcategory: idxOf(srcHeader,"Subcategory"), // Column C (course + rules)
     Machine:     idxOf(srcHeader,"Machine"),
     Rider:       idxOf(srcHeader,"Rider"),
     Player:      idxOf(srcHeader,"Player"),
@@ -464,10 +465,12 @@ async function loadAll(){
     const mode = TA_LABEL.test(category) ? 'TA' : (FR_LABEL.test(category) ? 'FR' : 'OTHER');
     if (mode === 'OTHER') return;
 
+    // "Course + Rules" split by '+'
     const parts     = String(subcat).trim().replace(/\s*\+$/, '').split(/\s*\+\s*/);
     const course    = (parts[0] ?? '').trim();
     const rulesText = (parts[1] ?? '').trim() || subcat;
 
+    // IMPORTANT: check UNRESTRICTED first (contains "restricted")
     let rules = '';
     if (UNRESTRICTED.test(rulesText))      rules = 'Unrestricted';
     else if (RESTRICTED.test(rulesText))   rules = 'Restricted';
@@ -503,6 +506,7 @@ async function loadAll(){
   const content = document.getElementById('content');
   const nav     = document.getElementById('course-nav');
 
+  // Course ordering + TOC (with legacy divider)
   const courseSet = new Set([...srcByCourse.keys(), ...srTaByCourse.keys(), ...srFrByCourse.keys()]);
   const orderedCourses = COURSE_ORDER.filter(c => courseSet.has(c));
 
@@ -524,9 +528,11 @@ async function loadAll(){
     const srTaCourse = srTaByCourse.get(courseName) ?? [];
     const srFrCourse = srFrByCourse.get(courseName) ?? [];
 
+    // Section
     const sec = document.createElement('section');
     sec.className = 'course';
 
+    // Banner
     const bannerPath = BANNERS[courseName] ?? '';
     sec.innerHTML = `
       <span id="${id}" class="anchor"></span>
@@ -562,6 +568,7 @@ async function loadAll(){
       <hr class="section-divider" />
     `;
 
+    // Inject banner image
     const fig = sec.querySelector('.banner-wrap');
     if (bannerPath){
       const img = document.createElement('img');
@@ -572,17 +579,20 @@ async function loadAll(){
     }
     content.appendChild(sec);
 
+    // Render SRC tables (pass context for empty-state link)
     renderSrcTable(`${id}-ta-r`, srcCourse.TA.Restricted,   { course:courseName, mode:'TA', rules:'Restricted'   });
     renderSrcTable(`${id}-ta-u`, srcCourse.TA.Unrestricted, { course:courseName, mode:'TA', rules:'Unrestricted' });
     renderSrcTable(`${id}-fr-r`, srcCourse.FR.Restricted,   { course:courseName, mode:'FR', rules:'Restricted'   });
     renderSrcTable(`${id}-fr-u`, srcCourse.FR.Unrestricted, { course:courseName, mode:'FR', rules:'Unrestricted' });
 
+    // Speedrider strips (sortable)
     renderSpeedriderStrip(`${id}-sr-ta`, srTaCourse);
     renderSpeedriderStrip(`${id}-sr-fr`, srFrCourse);
   });
 
   setupScrollSpy(sectionIds);
 
+  // Smooth scroll for TOC clicks
   nav.querySelectorAll('a').forEach(a => {
     a.addEventListener('click', e => {
       e.preventDefault();
