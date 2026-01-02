@@ -1,9 +1,9 @@
 
 /* KARs Garage — Air Ride (GitHub Pages-friendly)
    - Sidebar TOC with legacy divider
+   - Speedrider strips: aligned grid, compact, sortable horizontally
    - linkCell() outputs proper <a> with trimmed label
    - Banner images use relative 'images/...'
-   - Speedrider strips: single left label column + record columns
 */
 const SRC_CSV  = "https://docs.google.com/spreadsheets/d/e/2PACX-1vRLdSEHHpUNrBHTlJlEZLBJmJpbBuxrnJ4AXQk_vqzhVoyliOzaM-uEAw-WXNskMOhcjZq7HWLctrBN/pub?output=csv";
 const SR_TA_CSV= "https://docs.google.com/spreadsheets/d/e/2PACX-1vRLLtoztu41AtY4reRXwNd00WqxhlFyTbn3RKoBwssrf1fXFGAZxO2b1dB62-0lrUOz4yi1dLuJrmml/pub?gid=1618721256&single=true&output=csv";
@@ -79,7 +79,7 @@ function linkCell(url){
   const u = String(url ?? '').trim();
   if (!u) return '';
   const label = stripPrefix(u);
-  return `<a href="${u}" target="_blank" rel="noopener noreferrer">${label}</a>`;
+  return `<a href="${u}" target="_blank" rel="noopener">${label}</a>`;
 }
 
 /* Subcategory "Course + Ruleset" */
@@ -115,7 +115,7 @@ function toMillis(t){
   return Number.POSITIVE_INFINITY;
 }
 
-/* --- Table renderer --- */
+/* --- SRC tables (unchanged except alt-row color in CSS) --- */
 function renderSrcTable(mountId, rows){
   const mount = document.getElementById(mountId); if (!mount) return;
   const COLS = ["Player","Time","Machine","Rider","SRC Link","Video"];
@@ -134,7 +134,7 @@ function renderSrcTable(mountId, rows){
   html += '</tr></thead><tbody>';
   if (rows && rows.length){
     const sorted = rows.slice().sort((a,b) => (a._ms - b._ms));
-    sorted.forEach((r, i) => {
+    sorted.forEach(r => {
       html += '<tr>';
       html += `<td>${r.Player ?? ''}</td>`;
       html += `<td class="td--time">${r.Time ?? ''}</td>`;
@@ -175,27 +175,91 @@ function renderSrcTable(mountId, rows){
   });
 }
 
-/* --- Speedrider strips (single labels column) --- */
+/* --- Speedrider strips (aligned, compact, sortable) --- */
+const SR_STATE = new Map(); // mountId -> { entries:[], sortKey:'time'|'machine'|'rider'|'player', dir:'asc'|'desc' }
+
 function renderSpeedriderStrip(mountId, entries){
   const mount = document.getElementById(mountId); if (!mount) return;
   if (!entries || entries.length === 0){ mount.innerHTML = '<p class="muted">No data</p>'; return; }
 
-  // Build the left labels column once
-  let html = '<div class="sr-strip">';
-  html += `
-    <div class="sr-left">
-      <div class="sr-left-row">Time</div>
-      <div class="sr-left-row">Machine</div>
-      <div class="sr-left-row">Rider</div>
-      <div class="sr-left-row">Player</div>
-      <div class="sr-left-row">Link</div>
+  // Store state (default: fastest time to the left)
+  const sorted = entries.slice().sort((a,b) => {
+    const ax = (typeof a._sec === 'number' && !isNaN(a._sec)) ? a._sec : Infinity;
+    const bx = (typeof b._sec === 'number' && !isNaN(b._sec)) ? b._sec : Infinity;
+    return ax - bx;
+  });
+  SR_STATE.set(mountId, { entries: sorted, sortKey:'time', dir:'asc' });
+
+  // Build strip
+  mount.innerHTML = `
+    <div class="sr-strip" data-mount="${mountId}">
+      <div class="sr-left">
+        <div class="sr-left-row" data-sort="time">Time <span class="sr-sort-ind">▲</span></div>
+        <div class="sr-left-row" data-sort="machine">Machine <span class="sr-sort-ind"></span></div>
+        <div class="sr-left-row" data-sort="rider">Rider <span class="sr-sort-ind"></span></div>
+        <div class="sr-left-row" data-sort="player">Player <span class="sr-sort-ind"></span></div>
+        <div class="sr-left-row" data-sort="link" aria-disabled="true">Link</div>
+      </div>
+      <div class="sr-records"></div>
     </div>
   `;
 
-  // Each entry becomes a compact column to the right
-  entries.forEach(e => {
-    html += `
-      <div class="sr-col">
+  // Initial render of record columns
+  paintSrRecords(mountId);
+
+  // Sorting handlers (click to sort by Machine/Rider/Player; Time toggles desc/asc)
+  const strip = mount.querySelector('.sr-strip');
+  strip.querySelectorAll('.sr-left-row').forEach(row => {
+    const key = row.getAttribute('data-sort');
+    if (key === 'link') return; // non-sortable
+    row.addEventListener('click', () => {
+      const state = SR_STATE.get(mountId);
+      let dir = 'asc';
+      if (state.sortKey === key) dir = (state.dir === 'asc') ? 'desc' : 'asc';
+      sortSr(mountId, key, dir);
+      updateSrSortIndicators(strip, key, dir);
+    });
+  });
+}
+
+function updateSrSortIndicators(strip, activeKey, dir){
+  strip.querySelectorAll('.sr-left-row .sr-sort-ind').forEach(ind => ind.textContent = '');
+  const row = strip.querySelector(`.sr-left-row[data-sort="${activeKey}"] .sr-sort-ind`);
+  if (row) row.textContent = dir === 'asc' ? '▲' : '▼';
+}
+
+function sortSr(mountId, key, dir){
+  const state = SR_STATE.get(mountId);
+  const entries = state.entries.slice();
+
+  const cmpStr = (a,b) => a.localeCompare(b, undefined, { numeric:true, sensitivity:'base' });
+  let cmp;
+  switch (key){
+    case 'machine': cmp = (a,b) => cmpStr(a.Machine ?? '', b.Machine ?? ''); break;
+    case 'rider':   cmp = (a,b) => cmpStr(a.Rider ?? '',   b.Rider ?? '');   break;
+    case 'player':  cmp = (a,b) => cmpStr(a.Player ?? '',  b.Player ?? '');  break;
+    case 'time':    cmp = (a,b) => {
+      const ax = (typeof a._sec === 'number' && !isNaN(a._sec)) ? a._sec : Infinity;
+      const bx = (typeof b._sec === 'number' && !isNaN(b._sec)) ? b._sec : Infinity;
+      return ax - bx;
+    }; break;
+    default:        cmp = () => 0;
+  }
+  entries.sort((a,b) => (dir === 'asc' ? cmp(a,b) : -cmp(a,b)));
+  SR_STATE.set(mountId, { entries, sortKey:key, dir });
+  paintSrRecords(mountId);
+}
+
+function paintSrRecords(mountId){
+  const mount = document.querySelector(`[data-mount="${mountId}"]`);
+  const list = mount.querySelector('.sr-records');
+  const { entries } = SR_STATE.get(mountId);
+
+  // Build columns; mark first/last for rounded edges
+  list.innerHTML = entries.map((e, i) => {
+    const cls = (i === 0) ? 'sr-col first' : (i === entries.length - 1 ? 'sr-col last' : 'sr-col');
+    return `
+      <div class="${cls}">
         <div class="sr-time">${e.Time ?? ''}</div>
         <div class="sr-row">${e.Machine ?? ''}</div>
         <div class="sr-row">${e.Rider ?? ''}</div>
@@ -203,29 +267,10 @@ function renderSpeedriderStrip(mountId, entries){
         <div class="sr-row">${linkCell(e["Player Link"] ?? '')}</div>
       </div>
     `;
-  });
-
-  html += '</div>';
-  mount.innerHTML = html;
+  }).join('');
 }
 
-/* Scroll‑spy */
-function setupScrollSpy(sectionIds){
-  const links = sectionIds.map(id => ({ id, el: document.querySelector(`#course-nav a[href="#${id}"]`) })).filter(x => x.el);
-  const observer = new IntersectionObserver((entries) => {
-    entries.forEach(entry => {
-      const id = entry.target.id;
-      const link = links.find(l => l.id === id)?.el; if (!link) return;
-      if (entry.isIntersecting){
-        links.forEach(l => l.el.classList.remove('active'));
-        link.classList.add('active');
-      }
-    });
-  },{root:null, rootMargin:'0px 0px -60% 0px', threshold:0.25});
-  sectionIds.forEach(id => { const sec = document.getElementById(id); if (sec) observer.observe(sec); });
-}
-
-/* Build Speedrider index */
+/* --- Build Speedrider index from CSV --- */
 function buildSrIndex(rows){
   const header = rows[0].map(h => String(h).trim());
   const IDX = {
@@ -251,6 +296,7 @@ function buildSrIndex(rows){
     if (!byCourse.has(course)) byCourse.set(course, []);
     byCourse.get(course).push(entry);
   });
+  // default sort fastest → slowest inside each course (used later)
   byCourse.forEach(arr => {
     arr.sort((a,b) => {
       const ax = (typeof a._sec === 'number' && !isNaN(a._sec)) ? a._sec : Infinity;
@@ -266,7 +312,7 @@ async function loadAll(){
   const y = document.getElementById('year');
   if (y) y.textContent = new Date().getFullYear();
 
-  // Fetch CSVs (no-cache)
+  // Fetch CSVs (no-cache to avoid CDN staleness)
   const [srcRes, srTaRes, srFrRes] = await Promise.all([
     fetch(SRC_CSV,  { cache:'no-cache' }),
     fetch(SR_TA_CSV,{ cache:'no-cache' }),
@@ -313,7 +359,7 @@ async function loadAll(){
       _ms:     toMillis(r[SRC_IDX.Time])
     };
     if (!srcByCourse.has(course)) {
-      srcByCourse.set(course, { TA:{Restricted:[],Unrestricted:[]}, FR:{Restricted:[],Unrestricted:[]} });
+      srcByCourse.set(course, { TA:{Restricted:[],Unrestricted:[]}, FR:{Restricted:[],Unrestricted[]} });
     }
     srcByCourse.get(course)[mode][rules].push(rowObj);
   });
@@ -353,7 +399,7 @@ async function loadAll(){
     const id = makeAnchorId(courseName);
     sectionIds.push(id);
 
-    const srcCourse = srcByCourse.get(courseName) ?? { TA:{Restricted:[],Unrestricted:[]}, FR:{Restricted:[],Unrestricted:[]} };
+    const srcCourse = srcByCourse.get(courseName) ?? { TA:{Restricted:[],Unrestricted:[]}, FR:{Restricted:[],Unrestricted[]} };
     const srTaCourse = srTaByCourse.get(courseName) ?? [];
     const srFrCourse = srFrByCourse.get(courseName) ?? [];
 
@@ -415,7 +461,7 @@ async function loadAll(){
     renderSrcTable(`${id}-fr-r`, srcCourse.FR.Restricted);
     renderSrcTable(`${id}-fr-u`, srcCourse.FR.Unrestricted);
 
-    // Speedrider strips
+    // Speedrider strips (sortable)
     renderSpeedriderStrip(`${id}-sr-ta`, srTaCourse);
     renderSpeedriderStrip(`${id}-sr-fr`, srFrCourse);
   });
@@ -431,4 +477,21 @@ async function loadAll(){
     });
   });
 }
+
+/* Scroll‑spy */
+function setupScrollSpy(sectionIds){
+  const links = sectionIds.map(id => ({ id, el: document.querySelector(`#course-nav a[href="#${id}"]`) })).filter(x => x.el);
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      const id = entry.target.id;
+      const link = links.find(l => l.id === id)?.el; if (!link) return;
+      if (entry.isIntersecting){
+        links.forEach(l => l.el.classList.remove('active'));
+        link.classList.add('active');
+      }
+    });
+  },{root:null, rootMargin:'0px 0px -60% 0px', threshold:0.25});
+  sectionIds.forEach(id => { const sec = document.getElementById(id); if (sec) observer.observe(sec); });
+}
+
 document.addEventListener('DOMContentLoaded', loadAll);
