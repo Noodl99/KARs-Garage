@@ -1,4 +1,3 @@
-
 /* KARs Garage — Air Ride
  * - Valid <a> tags for SRC/Video cells and "Be the first!" links
  * - URL normalization and readable labels
@@ -46,11 +45,92 @@ const BANNERS = {
   "Waveflow Waters": "images/Waveflow_Banner.webp"
 };
 
-/* --- "Be the first!" exact URLs (from SRC URLs.txt) --- */
+/* --- "Be the first!" exact URLs --- */
 const SRC_EMPTY_LINKS = {
-  /* ... your existing TA/FR Restricted/Unrestricted maps ... left unchanged ... */
-  TA: { /* omitted for brevity: same values you uploaded */ },
-  FR: { /* omitted for brevity: same values you uploaded */ }
+  TA: {
+    Restricted: {
+      "Floria Fields": "https://www.speedrun.com/kars/runs/new?category=Time_Attack&variable_Course=Floria_Fields&variable_Rules=Restricted",
+      "Waveflow Waters": "https://www.speedrun.com/kars/runs/new?category=Time_Attack&variable_Course=Waveflow_Waters&variable_Rules=Restricted",
+      "Airtopia Ruins": "https://www.speedrun.com/kars/runs/new?category=Time_Attack&variable_Course=Airtopia_Ruins&variable_Rules=Restricted",
+      "Crystalline Fissure": "https://www.speedrun.com/kars/runs/new?category=Time_Attack&variable_Course=Crystalline_Fissure&variable_Rules=Restricted",
+      "Steamgust Forge": "https://www.speedrun.com/kars/runs/new?category=Time_Attack&variable_Course=Steamgust_Forge&variable_Rules=Restricted",
+      "Cavernous Corners": "https://www.speedrun.com/kars/runs/new?category=Time_Attack&variable_Course=Cavernous_Corners&variable_Rules=Restricted",
+      "Cyberion Highway": "https://www.speedrun.com/kars/runs/new?category=Time_Attack&variable_Course=Cyberion_Highway&variable_Rules=Restricted",
+      "Mount Amberfalls": "https://www.speedrun.com/kars/runs/new?category=Time_Attack&variable_Course=Mount_Amberfalls&variable_Rules=Restricted",
+      "Galactic Nova": "https://www.speedrun.com/kars/runs/new?category=Time_Attack&variable_Course=Galactic_Nova&variable_Rules=Restricted",
+      "Fantasy Meadows": "https://www.speedrun.com/kars/runs/new?category=Time_Attack&variable_Course=Fantasy_Meadows&variable_Rules=Restricted",
+      "Celestial Valley": "https://www.speedrun.com/kars/runs/new?category=Time_Attack&variable_Course=Celestial_Valley&variable_Rules=Restricted",
+      "Sky Sands": "https://www.speedrun.com/kars/runs/new?category=Time_Attack&variable_Course=Sky_Sands&variable_Rules=Restricted",
+      "Frozen Hillside": "https://www.speedrun.com/kars/runs/new?category=Time_Attack&variable_Course=Frozen_Hillside&variable_Rules=Restricted",
+      "Magma Flows": "https://www.speedrun.com/kars/runs/new?category=Time_Attack&variable_Course=Magma_Flows&variable_Rules=Restricted",
+      "Beanstalk Park": "https://www.speedrun.com/kars/runs/new?category=Time_Attack&variable_Course=Beanstalk_Park&variable_Rules=Restricted",
+      "Machine Passage": "https://www.speedrun.com/kars/runs/new?category=Time_Attack&variable_Course=Machine_Passage&variable_Rules=Restricted",
+      "Checker Knights": "https://www.speedrun.com/kars/runs/new?category=Time_Attack&variable_Course=Checker_Knights&variable_Rules=Restricted",
+      "Nebula Belt": "https://www.speedrun.com/kars/runs/new?category=Time_Attack&variable_Course=Nebula_Belt&variable_Rules=Restricted"
+    },
+    Unrestricted: {
+      "Floria Fields": "https://www.speedrun.com/kars/runs/new?category=Time_Attack&variable_Course=Floria_Fields&variable_Rules=Unrestricted",
+      "Waveflow Waters": "https://www.speedrun.com/kars/runs/new?category=Time_Attack&variable_Course=Waveflow_Waters&variable_Rules=Unrestricted",
+      "Airtopia Ruins": "https://www.speedrun.com/kars/runs/new?category=Time_Attack&variable_Course=Airtopia_Ruins&variable_Rules=Unrestricted",
+      "Crystalline Fissure": "https://www.speedrun.com/kars/runs/new?category=Time_Attack&variable_Course=Crystalline_Fissure&variable_Rules=Unrestricted",
+      "Steamgust Forge": "https://www.speedrun.com/kars/runs/new?category=Time_Attack&variable_Course=Steamgust_Forge&variable_Rules=Unrestricted",
+      "Cavernous Corners": "https://www.speedrun.com/kars/runs/new?category=Time_Attack&variable_Course=Cavernous_Corners&variable_Rules=Unrestricted",
+      "Cyberion Highway": "https://www.speedrun.com/kars/runs/new?category=Time_Attack&variable_Course=Cyberion_Highway&variable_Rules=Unrestricted",
+      "Mount Amberfalls": "https://www.speedrun.com/kars/runs/new?category=Time_Attack&variable_Course=Mount_Amberfalls&variable_Rules=Unrestricted",
+      "Galactic Nova": "https://www.speedrun.com/kars/runs/new?category=Time_Attack&variable_Course=Galactic_Nova&variable_Rules=Unrestricted",
+      "Fantasy Meadows": "https://www.speedrun.com/kars/runs/new?category=Time_Attack&variable_Course=Fantasy_Meadows&variable_Rules=Unrestricted",
+      "Celestial Valley": "https://www.speedrun.com/kars/runs/new?category=Time_Attack&variable_Course=Celestial_Valley&variable_Rules=Unrestricted",
+      "Sky Sands": "https://www.speedrun.com/kars/runs/new?category=Time_Attack&variable_Course=Sky_Sands&variable_Rules=Unrestricted",
+      "Frozen Hillside": "https://www.speedrun.com/kars/runs/new?category=Time_Attack&variable_Course=Frozen_Hillside&variable_Rules=Unrestricted",
+      "Magma Flows": "https://www.speedrun.com/kars/runs/new?category=Time_Attack&variable_Course=Magma_Flows&variable_Rules=Unrestricted",
+      "Beanstalk Park": "https://www.speedrun.com/kars/runs/new?category=Time_Attack&variable_Course=Beanstalk_Park&variable_Rules=Unrestricted",
+      "Machine Passage": "https://www.speedrun.com/kars/runs/new?category=Time_Attack&variable_Course=Machine_Passage&variable_Rules=Unrestricted",
+      "Checker Knights": "https://www.speedrun.com/kars/runs/new?category=Time_Attack&variable_Course=Checker_Knights&variable_Rules=Unrestricted",
+      "Nebula Belt": "https://www.speedrun.com/kars/runs/new?category=Time_Attack&variable_Course=Nebula_Belt&variable_Rules=Unrestricted"
+    }
+  },
+  FR: {
+    Restricted: {
+      "Floria Fields": "https://www.speedrun.com/kars/runs/new?category=Free_Run&variable_Course=Floria_Fields&variable_Rules=Restricted",
+      "Waveflow Waters": "https://www.speedrun.com/kars/runs/new?category=Free_Run&variable_Course=Waveflow_Waters&variable_Rules=Restricted",
+      "Airtopia Ruins": "https://www.speedrun.com/kars/runs/new?category=Free_Run&variable_Course=Airtopia_Ruins&variable_Rules=Restricted",
+      "Crystalline Fissure": "https://www.speedrun.com/kars/runs/new?category=Free_Run&variable_Course=Crystalline_Fissure&variable_Rules=Restricted",
+      "Steamgust Forge": "https://www.speedrun.com/kars/runs/new?category=Free_Run&variable_Course=Steamgust_Forge&variable_Rules=Restricted",
+      "Cavernous Corners": "https://www.speedrun.com/kars/runs/new?category=Free_Run&variable_Course=Cavernous_Corners&variable_Rules=Restricted",
+      "Cyberion Highway": "https://www.speedrun.com/kars/runs/new?category=Free_Run&variable_Course=Cyberion_Highway&variable_Rules=Restricted",
+      "Mount Amberfalls": "https://www.speedrun.com/kars/runs/new?category=Free_Run&variable_Course=Mount_Amberfalls&variable_Rules=Restricted",
+      "Galactic Nova": "https://www.speedrun.com/kars/runs/new?category=Free_Run&variable_Course=Galactic_Nova&variable_Rules=Restricted",
+      "Fantasy Meadows": "https://www.speedrun.com/kars/runs/new?category=Free_Run&variable_Course=Fantasy_Meadows&variable_Rules=Restricted",
+      "Celestial Valley": "https://www.speedrun.com/kars/runs/new?category=Free_Run&variable_Course=Celestial_Valley&variable_Rules=Restricted",
+      "Sky Sands": "https://www.speedrun.com/kars/runs/new?category=Free_Run&variable_Course=Sky_Sands&variable_Rules=Restricted",
+      "Frozen Hillside": "https://www.speedrun.com/kars/runs/new?category=Free_Run&variable_Course=Frozen_Hillside&variable_Rules=Restricted",
+      "Magma Flows": "https://www.speedrun.com/kars/runs/new?category=Free_Run&variable_Course=Magma_Flows&variable_Rules=Restricted",
+      "Beanstalk Park": "https://www.speedrun.com/kars/runs/new?category=Free_Run&variable_Course=Beanstalk_Park&variable_Rules=Restricted",
+      "Machine Passage": "https://www.speedrun.com/kars/runs/new?category=Free_Run&variable_Course=Machine_Passage&variable_Rules=Restricted",
+      "Checker Knights": "https://www.speedrun.com/kars/runs/new?category=Free_Run&variable_Course=Checker_Knights&variable_Rules=Restricted",
+      "Nebula Belt": "https://www.speedrun.com/kars/runs/new?category=Free_Run&variable_Course=Nebula_Belt&variable_Rules=Restricted"
+    },
+    Unrestricted: {
+      "Floria Fields": "https://www.speedrun.com/kars/runs/new?category=Free_Run&variable_Course=Floria_Fields&variable_Rules=Unrestricted",
+      "Waveflow Waters": "https://www.speedrun.com/kars/runs/new?category=Free_Run&variable_Course=Waveflow_Waters&variable_Rules=Unrestricted",
+      "Airtopia Ruins": "https://www.speedrun.com/kars/runs/new?category=Free_Run&variable_Course=Airtopia_Ruins&variable_Rules=Unrestricted",
+      "Crystalline Fissure": "https://www.speedrun.com/kars/runs/new?category=Free_Run&variable_Course=Crystalline_Fissure&variable_Rules=Unrestricted",
+      "Steamgust Forge": "https://www.speedrun.com/kars/runs/new?category=Free_Run&variable_Course=Steamgust_Forge&variable_Rules=Unrestricted",
+      "Cavernous Corners": "https://www.speedrun.com/kars/runs/new?category=Free_Run&variable_Course=Cavernous_Corners&variable_Rules=Unrestricted",
+      "Cyberion Highway": "https://www.speedrun.com/kars/runs/new?category=Free_Run&variable_Course=Cyberion_Highway&variable_Rules=Unrestricted",
+      "Mount Amberfalls": "https://www.speedrun.com/kars/runs/new?category=Free_Run&variable_Course=Mount_Amberfalls&variable_Rules=Unrestricted",
+      "Galactic Nova": "https://www.speedrun.com/kars/runs/new?category=Free_Run&variable_Course=Galactic_Nova&variable_Rules=Unrestricted",
+      "Fantasy Meadows": "https://www.speedrun.com/kars/runs/new?category=Free_Run&variable_Course=Fantasy_Meadows&variable_Rules=Unrestricted",
+      "Celestial Valley": "https://www.speedrun.com/kars/runs/new?category=Free_Run&variable_Course=Celestial_Valley&variable_Rules=Unrestricted",
+      "Sky Sands": "https://www.speedrun.com/kars/runs/new?category=Free_Run&variable_Course=Sky_Sands&variable_Rules=Unrestricted",
+      "Frozen Hillside": "https://www.speedrun.com/kars/runs/new?category=Free_Run&variable_Course=Frozen_Hillside&variable_Rules=Unrestricted",
+      "Magma Flows": "https://www.speedrun.com/kars/runs/new?category=Free_Run&variable_Course=Magma_Flows&variable_Rules=Unrestricted",
+      "Beanstalk Park": "https://www.speedrun.com/kars/runs/new?category=Free_Run&variable_Course=Beanstalk_Park&variable_Rules=Unrestricted",
+      "Machine Passage": "https://www.speedrun.com/kars/runs/new?category=Free_Run&variable_Course=Machine_Passage&variable_Rules=Unrestricted",
+      "Checker Knights": "https://www.speedrun.com/kars/runs/new?category=Free_Run&variable_Course=Checker_Knights&variable_Rules=Unrestricted",
+      "Nebula Belt": "https://www.speedrun.com/kars/runs/new?category=Free_Run&variable_Course=Nebula_Belt&variable_Rules=Unrestricted"
+    }
+  }
 };
 
 /* --- CSV parsing (minimal) --- */
@@ -87,18 +167,10 @@ function makeAnchorId(name){
 function normalizeUrl(u){
   if (!u) return '';
   const raw = String(u).trim();
-
-  // Already has protocol
   if (/^https?:\/\//i.test(raw)) return raw;
-
-  // Missing colon after http/https (e.g., "https//youtu.be/..."): fix it
   if (/^https?\/\/(?=\w)/i.test(raw)) return raw.replace(/^https?/i, m => m + ':');
-
-  // Starts with "www." or domain only: assume https
   if (/^www\./i.test(raw)) return 'https://' + raw;
   if (/^[a-z0-9\-_.]+\.[a-z]{2,}(?:\/|$)/i.test(raw)) return 'https://' + raw;
-
-  // Fallback: leave as-is (will fail validation and render as plain text)
   return raw;
 }
 
@@ -110,7 +182,6 @@ function labelForUrl(u){
     const host = url.hostname.replace(/^www\./i,'');
     return host + (path && path !== '/' ? path : '');
   } catch {
-    // Non-URL input: show trimmed raw value
     return String(u).replace(/^https?:\/\/(?:www\.)?/i,'');
   }
 }
@@ -120,7 +191,7 @@ function linkCell(url){
   const href = normalizeUrl(url);
   if (!href) return '';
   const label = labelForUrl(href);
-  return `${href}${label}</a>`;
+  return `<a href="${href}" target="_blank">${label}</a>`;
 }
 
 /* Build empty-table link from exact map */
@@ -157,7 +228,7 @@ function renderSrcTable(mountId, rows, ctx){
   const colgroup = `
     <colgroup>
       <col style="width:18%">
-      <col style="width:16%"><!-- Time -->
+      <col style="width:16%">
       <col style="width:18%">
       <col style="width:18%">
       <col style="width:15%">
@@ -182,7 +253,7 @@ function renderSrcTable(mountId, rows, ctx){
     });
   } else {
     const url = buildSrcCategoryUrl(ctx.course, ctx.mode, ctx.rules);
-    const linkHtml = url ? `${url}Be the first!</a>` : '';
+    const linkHtml = url ? `<a href="${url}" target="_blank">Be the first!</a>` : '';
     html += `<tr><td class="empty" colspan="${COLS.length}">
       <span class="empty-msg">
         <span>No runs submitted for this category.</span>
@@ -193,7 +264,7 @@ function renderSrcTable(mountId, rows, ctx){
   html += '</tbody></table>';
   mount.innerHTML = html;
 
-  // Click-sort
+  // Click-sort logic
   const ths = mount.querySelectorAll('th'); let sortState = {};
   ths.forEach(th => {
     th.addEventListener('click', () => {
@@ -218,14 +289,13 @@ function renderSrcTable(mountId, rows, ctx){
   });
 }
 
-/* --- Speedrider strips (aligned, compact, sortable) --- */
-const SR_STATE = new Map(); // mountId -> { entries:[], sortKey:'time'|'machine'|'rider'|'player', dir:'asc'|'desc' }
+/* --- Speedrider strips --- */
+const SR_STATE = new Map();
 
 function renderSpeedriderStrip(mountId, entries){
   const mount = document.getElementById(mountId); if (!mount) return;
   if (!entries || entries.length === 0){ mount.innerHTML = '<p class="muted">No data</p>'; return; }
 
-  // Default sort: fastest time to the left (no arrow shown until user clicks)
   const sorted = entries.slice().sort((a,b) => {
     const ax = (typeof a._sec === 'number' && !isNaN(a._sec)) ? a._sec : Infinity;
     const bx = (typeof b._sec === 'number' && !isNaN(b._sec)) ? b._sec : Infinity;
@@ -247,11 +317,10 @@ function renderSpeedriderStrip(mountId, entries){
   `;
   paintSrRecords(mountId);
 
-  // Sorting handlers (horizontal sort with ◀ ▶ arrows)
   const strip = mount.querySelector('.sr-strip');
   strip.querySelectorAll('.sr-left-row').forEach(row => {
     const key = row.getAttribute('data-sort');
-    if (key === 'link') return; // non-sortable
+    if (key === 'link') return;
     row.addEventListener('click', () => {
       const state = SR_STATE.get(mountId);
       let dir = 'asc';
@@ -296,7 +365,7 @@ function paintSrRecords(mountId){
   list.innerHTML = entries.map((e, i) => {
     const cls = (i === 0) ? 'sr-col first' : (i === entries.length - 1 ? 'sr-col last' : 'sr-col');
     const playerHref = normalizeUrl(e["Player Link"] ?? '');
-    const playerLink = playerHref ? `${playerHref}${labelForUrl(playerHref)}</a>` : '';
+    const playerLink = playerHref ? `<a href="${playerHref}" target="_blank">${labelForUrl(playerHref)}</a>` : '';
     return `
       <div class="${cls}">
         <div class="sr-time">${e.Time ?? ''}</div>
@@ -309,7 +378,7 @@ function paintSrRecords(mountId){
   }).join('');
 }
 
-/* --- Build Speedrider index from CSV --- */
+/* --- Build Speedrider index --- */
 function buildSrIndex(rows){
   const header = rows[0].map(h => String(h).trim());
   const IDX = {
@@ -335,13 +404,6 @@ function buildSrIndex(rows){
     if (!byCourse.has(course)) byCourse.set(course, []);
     byCourse.get(course).push(entry);
   });
-  byCourse.forEach(arr => {
-    arr.sort((a,b) => {
-      const ax = (typeof a._sec === 'number' && !isNaN(a._sec)) ? a._sec : Infinity;
-      const bx = (typeof b._sec === 'number' && !isNaN(b._sec)) ? b._sec : Infinity;
-      return ax - bx;
-    });
-  });
   return byCourse;
 }
 
@@ -360,11 +422,10 @@ async function loadAll(){
   const srTaRows = parseCSV(srTaText);
   const srFrRows = parseCSV(srFrText);
 
-  // Parse headers
   const srcHeader = srcRows[0].map(h => String(h).trim());
   const SRC_IDX = {
     Category:   idxOf(srcHeader,"Category"),
-    Subcategory:idxOf(srcHeader,"Subcategory"), // Column C (course + rules)
+    Subcategory:idxOf(srcHeader,"Subcategory"),
     Machine:    idxOf(srcHeader,"Machine"),
     Rider:      idxOf(srcHeader,"Rider"),
     Player:     idxOf(srcHeader,"Player"),
@@ -373,7 +434,6 @@ async function loadAll(){
     Video:      idxOf(srcHeader,"Video")
   };
 
-  // Bucket SRC by course + mode + rules
   const srcByCourse = new Map();
   srcRows.slice(1).forEach(r => {
     const category = r[SRC_IDX.Category] ?? '';
@@ -383,12 +443,10 @@ async function loadAll(){
     const mode = TA_LABEL.test(category) ? 'TA' : (FR_LABEL.test(category) ? 'FR' : 'OTHER');
     if (mode === 'OTHER') return;
 
-    // "Course + Rules" split by '+'
     const parts     = String(subcat).trim().replace(/\s*\+$/, '').split(/\s*\+\s*/);
     const course    = (parts[0] ?? '').trim();
     const rulesText = (parts[1] ?? '').trim() || subcat;
 
-    // IMPORTANT: check UNRESTRICTED first (contains "restricted")
     let rules = '';
     if (UNRESTRICTED.test(rulesText))      rules = 'Unrestricted';
     else if (RESTRICTED.test(rulesText))   rules = 'Restricted';
@@ -409,22 +467,12 @@ async function loadAll(){
     srcByCourse.get(course)[mode][rules].push(rowObj);
   });
 
-  // Sort SRC lists
-  for (const course of srcByCourse.keys()){
-    ['TA','FR'].forEach(m => ['Restricted','Unrestricted'].forEach(rule => {
-      srcByCourse.get(course)[m][rule].sort((a,b) => a._ms - b._ms);
-    }));
-  }
-
-  // Speedrider indices
   const srTaByCourse = buildSrIndex(srTaRows);
   const srFrByCourse = buildSrIndex(srFrRows);
 
-  // Mount points
   const content = document.getElementById('content');
   const nav     = document.getElementById('course-nav');
 
-  // Course ordering + TOC (with legacy divider)
   const courseSet = new Set([...srcByCourse.keys(), ...srTaByCourse.keys(), ...srFrByCourse.keys()]);
   const orderedCourses = COURSE_ORDER.filter(c => courseSet.has(c));
 
@@ -434,7 +482,7 @@ async function loadAll(){
     if (course === 'Fantasy Meadows'){
       navHtml += '<div class="legacy-sep" aria-hidden="true"></div>';
     }
-    navHtml += `#${id}${course}</a>`;
+    navHtml += `<a href="#${id}">${course}</a>`;
   });
   nav.innerHTML = navHtml;
 
@@ -446,11 +494,9 @@ async function loadAll(){
     const srTaCourse = srTaByCourse.get(courseName) ?? [];
     const srFrCourse = srFrByCourse.get(courseName) ?? [];
 
-    // Section
     const sec = document.createElement('section');
     sec.className = 'course';
 
-    // Banner
     const bannerPath = BANNERS[courseName] ?? '';
     sec.innerHTML = `
       <span id="${id}" class="anchor"></span>
@@ -458,35 +504,16 @@ async function loadAll(){
         <figcaption class="banner-title">${courseName}</figcaption>
       </figure>
       <div class="tables-grid">
-        <article class="table-card">
-          <h3>Time Attack - Restricted</h3>
-          <div id="${id}-ta-r"></div>
-        </article>
-        <article class="table-card">
-          <h3>Time Attack - Unrestricted</h3>
-          <div id="${id}-ta-u"></div>
-        </article>
-        <article class="table-card">
-          <h3>Free Run - Restricted</h3>
-          <div id="${id}-fr-r"></div>
-        </article>
-        <article class="table-card">
-          <h3>Free Run - Unrestricted</h3>
-          <div id="${id}-fr-u"></div>
-        </article>
-        <article class="table-card wide">
-          <h3>Speedrider - Time Attack Records by Machine</h3>
-          <div id="${id}-sr-ta"></div>
-        </article>
-        <article class="table-card wide">
-          <h3>Speedrider - Free Run Records by Machine</h3>
-          <div id="${id}-sr-fr"></div>
-        </article>
+        <article class="table-card"><h3>Time Attack - Restricted</h3><div id="${id}-ta-r"></div></article>
+        <article class="table-card"><h3>Time Attack - Unrestricted</h3><div id="${id}-ta-u"></div></article>
+        <article class="table-card"><h3>Free Run - Restricted</h3><div id="${id}-fr-r"></div></article>
+        <article class="table-card"><h3>Free Run - Unrestricted</h3><div id="${id}-fr-u"></div></article>
+        <article class="table-card wide"><h3>Speedrider - Time Attack Records by Machine</h3><div id="${id}-sr-ta"></div></article>
+        <article class="table-card wide"><h3>Speedrider - Free Run Records by Machine</h3><div id="${id}-sr-fr"></div></article>
       </div>
       <hr class="section-divider" />
     `;
 
-    // Inject banner image
     const fig = sec.querySelector('.banner-wrap');
     if (bannerPath){
       const img = document.createElement('img');
@@ -497,20 +524,16 @@ async function loadAll(){
     }
     content.appendChild(sec);
 
-    // Render SRC tables (pass context for empty-state link)
     renderSrcTable(`${id}-ta-r`, srcCourse.TA.Restricted,   { course:courseName, mode:'TA', rules:'Restricted'   });
     renderSrcTable(`${id}-ta-u`, srcCourse.TA.Unrestricted, { course:courseName, mode:'TA', rules:'Unrestricted' });
     renderSrcTable(`${id}-fr-r`, srcCourse.FR.Restricted,   { course:courseName, mode:'FR', rules:'Restricted'   });
     renderSrcTable(`${id}-fr-u`, srcCourse.FR.Unrestricted, { course:courseName, mode:'FR', rules:'Unrestricted' });
-
-    // Speedrider strips (sortable)
     renderSpeedriderStrip(`${id}-sr-ta`, srTaCourse);
     renderSpeedriderStrip(`${id}-sr-fr`, srFrCourse);
   });
 
   setupScrollSpy(sectionIds);
 
-  // Smooth scroll for TOC clicks
   nav.querySelectorAll('a').forEach(a => {
     a.addEventListener('click', e => {
       e.preventDefault();
@@ -520,7 +543,6 @@ async function loadAll(){
   });
 }
 
-/* Scroll‑spy */
 function setupScrollSpy(sectionIds){
   const links = sectionIds.map(id => ({ id, el: document.querySelector(`#course-nav a[href="#${id}"]`) })).filter(x => x.el);
   const observer = new IntersectionObserver((entries) => {

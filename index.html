@@ -1,4 +1,3 @@
-
 <!doctype html>
 <html lang="en">
 <head>
@@ -6,26 +5,22 @@
   <title>KARs Garage — Home</title>
   <meta name="viewport" content="width=device-width,initial-scale=1" />
 
-  <!-- Favicon -->
-  icons/garage-icon-white.png
+  <link rel="icon" href="icons/garage-icon-white.png">
 
-  <!-- Styles -->
-  style.css?v=16
+  <link rel="stylesheet" href="style.css?v=16">
 </head>
 <body>
-  <!-- Fixed top bar -->
   <header class="topbar fixed">
     <div class="container bar-inner">
-      icons/garage-icon-white.png
+      <img src="icons/garage-icon-white.png" alt="Logo" class="brand-logo-img">
       <div class="brand-name">KARs Garage</div>
       <nav class="site-nav" aria-label="Primary">
-        ./Home</a>
-        air-ride.htmlAir Ride</a>
+        <a href="./">Home</a>
+        <a href="air-ride.html">Air Ride</a>
       </nav>
     </div>
   </header>
 
-  <!-- Home hero -->
   <section class="hero hero--home">
     <div class="hero-bg hero-bg--top" aria-hidden="true"></div>
     <div class="hero-content hero-content--center">
@@ -33,19 +28,17 @@
     </div>
   </section>
 
-  <!-- Tiles -->
   <div class="tile-grid tile-grid--shrink">
-    air-ride.html</a>
-    #</a>
-    #</a>
-    #</a>
+    <a href="air-ride.html" class="tile tile-airride"></a>
+    <a href="#" class="tile tile-topride"></a>
+    <a href="#" class="tile tile-citytrial"></a>
+    <a href="#" class="tile tile-roadtrip"></a>
   </div>
 
   <footer class="site-footer">
     <div class="container">© <span id="year"></span> KARs Garage</div>
   </footer>
 
-  <!-- Script -->
-  script.js?v=16</script>
+  <script src="script.js?v=16"></script>
 </body>
 </html>

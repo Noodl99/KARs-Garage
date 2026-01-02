@@ -1,7 +1,4 @@
-
 // KARs Garage — Home helpers
-// Sets footer year and highlights active nav if needed.
-
 document.addEventListener('DOMContentLoaded', () => {
   const y = document.getElementById('year');
   if (y) y.textContent = new Date().getFullYear();
@@ -9,11 +6,8 @@ document.addEventListener('DOMContentLoaded', () => {
   const path = location.pathname.replace(/\/+$/, '') || '/';
   document.querySelectorAll('.site-nav a').forEach(a => {
     const href = a.getAttribute('href');
-    const isHome = href === './' || href === '/' || href === '';
-    if ((isHome && (path.endsWith('/') || path.endsWith('/index.html'))) || href === path) {
+    if (href === path || (path === '/' && href === './')) {
       a.classList.add('active');
-    } else {
-      a.classList.remove('active');
     }
   });
 });

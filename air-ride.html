@@ -1,43 +1,39 @@
-
 <!doctype html>
 <html lang="en">
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>KARs Garage — Air Ride</title>
-  images/kars-icon.png
-  style.css
+  <link rel="icon" href="images/kars-icon.png">
+  <link rel="stylesheet" href="style.css">
 </head>
 <body>
-  <!-- Fixed top bar -->
   <header class="topbar fixed">
     <div class="container bar-inner">
-      images/kars-icon.png
+      <img src="images/kars-icon.png" alt="Logo" class="brand-logo-img">
       <strong class="brand-name">KARs Garage</strong>
       <nav class="site-nav" aria-label="Main">
-        ./Home</a>
-        air-ride.htmlAir Ride</a>
+        <a href="./">Home</a>
+        <a href="air-ride.html">Air Ride</a>
       </nav>
     </div>
   </header>
 
-  <!-- Page header -->
   <div class="container">
     <header class="site-header">
       <h1 class="brand">AIR RIDE</h1>
       <p class="tagline">
         Updates daily at 12am, 6am, 12pm, and 6pm EST.
         Data pulled from
-        https://www.speedrun.com/karsspeedrun.com/kars</a>
+        <a href="https://www.speedrun.com/kars">speedrun.com/kars</a>
         and
-        https://speedrider.coresv.net/?lang=enspeedrider.coresv.net</a>.
+        <a href="https://speedrider.coresv.net/?lang=en">speedrider.coresv.net</a>.
       </p>
     </header>
   </div>
 
   <hr class="accent--fullbleed" />
 
-  <!-- Layout -->
   <div class="container layout">
     <aside class="sidebar">
       <nav id="course-nav" aria-label="Courses"></nav>
@@ -51,8 +47,7 @@
     </div>
   </footer>
 
-  <!-- Load JS last -->
-  script.js</script>
-  airride.js</script>
+  <script src="script.js"></script>
+  <script src="airride.js"></script>
 </body>
 </html>
