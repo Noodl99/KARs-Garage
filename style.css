@@ -1,495 +1,181 @@
 
-/* KARs Garage — Air Ride
-   - Sidebar TOC with legacy divider
-   - Proper <a> anchors
-   - Speedrider: compact, aligned, sortable horizontally (◀ ▶ arrows)
-   - SRC tables: empty state links to computed category URL
-*/
-const SRC_CSV  = "https://docs.google.com/spreadsheets/d/e/2PACX-1vRLdSEHHpUNrBHTlJlEZLBJmJpbBuxrnJ4AXQk_vqzhVoyliOzaM-uEAw-WXNskMOhcjZq7HWLctrBN/pub?output=csv";
-const SR_TA_CSV= "https://docs.google.com/spreadsheets/d/e/2PACX-1vRLLtoztu41AtY4reRXwNd00WqxhlFyTbn3RKoBwssrf1fXFGAZxO2b1dB62-0lrUOz4yi1dLuJrmml/pub?gid=1618721256&single=true&output=csv";
-const SR_FR_CSV= "https://docs.google.com/spreadsheets/d/e/2PACX-1vRLLtoztu41AtY4reRXwNd00WqxhlFyTbn3RKoBwssrf1fXFGAZxO2b1dB62-0lrUOz4yi1dLuJrmml/pub?gid=109124482&single=true&output=csv";
+:root{
+  --bg:#ffffff; --text:#000000; --muted:#333333;
+  --panel:#f7f7f7; --border:#e5e5e5;
+  --accent:#ff5252;
+  --link:#ff5252; --link-hover:#d60000;
+  --maxw:1440px;
+  --container-pad:24px;
+  --topbar-h:56px;
 
-const TA_LABEL   = /time\s*attack/i;
-const FR_LABEL   = /free\s*run/i;
-const RESTRICTED = /restricted/i;
-const UNRESTRICTED = /unrestricted/i;
+  /* Speedrider tuning */
+  --sr-left-w:140px;
+  --sr-col-w:148px;
+  --sr-row-pad:2px;
+  --sr-font:.92rem;
+  --sr-line:1.25;
+}
+html { scroll-padding-top: calc(var(--topbar-h) + 12px); }
+*{box-sizing:border-box}
+html,body{height:100%}
+body{
+  margin:0; color:var(--text); background:var(--bg);
+  font-family:"Google Sans","Avenir Next","Metropolis",Inter,system-ui,-apple-system,Segoe UI,Roboto,"Helvetica Neue",Arial,sans-serif;
+  line-height:1.45;
+  padding-top:var(--topbar-h);
+}
+.container{max-width:var(--maxw); margin:0 auto; padding:0 var(--container-pad)}
 
-const COURSE_ORDER = [
-  "Floria Fields","Waveflow Waters","Airtopia Ruins","Crystalline Fissure","Steamgust Forge",
-  "Cavernous Corners","Cyberion Highway","Mount Amberfalls","Galactic Nova","Fantasy Meadows",
-  "Celestial Valley","Sky Sands","Frozen Hillside","Magma Flows","Beanstalk Park",
-  "Machine Passage","Checker Knights","Nebula Belt"
-];
+/* ===== Fixed top bar ===== */
+.topbar.fixed{position:fixed; top:0; left:0; right:0; z-index:1000; background:#000; color:#fff; height:var(--topbar-h)}
+.bar-inner{display:flex; align-items:center; gap:12px; height:var(--topbar-h)}
+.brand-logo-img{width:24px; height:24px}
+.brand-name{font-weight:700}
+.site-nav a{color:#fff; text-decoration:none; margin-left:16px; padding:8px 4px; border-bottom:2px solid transparent}
+.site-nav a.active{border-bottom-color:var(--accent)}
+.site-nav a:hover{color:#ddd}
 
-const BANNERS = {
-  "Airtopia Ruins": "images/airtopia_banner.webp",
-  "Beanstalk Park": "images/beanstalk_banner.webp",
-  "Cavernous Corners": "images/Cavernous_banner.webp",
-  "Checker Knights": "images/checker_banner.webp",
-  "Celestial Valley": "images/Celestial_banner.webp",
-  "Crystalline Fissure":"images/Crystalline_banner.webp",
-  "Cyberion Highway": "images/Cyberion_Banner.webp",
-  "Fantasy Meadows": "images/Fantasy_banner.webp",
-  "Floria Fields": "images/Floria_banner.webp",
-  "Frozen Hillside": "images/Frozen_banner.webp",
-  "Galactic Nova": "images/Nova_Banner.webp",
-  "Machine Passage": "images/Machine_Banner.webp",
-  "Magma Flows": "images/Magma_Banner.webp",
-  "Mount Amberfalls": "images/Amberfalls_banner.webp",
-  "Nebula Belt": "images/Nebula_Banner.webp",
-  "Sky Sands": "images/Sky_Banner.webp",
-  "Steamgust Forge": "images/Steamgust_Banner.webp",
-  "Waveflow Waters": "images/Waveflow_Banner.webp"
-};
+/* ===== Footer ===== */
+.site-footer{border-top:1px solid var(--border); padding:12px 0; color:var(--muted)}
+#year{white-space:nowrap}
 
-/* --- CSV parsing (minimal) --- */
-function parseCSV(text){
-  const rows = [];
-  let row = [], cur = '', inQuotes = false;
-  for (let i=0; i<text.length; i++){
-    const ch = text[i], next = text[i+1];
-    if (inQuotes){
-      if (ch === '"' && next === '"'){ cur += '"'; i++; }
-      else if (ch === '"'){ inQuotes = false; }
-      else { cur += ch; }
-    } else {
-      if (ch === '"'){ inQuotes = true; }
-      else if (ch === ','){ row.push(cur); cur = ''; }
-      else if (ch === '\n'){ row.push(cur); rows.push(row); row = []; cur = ''; }
-      else { cur += ch; }
-    }
-  }
-  if (cur.length || row.length){ row.push(cur); rows.push(row); }
-  return rows.filter(r => r.length && r.some(v => String(v).trim().length));
+/* ===== Air Ride page header ===== */
+.site-header{padding:16px 0 8px}
+.site-header .brand{margin:0; font-weight:800; font-size:2rem}
+.site-header .tagline{margin:6px 0 10px; color:var(--muted)}
+.site-header .tagline a{color:var(--link); text-decoration:none}
+.site-header .tagline a:hover{color:var(--link-hover); text-decoration:underline}
+.accent--fullbleed{
+  width:100vw; height:4px; background:var(--accent); border:none; margin:0;
+  margin-left:calc((100vw - 100%) / -2);
+  margin-right:calc((100vw - 100%) / -2);
 }
 
-/* --- Helpers --- */
-function idxOf(header, colName){
-  const i = header.findIndex(h => String(h).trim().toLowerCase() === String(colName).toLowerCase());
-  return i < 0 ? null : i;
-}
-function makeAnchorId(name){
-  return String(name).toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-+|-+$/g,'');
-}
-function stripPrefix(url){
-  return String(url ?? '').replace(/^https?:\/\/(www\.)?/i,'');
-}
-/* Proper clickable anchor with trimmed label */
-function linkCell(url){
-  const u = String(url ?? '').trim();
-  if (!u) return '';
-  const label = stripPrefix(u);
-  return `${u}${label}</a>`;
-}
+/* ===== Air Ride layout (TOC + content) ===== */
+.layout{display:grid; grid-template-columns:150px 1fr; gap:32px}
+@media (max-width:900px){.layout{grid-template-columns:1fr}}
+.sidebar{padding:8px 0; margin-left:-32px}
+#course-nav{position:sticky; top:calc(var(--topbar-h) + 12px)}
+#course-nav a{display:block; padding:6px 2px; color:var(--text); text-decoration:underline; text-decoration-color:transparent; border-bottom:2px solid transparent}
+#course-nav a:hover{border-bottom-color:#999}
+#course-nav a.active{border-bottom-color:var(--accent)}
+/* Legacy divider (1px #c7c7c7) */
+#course-nav .legacy-sep{height:1px; background:#c7c7c7; margin:6px 0}
 
-/* Build SRC category link for empty tables (pattern from your SRC URLs.txt) */
-function slugifyCourse(name){
-  return String(name).trim().toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-+|-+$/g,'');
-}
-function buildSrcCategoryUrl(course, mode, rules){
-  const courseSlug = slugifyCourse(course);
-  const modeSlug   = (mode === 'TA') ? 'time-attack' : 'free-run';
-  const ruleSlug   = String(rules).trim().toLowerCase(); // 'restricted' | 'unrestricted'
-  return `https://www.speedrun.com/kars?h=levels-air-ride-${modeSlug}-${courseSlug}-${ruleSlug}`;
+/* Course sections */
+.course{margin:12px 0 32px}
+.anchor{position:relative; top:-80px}
+.section-divider{border:none; height:2px; background:#eee; margin:18px 0}
+
+/* ===== Course banner ===== */
+.banner-wrap{position:relative; width:100%; height:100px; margin:8px 0 12px 0}
+.course-banner{width:100%; height:100%; object-fit:cover; border:none; border-radius:8px}
+.banner-title{
+  position:absolute; left:16px; top:50%; transform:translateY(-50%);
+  color:#fff; font-weight:800; font-size:60px; letter-spacing:.02em;
+  text-shadow:0 2px 6px rgba(0,0,0,.55);
 }
 
-/* Parse time to ms for sorting */
-function toMillis(t){
-  const s = String(t ?? '').trim();
-  let m;
-  if ((m = s.match(/^(\d+)'(\d{2})"(\d{2,3})$/))){
-    const mm = +m[1], ss = +m[2], frac = +m[3];
-    const ms = m[3].length === 2 ? frac * 10 : frac;
-    return (mm*60 + ss) * 1000 + ms;
-  }
-  if ((m = s.match(/^(\d+):(\d{2})\.(\d{3})$/))){
-    const mm = +m[1], ss = +m[2], ms = +m[3];
-    return (mm*60 + ss) * 1000 + ms;
-  }
-  if ((m = s.match(/^(\d+):(\d{2}):(\d{2})\.(\d{3})$/))){
-    const hh = +m[1], mm = +m[2], ss = +m[3], ms = +m[4];
-    return ((hh*3600)+(mm*60)+ss)*1000 + ms;
-  }
-  return Number.POSITIVE_INFINITY;
+/* ===== SRC tables ===== */
+.tables-grid{display:grid; gap:12px; margin-top:12px; grid-template-columns:1fr 1fr}
+.table-card{background:none; border:none; padding:0}
+.table-card h3{margin:0 0 10px; font-size:18px; font-weight:700}
+
+.table{
+  width:100%;
+  max-width:100%;
+  border-collapse:collapse;
+  table-layout:fixed;
+  /* Requested: 1px #fafafa border and rounded corners */
+  border:1px solid #fafafa; border-radius:8px; overflow:hidden;
 }
-
-/* --- SRC tables --- */
-function renderSrcTable(mountId, rows, ctx){
-  const mount = document.getElementById(mountId); if (!mount) return;
-  const COLS = ["Player","Time","Machine","Rider","SRC Link","Video"];
-  const colgroup = `
-    <colgroup>
-      <col style="width:18%">
-      <col style="width:16%"><!-- Time -->
-      <col style="width:18%">
-      <col style="width:18%">
-      <col style="width:15%">
-      <col style="width:15%">
-    </colgroup>
-  `;
-  let html = `<table class="table">${colgroup}<thead><tr>`;
-  COLS.forEach(c => { html += `<th data-col="${c}">${c}<span class="sort-ind"></span></th>`; });
-  html += '</tr></thead><tbody>';
-  if (rows && rows.length){
-    const sorted = rows.slice().sort((a,b) => (a._ms - b._ms));
-    sorted.forEach(r => {
-      html += '<tr>';
-      html += `<td>${r.Player ?? ''}</td>`;
-      html += `<td class="td--time">${r.Time ?? ''}</td>`;
-      html += `<td>${r.Machine ?? ''}</td>`;
-      html += `<td>${r.Rider ?? ''}</td>`;
-      html += `<td>${linkCell(r.Link)}</td>`;
-      html += `<td>${linkCell(r.Video)}</td>`;
-      html += '</tr>';
-    });
-  } else {
-    const url = buildSrcCategoryUrl(ctx.course, ctx.mode, ctx.rules);
-    html += `<tr><td class="empty" colspan="${COLS.length}">
-      No runs submitted for this category.
-      <a href="${url}" target="_blank" rel="noopener">Be the first!</a>
-    </td></tr>`;
-  }
-  html += '</tbody></table>';
-  mount.innerHTML = html;
-
-  // Click-sort
-  const ths = mount.querySelectorAll('th'); let sortState = {};
-  ths.forEach(th => {
-    th.addEventListener('click', () => {
-      const col = th.getAttribute('data-col');
-      const dir = (sortState.col === col && sortState.dir === 'asc') ? 'desc' : 'asc';
-      sortState = { col, dir };
-      const tbody = mount.querySelector('tbody');
-      const rowsEl = Array.from(tbody.querySelectorAll('tr')).filter(tr => !tr.querySelector('.empty'));
-      const idx = COLS.indexOf(col) + 1;
-      rowsEl.sort((rA, rB) => {
-        const a = rA.querySelector(`td:nth-child(${idx})`).textContent.trim();
-        const b = rB.querySelector(`td:nth-child(${idx})`).textContent.trim();
-        let cmp;
-        if (col === 'Time'){ cmp = toMillis(a) - toMillis(b); }
-        else { cmp = a.localeCompare(b, undefined, { numeric:true, sensitivity:'base' }); }
-        return dir === 'asc' ? cmp : -cmp;
-      });
-      rowsEl.forEach(el => tbody.appendChild(el));
-      mount.querySelectorAll('.sort-ind').forEach(i => i.textContent = '');
-      th.querySelector('.sort-ind').textContent = dir === 'asc' ? '▲' : '▼';
-    });
-  });
+.table th, .table td{
+  /* keep inner cell lines subtle */
+  border-right:1px solid var(--border);
+  font-size:12px; white-space:nowrap;
 }
-
-/* --- Speedrider strips (aligned, compact, sortable) --- */
-const SR_STATE = new Map(); // mountId -> { entries:[], sortKey:'time'|'machine'|'rider'|'player', dir:'asc'|'desc' }
-
-function renderSpeedriderStrip(mountId, entries){
-  const mount = document.getElementById(mountId); if (!mount) return;
-  if (!entries || entries.length === 0){ mount.innerHTML = '<p class="muted">No data</p>'; return; }
-
-  // Default: fastest time to the left
-  const sorted = entries.slice().sort((a,b) => {
-    const ax = (typeof a._sec === 'number' && !isNaN(a._sec)) ? a._sec : Infinity;
-    const bx = (typeof b._sec === 'number' && !isNaN(b._sec)) ? b._sec : Infinity;
-    return ax - bx;
-  });
-  SR_STATE.set(mountId, { entries: sorted, sortKey:'time', dir:'asc' });
-
-  mount.innerHTML = `
-    <div class="sr-strip" data-mount="${mountId}">
-      <div class="sr-left">
-        <div class="sr-left-row" data-sort="time">Time <span class="sr-sort-ind">◀</span></div>
-        <div class="sr-left-row" data-sort="machine">Machine <span class="sr-sort-ind"></span></div>
-        <div class="sr-left-row" data-sort="rider">Rider <span class="sr-sort-ind"></span></div>
-        <div class="sr-left-row" data-sort="player">Player <span class="sr-sort-ind"></span></div>
-        <div class="sr-left-row" data-sort="link" aria-disabled="true">Link</div>
-      </div>
-      <div class="sr-records"></div>
-    </div>
-  `;
-
-  paintSrRecords(mountId);
-
-  // Sorting handlers
-  const strip = mount.querySelector('.sr-strip');
-  strip.querySelectorAll('.sr-left-row').forEach(row => {
-    const key = row.getAttribute('data-sort');
-    if (key === 'link') return; // non-sortable
-    row.addEventListener('click', () => {
-      const state = SR_STATE.get(mountId);
-      let dir = 'asc';
-      if (state.sortKey === key) dir = (state.dir === 'asc') ? 'desc' : 'asc';
-      sortSr(mountId, key, dir);
-      updateSrSortIndicators(strip, key, dir);
-    });
-  });
+.table th{
+  background:#000; color:#fff; text-align:left; font-weight:700;
+  line-height:27px; padding:4px 10px; cursor:pointer; position:relative;
 }
+.table th .sort-ind{position:absolute; right:8px; top:50%; transform:translateY(-50%); font-size:.9rem; color:#fff; opacity:.8}
+.table td{background:#fff; color:var(--text); line-height:22px; padding:4px 10px}
 
-function updateSrSortIndicators(strip, activeKey, dir){
-  strip.querySelectorAll('.sr-left-row .sr-sort-ind').forEach(ind => ind.textContent = '');
-  const row = strip.querySelector(`.sr-left-row[data-sort="${activeKey}"] .sr-sort-ind`);
-  if (row) row.textContent = dir === 'asc' ? '◀' : '▶'; // left/right arrows for horizontal sort
+/* Alternate row color #f3f3f3 */
+.table tbody tr:nth-child(odd) td{background:#fff}
+.table tbody tr:nth-child(even) td{background:#f3f3f3}
+
+.table thead tr th:last-child, .table tbody tr td:last-child{border-right:none}
+
+/* Empty state cell */
+.table td.empty{ text-align:center; padding:12px 10px; }
+.table td.empty a{ color:var(--link); text-decoration:none; }
+.table td.empty a:hover{ color:var(--link-hover); text-decoration:underline; }
+
+/* Core columns: Player / Time / Machine / Rider */
+.table td:nth-child(1), .table td:nth-child(3), .table td:nth-child(4){
+  overflow:visible; text-overflow:clip;
 }
+/* Time column: hide slight overflow */
+.table td.td--time{overflow:hidden; text-overflow:clip}
 
-function sortSr(mountId, key, dir){
-  const state = SR_STATE.get(mountId);
-  const entries = state.entries.slice();
-  const cmpStr = (a,b) => a.localeCompare(b, undefined, { numeric:true, sensitivity:'base' });
-  let cmp;
-  switch (key){
-    case 'machine': cmp = (a,b) => cmpStr(a.Machine ?? '', b.Machine ?? ''); break;
-    case 'rider':   cmp = (a,b) => cmpStr(a.Rider ?? '',   b.Rider ?? '');   break;
-    case 'player':  cmp = (a,b) => cmpStr(a.Player ?? '',  b.Player ?? '');  break;
-    case 'time':    cmp = (a,b) => {
-      const ax = (typeof a._sec === 'number' && !isNaN(a._sec)) ? a._sec : Infinity;
-      const bx = (typeof b._sec === 'number' && !isNaN(b._sec)) ? b._sec : Infinity;
-      return ax - bx;
-    }; break;
-    default:        cmp = () => 0;
-  }
-  entries.sort((a,b) => (dir === 'asc' ? cmp(a,b) : -cmp(a,b)));
-  SR_STATE.set(mountId, { entries, sortKey:key, dir });
-  paintSrRecords(mountId);
+/* Link columns (5–6): fixed width + ellipsis */
+.table th:nth-child(5), .table td:nth-child(5),
+.table th:nth-child(6), .table td:nth-child(6){ width:240px; max-width:240px; }
+.table td:nth-child(5), .table td:nth-child(6){ overflow:hidden; text-overflow:ellipsis; }
+.table a{
+  color:var(--link); text-decoration:none; display:inline-block;
+  max-width:100%; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
 }
+.table a:hover{color:var(--link-hover); text-decoration:underline}
 
-function paintSrRecords(mountId){
-  const strip = document.querySelector(`[data-mount="${mountId}"]`);
-  const list = strip.querySelector('.sr-records');
-  const { entries } = SR_STATE.get(mountId);
-  list.innerHTML = entries.map((e, i) => {
-    const cls = (i === 0) ? 'sr-col first' : (i === entries.length - 1 ? 'sr-col last' : 'sr-col');
-    return `
-      <div class="${cls}">
-        <div class="sr-time">${e.Time ?? ''}</div>
-        <div class="sr-row">${e.Machine ?? ''}</div>
-        <div class="sr-row">${e.Rider ?? ''}</div>
-        <div class="sr-row">${e.Player ?? ''}</div>
-        <div class="sr-row">${linkCell(e["Player Link"] ?? '')}</div>
-      </div>
-    `;
-  }).join('');
+/* ===== Speedrider strips (aligned grid, compact, sortable) ===== */
+.table-card.wide{grid-column:1/-1}
+
+/* Whole strip: left header + record columns with zero gap */
+.sr-strip{display:flex; gap:0; overflow-x:auto; padding-bottom:8px}
+
+/* Left labels column — smaller font, tight line-height, rounded */
+.sr-left{
+  flex:0 0 var(--sr-left-w);
+  display:grid; grid-template-rows:repeat(5,auto); row-gap:0;
+  background:#000; color:#fff; border-radius:12px;
+  padding:8px;
+  font-size:var(--sr-font); line-height:var(--sr-line);
 }
-
-/* --- Build Speedrider index from CSV --- */
-function buildSrIndex(rows){
-  const header = rows[0].map(h => String(h).trim());
-  const IDX = {
-    Course:    idxOf(header,"Course"),
-    Machine:   idxOf(header,"Machine"),
-    Rider:     idxOf(header,"Rider"),
-    Player:    idxOf(header,"Player"),
-    Time:      idxOf(header,"Time"),
-    TimeSec:   idxOf(header,"Time (sec)"),
-    PlayerLink:idxOf(header,"Player Link")
-  };
-  const byCourse = new Map();
-  rows.slice(1).forEach(r => {
-    const course = r[IDX.Course] ?? ''; if (!course) return;
-    const entry = {
-      "Time": r[IDX.Time],
-      "Machine": r[IDX.Machine],
-      "Rider": r[IDX.Rider],
-      "Player": r[IDX.Player],
-      "Player Link": r[IDX.PlayerLink],
-      _sec: Number(r[IDX.TimeSec] ?? NaN)
-    };
-    if (!byCourse.has(course)) byCourse.set(course, []);
-    byCourse.get(course).push(entry);
-  });
-  // default sort fastest → slowest inside each course
-  byCourse.forEach(arr => {
-    arr.sort((a,b) => {
-      const ax = (typeof a._sec === 'number' && !isNaN(a._sec)) ? a._sec : Infinity;
-      const bx = (typeof b._sec === 'number' && !isNaN(b._sec)) ? b._sec : Infinity;
-      return ax - bx;
-    });
-  });
-  return byCourse;
+.sr-left .sr-left-row{
+  margin:0; padding:var(--sr-row-pad) 0;
+  font-weight:700; display:flex; align-items:center; justify-content:space-between;
+  cursor:pointer; user-select:none;
 }
+.sr-left .sr-left-row .sr-sort-ind{margin-left:8px; opacity:.85;}
 
-/* --- MAIN --- */
-async function loadAll(){
-  const y = document.getElementById('year');
-  if (y) y.textContent = new Date().getFullYear();
-
-  const [srcRes, srTaRes, srFrRes] = await Promise.all([
-    fetch(SRC_CSV,  { cache:'no-cache' }),
-    fetch(SR_TA_CSV,{ cache:'no-cache' }),
-    fetch(SR_FR_CSV,{ cache:'no-cache' })
-  ]);
-  const [srcText, srTaText, srFrText] = await Promise.all([srcRes.text(), srTaRes.text(), srFrRes.text()]);
-  const srcRows  = parseCSV(srcText);
-  const srTaRows = parseCSV(srTaText);
-  const srFrRows = parseCSV(srFrText);
-
-  // Parse headers
-  const srcHeader = srcRows[0].map(h => String(h).trim());
-  const SRC_IDX = {
-    Category:   idxOf(srcHeader,"Category"),
-    Subcategory:idxOf(srcHeader,"Subcategory"),
-    Machine:    idxOf(srcHeader,"Machine"),
-    Rider:      idxOf(srcHeader,"Rider"),
-    Player:     idxOf(srcHeader,"Player"),
-    Time:       idxOf(srcHeader,"Time"),
-    Link:       idxOf(srcHeader,"Link"),
-    Video:      idxOf(srcHeader,"Video")
-  };
-
-  // Bucket SRC by course + mode + rules
-  const srcByCourse = new Map();
-  srcRows.slice(1).forEach(r => {
-    const category = r[SRC_IDX.Category] ?? '';
-    const subcat   = r[SRC_IDX.Subcategory] ?? '';
-    if (!category || !subcat) return;
-
-    const mode = TA_LABEL.test(category) ? 'TA' : (FR_LABEL.test(category) ? 'FR' : 'OTHER');
-    if (mode === 'OTHER') return;
-
-    const parts = String(subcat ?? '').trim().replace(/\s*\+$/, '').split(/\s*\+\s*/);
-    const course = (parts[0] ?? '').trim();
-    const rulesText = (parts[1] ?? '').trim() || subcat;
-    const rules = RESTRICTED.test(rulesText) ? 'Restricted' : (UNRESTRICTED.test(rulesText) ? 'Unrestricted' : '');
-    if (!course || !rules) return;
-
-    const rowObj = {
-      Player:  r[SRC_IDX.Player],
-      Time:    r[SRC_IDX.Time],
-      Machine: r[SRC_IDX.Machine],
-      Rider:   r[SRC_IDX.Rider],
-      Link:    r[SRC_IDX.Link],
-      Video:   r[SRC_IDX.Video],
-      _ms:     toMillis(r[SRC_IDX.Time])
-    };
-    if (!srcByCourse.has(course)) {
-      srcByCourse.set(course, { TA:{Restricted:[],Unrestricted:[]}, FR:{Restricted:[],Unrestricted:[]} });
-    }
-    srcByCourse.get(course)[mode][rules].push(rowObj);
-  });
-
-  // Sort SRC lists
-  for (const course of srcByCourse.keys()){
-    ['TA','FR'].forEach(m => ['Restricted','Unrestricted'].forEach(rule => {
-      srcByCourse.get(course)[m][rule].sort((a,b) => a._ms - b._ms);
-    }));
-  }
-
-  // Speedrider indices
-  const srTaByCourse = buildSrIndex(srTaRows);
-  const srFrByCourse = buildSrIndex(srFrRows);
-
-  // Mount points
-  const content = document.getElementById('content');
-  const nav     = document.getElementById('course-nav');
-
-  // Course ordering + TOC (with legacy divider)
-  const courseSet = new Set([...srcByCourse.keys(), ...srTaByCourse.keys(), ...srFrByCourse.keys()]);
-  const orderedCourses = COURSE_ORDER.filter(c => courseSet.has(c));
-
-  let navHtml = '';
-  orderedCourses.forEach(course => {
-    const id = makeAnchorId(course);
-    if (course === 'Fantasy Meadows'){
-      navHtml += '<div class="legacy-sep" aria-hidden="true"></div>';
-    }
-    navHtml += `<a href="#${id}">${course}</a>`;
-  });
-  nav.innerHTML = navHtml;
-
-  const sectionIds = [];
-  orderedCourses.forEach(courseName => {
-    const id = makeAnchorId(courseName);
-    sectionIds.push(id);
-
-    const srcCourse = srcByCourse.get(courseName) ?? { TA:{Restricted:[],Unrestricted:[]}, FR:{Restricted:[],Unrestricted:[]} };
-    const srTaCourse = srTaByCourse.get(courseName) ?? [];
-    const srFrCourse = srFrByCourse.get(courseName) ?? [];
-
-    // Section
-    const sec = document.createElement('section');
-    sec.className = 'course';
-
-    // Banner
-    const bannerPath = BANNERS[courseName] ?? '';
-
-    sec.innerHTML = `
-      <span id="${id}" class="anchor"></span>
-      <figure class="banner-wrap">
-        <figcaption class="banner-title">${courseName}</figcaption>
-      </figure>
-      <div class="tables-grid">
-        <article class="table-card">
-          <h3>Time Attack - Restricted</h3>
-          <div id="${id}-ta-r"></div>
-        </article>
-        <article class="table-card">
-          <h3>Time Attack - Unrestricted</h3>
-          <div id="${id}-ta-u"></div>
-        </article>
-        <article class="table-card">
-          <h3>Free Run - Restricted</h3>
-          <div id="${id}-fr-r"></div>
-        </article>
-        <article class="table-card">
-          <h3>Free Run - Unrestricted</h3>
-          <div id="${id}-fr-u"></div>
-        </article>
-        <article class="table-card wide">
-          <h3>Speedrider - Time Attack Records by Machine</h3>
-          <div id="${id}-sr-ta"></div>
-        </article>
-        <article class="table-card wide">
-          <h3>Speedrider - Free Run Records by Machine</h3>
-          <div id="${id}-sr-fr"></div>
-        </article>
-      </div>
-      <hr class="section-divider" />
-    `;
-
-    // Inject banner image
-    const fig = sec.querySelector('.banner-wrap');
-    if (bannerPath) {
-      const img = document.createElement('img');
-      img.className = 'course-banner';
-      img.src = bannerPath;
-      img.alt = `${courseName} banner`;
-      fig.insertBefore(img, fig.firstChild);
-    }
-    content.appendChild(sec);
-
-    // Render SRC tables (now pass context for empty-state link)
-    renderSrcTable(`${id}-ta-r`, srcCourse.TA.Restricted, { course:courseName, mode:'TA', rules:'Restricted' });
-    renderSrcTable(`${id}-ta-u`, srcCourse.TA.Unrestricted, { course:courseName, mode:'TA', rules:'Unrestricted' });
-    renderSrcTable(`${id}-fr-r`, srcCourse.FR.Restricted, { course:courseName, mode:'FR', rules:'Restricted' });
-    renderSrcTable(`${id}-fr-u`, srcCourse.FR.Unrestricted, { course:courseName, mode:'FR', rules:'Unrestricted' });
-
-    // Speedrider strips (sortable)
-    renderSpeedriderStrip(`${id}-sr-ta`, srTaCourse);
-    renderSpeedriderStrip(`${id}-sr-fr`, srFrCourse);
-  });
-
-  setupScrollSpy(sectionIds);
-
-  // Smooth scroll for TOC clicks
-  nav.querySelectorAll('a').forEach(a => {
-    a.addEventListener('click', e => {
-      e.preventDefault();
-      const target = document.querySelector(a.getAttribute('href'));
-      if (target) target.scrollIntoView({ behavior:'smooth', block:'start' });
-    });
-  });
+/* Record columns — compact width, squared edges in-between */
+.sr-records{display:flex; gap:0;}
+.sr-col{
+  flex:0 0 var(--sr-col-w);
+  display:grid; grid-template-rows:repeat(5,auto); row-gap:0;
+  background:#fff;
+  border-left:1px solid var(--border);
+  padding:8px;
 }
+.sr-col.first{border-top-left-radius:12px; border-bottom-left-radius:12px;}
+.sr-col.last{border-top-right-radius:12px; border-bottom-right-radius:12px;}
 
-/* Scroll‑spy */
-function setupScrollSpy(sectionIds){
-  const links = sectionIds.map(id => ({ id, el: document.querySelector(`#course-nav a[href="#${id}"]`) })).filter(x => x.el);
-  const observer = new IntersectionObserver((entries) => {
-    entries.forEach(entry => {
-      const id = entry.target.id;
-      const link = links.find(l => l.id === id)?.el; if (!link) return;
-      if (entry.isIntersecting){
-        links.forEach(l => l.el.classList.remove('active'));
-        link.classList.add('active');
-      }
-    });
-  },{root:null, rootMargin:'0px 0px -60% 0px', threshold:0.25});
-  sectionIds.forEach(id => { const sec = document.getElementById(id); if (sec) observer.observe(sec); });
+/* Inner content — equal row heights to match header */
+.sr-time{
+  font-weight:700; font-size:1rem; margin:0; padding:var(--sr-row-pad) 0 0 8px;
+  border-left:4px solid var(--accent);
 }
+.sr-row{font-size:.9rem; margin:0; padding:var(--sr-row-pad) 0; white-space:normal; overflow:hidden; text-overflow:clip;}
+.sr-row a{
+  color:var(--link); text-decoration:none; display:inline-block;
+  max-width:100%; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
+}
+.sr-row a:hover{color:var(--link-hover); text-decoration:underline}
 
-document.addEventListener('DOMContentLoaded', loadAll);
+/* Alternating shading of record columns to echo tables */
+.sr-col:nth-child(even){background:#f3f3f3}
+
+/* Utility */
+.muted{color:#777}
