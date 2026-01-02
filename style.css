@@ -15,6 +15,7 @@
   --sr-font:.92rem;
   --sr-line:1.25;
 }
+
 html { scroll-padding-top: calc(var(--topbar-h) + 12px); }
 *{box-sizing:border-box}
 html,body{height:100%}
@@ -39,12 +40,33 @@ body{
 .site-footer{border-top:1px solid var(--border); padding:12px 0; color:var(--muted)}
 #year{white-space:nowrap}
 
+/* ===== Home hero ===== */
+.hero{position:relative; min-height:280px; display:flex; align-items:center; justify-content:center}
+.hero--home{width:100vw; margin-left:calc((100vw - 100%) / -2); margin-right:calc((100vw - 100%) / -2)}
+.hero-bg{position:absolute; inset:0; background:url('images/kars-garage-hero.png') center top / cover no-repeat}
+.hero-bg--top{background-position:center top}
+.hero-content{position:relative; z-index:1}
+.hero-content--center{text-align:center}
+.hero-title--76{margin:48px 0; font-size:76px; font-weight:800; color:#fff; text-shadow:0 2px 8px rgba(0,0,0,.4)}
+
+/* ===== Home tiles ===== */
+.tile-grid{display:grid; gap:18px; margin:24px auto; grid-template-columns:repeat(2,minmax(0,1fr)); max-width:var(--maxw); padding:0 var(--container-pad)}
+.tile-grid--shrink{transform:scale(.75); transform-origin:top center}
+.tile{display:block; border:none; border-radius:16px; text-decoration:none; position:relative; overflow:hidden; box-shadow:none}
+.tile-airride{background:url('images/air-ride.png') center/cover no-repeat; aspect-ratio:17/9}
+.tile-topride{background:url('images/top-ride.png') center/cover no-repeat; aspect-ratio:17/9}
+.tile-citytrial{background:url('images/city-trial.png') center/cover no-repeat; aspect-ratio:17/9}
+.tile-roadtrip{background:url('images/road-trip.png') center/cover no-repeat; aspect-ratio:2.3948/1}
+@media (max-width:900px){.tile-grid{grid-template-columns:1fr}}
+
 /* ===== Air Ride page header ===== */
 .site-header{padding:16px 0 8px}
 .site-header .brand{margin:0; font-weight:800; font-size:2rem}
 .site-header .tagline{margin:6px 0 10px; color:var(--muted)}
 .site-header .tagline a{color:var(--link); text-decoration:none}
 .site-header .tagline a:hover{color:var(--link-hover); text-decoration:underline}
+
+/* Full-bleed underline below cadence */
 .accent--fullbleed{
   width:100vw; height:4px; background:var(--accent); border:none; margin:0;
   margin-left:calc((100vw - 100%) / -2);
@@ -90,7 +112,6 @@ body{
   border:1px solid #fafafa; border-radius:8px; overflow:hidden;
 }
 .table th, .table td{
-  /* keep inner cell lines subtle */
   border-right:1px solid var(--border);
   font-size:12px; white-space:nowrap;
 }
@@ -138,7 +159,7 @@ body{
 /* Left labels column — smaller font, tight line-height, rounded */
 .sr-left{
   flex:0 0 var(--sr-left-w);
-  display:grid; grid-template-rows:repeat(5,auto); row-gap:0;
+  display:grid; grid-template-rows:repeat(5,min-content); row-gap:0;
   background:#000; color:#fff; border-radius:12px;
   padding:8px;
   font-size:var(--sr-font); line-height:var(--sr-line);
@@ -154,7 +175,7 @@ body{
 .sr-records{display:flex; gap:0;}
 .sr-col{
   flex:0 0 var(--sr-col-w);
-  display:grid; grid-template-rows:repeat(5,auto); row-gap:0;
+  display:grid; grid-template-rows:repeat(5,min-content); row-gap:0;
   background:#fff;
   border-left:1px solid var(--border);
   padding:8px;
@@ -167,7 +188,10 @@ body{
   font-weight:700; font-size:1rem; margin:0; padding:var(--sr-row-pad) 0 0 8px;
   border-left:4px solid var(--accent);
 }
-.sr-row{font-size:.9rem; margin:0; padding:var(--sr-row-pad) 0; white-space:normal; overflow:hidden; text-overflow:clip;}
+.sr-row{
+  font-size:.9rem; margin:0; padding:var(--sr-row-pad) 0;
+  white-space:normal; overflow:hidden; text-overflow:clip;
+}
 .sr-row a{
   color:var(--link); text-decoration:none; display:inline-block;
   max-width:100%; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;

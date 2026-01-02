@@ -1,7 +1,7 @@
 
 /* KARs Garage — Air Ride
-   - Sidebar TOC with legacy divider
-   - Proper <a> anchors
+   - Sidebar TOC with legacy divider (before Fantasy Meadows)
+   - Proper <a> anchors and trimmed labels
    - Speedrider: compact, aligned, sortable horizontally (◀ ▶ arrows)
    - SRC tables: empty state links to computed category URL
 */
@@ -79,17 +79,17 @@ function linkCell(url){
   const u = String(url ?? '').trim();
   if (!u) return '';
   const label = stripPrefix(u);
-  return `${u}${label}</a>`;
+  return `<a href="${u}" target="_blank" rel="noopener">${label}</a>`;
 }
 
-/* Build SRC category link for empty tables (pattern from your SRC URLs.txt) */
+/* Build SRC category link for empty tables */
 function slugifyCourse(name){
   return String(name).trim().toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-+|-+$/g,'');
 }
 function buildSrcCategoryUrl(course, mode, rules){
   const courseSlug = slugifyCourse(course);
   const modeSlug   = (mode === 'TA') ? 'time-attack' : 'free-run';
-  const ruleSlug   = String(rules).trim().toLowerCase(); // 'restricted' | 'unrestricted'
+  const ruleSlug   = String(rules).trim().toLowerCase(); // restricted | unrestricted
   return `https://www.speedrun.com/kars?h=levels-air-ride-${modeSlug}-${courseSlug}-${ruleSlug}`;
 }
 
@@ -207,7 +207,7 @@ function renderSpeedriderStrip(mountId, entries){
 
   paintSrRecords(mountId);
 
-  // Sorting handlers
+  // Sorting handlers (horizontal sort with ◀ ▶ arrows)
   const strip = mount.querySelector('.sr-strip');
   strip.querySelectorAll('.sr-left-row').forEach(row => {
     const key = row.getAttribute('data-sort');
@@ -225,7 +225,7 @@ function renderSpeedriderStrip(mountId, entries){
 function updateSrSortIndicators(strip, activeKey, dir){
   strip.querySelectorAll('.sr-left-row .sr-sort-ind').forEach(ind => ind.textContent = '');
   const row = strip.querySelector(`.sr-left-row[data-sort="${activeKey}"] .sr-sort-ind`);
-  if (row) row.textContent = dir === 'asc' ? '◀' : '▶'; // left/right arrows for horizontal sort
+  if (row) row.textContent = dir === 'asc' ? '◀' : '▶';
 }
 
 function sortSr(mountId, key, dir){
@@ -293,7 +293,6 @@ function buildSrIndex(rows){
     if (!byCourse.has(course)) byCourse.set(course, []);
     byCourse.get(course).push(entry);
   });
-  // default sort fastest → slowest inside each course
   byCourse.forEach(arr => {
     arr.sort((a,b) => {
       const ax = (typeof a._sec === 'number' && !isNaN(a._sec)) ? a._sec : Infinity;
@@ -453,7 +452,7 @@ async function loadAll(){
     }
     content.appendChild(sec);
 
-    // Render SRC tables (now pass context for empty-state link)
+    // Render SRC tables (pass context for empty-state link)
     renderSrcTable(`${id}-ta-r`, srcCourse.TA.Restricted, { course:courseName, mode:'TA', rules:'Restricted' });
     renderSrcTable(`${id}-ta-u`, srcCourse.TA.Unrestricted, { course:courseName, mode:'TA', rules:'Unrestricted' });
     renderSrcTable(`${id}-fr-r`, srcCourse.FR.Restricted, { course:courseName, mode:'FR', rules:'Restricted' });

@@ -1,7 +1,6 @@
 
 // KARs Garage — Home helpers
 // Sets footer year and highlights active nav if needed.
-// (Air Ride page loads its own data script: airride.js)
 
 document.addEventListener('DOMContentLoaded', () => {
   const y = document.getElementById('year');
@@ -19,3 +18,4 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   });
 });
+``
