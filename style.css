@@ -49,16 +49,6 @@ body{
 .hero-content--center{text-align:center}
 .hero-title--76{margin:48px 0; font-size:76px; font-weight:800; color:#fff; text-shadow:0 2px 8px rgba(0,0,0,.4)}
 
-/* ===== Home tiles ===== */
-.tile-grid{display:grid; gap:18px; margin:24px auto; grid-template-columns:repeat(2,minmax(0,1fr)); max-width:var(--maxw); padding:0 var(--container-pad)}
-.tile-grid--shrink{transform:scale(.75); transform-origin:top center}
-.tile{display:block; border:none; border-radius:16px; text-decoration:none; position:relative; overflow:hidden; box-shadow:none}
-.tile-airride{background:url('images/air-ride.png') center/cover no-repeat; aspect-ratio:17/9}
-.tile-topride{background:url('images/top-ride.png') center/cover no-repeat; aspect-ratio:17/9}
-.tile-citytrial{background:url('images/city-trial.png') center/cover no-repeat; aspect-ratio:17/9}
-.tile-roadtrip{background:url('images/road-trip.png') center/cover no-repeat; aspect-ratio:2.3948/1}
-@media (max-width:900px){.tile-grid{grid-template-columns:1fr}}
-
 /* ===== Air Ride page header ===== */
 .site-header{padding:16px 0 8px}
 .site-header .brand{margin:0; font-weight:800; font-size:2rem}
@@ -108,8 +98,8 @@ body{
   max-width:100%;
   border-collapse:collapse;
   table-layout:fixed;
-  /* Requested: 1px #fafafa border and rounded corners */
-  border:1px solid #fafafa; border-radius:8px; overflow:hidden;
+  /* Requested: 1px #c7c7c7 border and rounded corners */
+  border:1px solid #c7c7c7; border-radius:8px; overflow:hidden;
 }
 .table th, .table td{
   border-right:1px solid var(--border);
@@ -128,8 +118,12 @@ body{
 
 .table thead tr th:last-child, .table tbody tr td:last-child{border-right:none}
 
-/* Empty state cell */
+/* Empty state cell (centered, baseline-aligned message) */
 .table td.empty{ text-align:center; padding:12px 10px; }
+.table td.empty .empty-msg{
+  display:inline-flex; align-items:baseline; gap:6px;
+  line-height:22px;
+}
 .table td.empty a{ color:var(--link); text-decoration:none; }
 .table td.empty a:hover{ color:var(--link-hover); text-decoration:underline; }
 
@@ -167,7 +161,7 @@ body{
 .sr-left .sr-left-row{
   margin:0; padding:var(--sr-row-pad) 0;
   font-weight:700; display:flex; align-items:center; justify-content:space-between;
-  cursor:pointer; user-select:none;
+  cursor:pointer; user-select:none; line-height:var(--sr-line);
 }
 .sr-left .sr-left-row .sr-sort-ind{margin-left:8px; opacity:.85;}
 
@@ -185,16 +179,18 @@ body{
 
 /* Inner content — equal row heights to match header */
 .sr-time{
-  font-weight:700; font-size:1rem; margin:0; padding:var(--sr-row-pad) 0 0 8px;
-  border-left:4px solid var(--accent);
+  font-weight:700; font-size:1rem; margin:0;
+  padding:var(--sr-row-pad) 0 0 8px; border-left:4px solid var(--accent);
+  line-height:var(--sr-line);
 }
 .sr-row{
   font-size:.9rem; margin:0; padding:var(--sr-row-pad) 0;
-  white-space:normal; overflow:hidden; text-overflow:clip;
+  white-space:normal; overflow:hidden; text-overflow:ellipsis; line-height:var(--sr-line);
+  display:flex; align-items:center;
 }
 .sr-row a{
   color:var(--link); text-decoration:none; display:inline-block;
-  max-width:100%; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
+  max-width:100%; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; line-height:var(--sr-line);
 }
 .sr-row a:hover{color:var(--link-hover); text-decoration:underline}
 

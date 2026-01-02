@@ -3,7 +3,7 @@
    - Sidebar TOC with legacy divider (before Fantasy Meadows)
    - Proper <a> anchors and trimmed labels
    - Speedrider: compact, aligned, sortable horizontally (◀ ▶ arrows)
-   - SRC tables: empty state links to computed category URL
+   - SRC tables: empty state links to computed category URL + group &x param
 */
 const SRC_CSV  = "https://docs.google.com/spreadsheets/d/e/2PACX-1vRLdSEHHpUNrBHTlJlEZLBJmJpbBuxrnJ4AXQk_vqzhVoyliOzaM-uEAw-WXNskMOhcjZq7HWLctrBN/pub?output=csv";
 const SR_TA_CSV= "https://docs.google.com/spreadsheets/d/e/2PACX-1vRLLtoztu41AtY4reRXwNd00WqxhlFyTbn3RKoBwssrf1fXFGAZxO2b1dB62-0lrUOz4yi1dLuJrmml/pub?gid=1618721256&single=true&output=csv";
@@ -82,15 +82,24 @@ function linkCell(url){
   return `<a href="${u}" target="_blank" rel="noopener">${label}</a>`;
 }
 
-/* Build SRC category link for empty tables */
+/* Build SRC category link for empty tables + group code from your screenshot */
 function slugifyCourse(name){
   return String(name).trim().toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-+|-+$/g,'');
 }
+const SRC_GROUP_X = {
+  "TA-Restricted":    "l_dy123jpd-z27qqvgk-ylq4rkmn.le2r4npl-kn0e5z38.192m988q",
+  "TA-Unrestricted":  "l_dy123jpd-z27qqvgk-ylq4rkmn.q5v5n41-kn0e5z38.1pvp0d81",
+  "FR-Restricted":    "l_dy123jpd-zdnjyxk-gmxx7j8.qnvps9dl-q1q6eg41.qjek4mkq",
+  "FR-Unrestricted":  "l_dy123jpd-zdnjyxk-gmxx7j8.qnvps9dl-q1q6eg41.q75r4d1"
+};
 function buildSrcCategoryUrl(course, mode, rules){
   const courseSlug = slugifyCourse(course);
   const modeSlug   = (mode === 'TA') ? 'time-attack' : 'free-run';
   const ruleSlug   = String(rules).trim().toLowerCase(); // restricted | unrestricted
-  return `https://www.speedrun.com/kars?h=levels-air-ride-${modeSlug}-${courseSlug}-${ruleSlug}`;
+  const groupKey   = `${mode}-${rules}`;
+  const groupX     = SRC_GROUP_X[groupKey] || "";
+  const base = `https://www.speedrun.com/kars?h=levels-air-ride-${modeSlug}-${courseSlug}-${ruleSlug}`;
+  return groupX ? `${base}&x=${groupX}` : base;
 }
 
 /* Parse time to ms for sorting */
@@ -145,8 +154,10 @@ function renderSrcTable(mountId, rows, ctx){
   } else {
     const url = buildSrcCategoryUrl(ctx.course, ctx.mode, ctx.rules);
     html += `<tr><td class="empty" colspan="${COLS.length}">
-      No runs submitted for this category.
-      <a href="${url}" target="_blank" rel="noopener">Be the first!</a>
+      <span class="empty-msg">
+        <span>No runs submitted for this category.</span>
+        <a href="${url}" target="_blank" rel="noopener">Be the first!</a>
+      </span>
     </td></tr>`;
   }
   html += '</tbody></table>';
