@@ -1,8 +1,9 @@
 
-/* KARs Garage — Air Ride (GitHub Pages-friendly)
+/* KARs Garage — Air Ride
    - Sidebar TOC with legacy divider
-   - Proper <a> anchors in TOC and link cells
-   - Speedrider strips: aligned grid, compact, sortable horizontally
+   - Proper <a> anchors
+   - Speedrider: compact, aligned, sortable horizontally (◀ ▶ arrows)
+   - SRC tables: empty state links to computed category URL
 */
 const SRC_CSV  = "https://docs.google.com/spreadsheets/d/e/2PACX-1vRLdSEHHpUNrBHTlJlEZLBJmJpbBuxrnJ4AXQk_vqzhVoyliOzaM-uEAw-WXNskMOhcjZq7HWLctrBN/pub?output=csv";
 const SR_TA_CSV= "https://docs.google.com/spreadsheets/d/e/2PACX-1vRLLtoztu41AtY4reRXwNd00WqxhlFyTbn3RKoBwssrf1fXFGAZxO2b1dB62-0lrUOz4yi1dLuJrmml/pub?gid=1618721256&single=true&output=csv";
@@ -68,9 +69,7 @@ function idxOf(header, colName){
   return i < 0 ? null : i;
 }
 function makeAnchorId(name){
-  return String(name).toLowerCase()
-    .replace(/[^a-z0-9]+/g,'-')
-    .replace(/^-+|-+$/g,'');
+  return String(name).toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-+|-+$/g,'');
 }
 function stripPrefix(url){
   return String(url ?? '').replace(/^https?:\/\/(www\.)?/i,'');
@@ -80,20 +79,18 @@ function linkCell(url){
   const u = String(url ?? '').trim();
   if (!u) return '';
   const label = stripPrefix(u);
-  return `<a href="${u}" target="_blank" rel="noopener">${label}</a>`;
+  return `${u}${label}</a>`;
 }
 
-/* Subcategory "Course + Ruleset" */
-function parseCourseAndRules(subRaw){
-  const s = String(subRaw ?? '').trim().replace(/\s*\+$/, '');
-  if (!s) return { course:"", rules:"" };
-  const parts = s.split(/\s*\+\s*/);
-  const course = (parts[0] ?? '').trim();
-  let rulesText = (parts[1] ?? '').trim() || s;
-  let rules = '';
-  if (RESTRICTED.test(rulesText))   rules = 'Restricted';
-  if (UNRESTRICTED.test(rulesText)) rules = 'Unrestricted';
-  return { course, rules };
+/* Build SRC category link for empty tables (pattern from your SRC URLs.txt) */
+function slugifyCourse(name){
+  return String(name).trim().toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-+|-+$/g,'');
+}
+function buildSrcCategoryUrl(course, mode, rules){
+  const courseSlug = slugifyCourse(course);
+  const modeSlug   = (mode === 'TA') ? 'time-attack' : 'free-run';
+  const ruleSlug   = String(rules).trim().toLowerCase(); // 'restricted' | 'unrestricted'
+  return `https://www.speedrun.com/kars?h=levels-air-ride-${modeSlug}-${courseSlug}-${ruleSlug}`;
 }
 
 /* Parse time to ms for sorting */
@@ -117,7 +114,7 @@ function toMillis(t){
 }
 
 /* --- SRC tables --- */
-function renderSrcTable(mountId, rows){
+function renderSrcTable(mountId, rows, ctx){
   const mount = document.getElementById(mountId); if (!mount) return;
   const COLS = ["Player","Time","Machine","Rider","SRC Link","Video"];
   const colgroup = `
@@ -146,7 +143,11 @@ function renderSrcTable(mountId, rows){
       html += '</tr>';
     });
   } else {
-    html += `<tr><td colspan="${COLS.length}" class="muted">No data</td></tr>`;
+    const url = buildSrcCategoryUrl(ctx.course, ctx.mode, ctx.rules);
+    html += `<tr><td class="empty" colspan="${COLS.length}">
+      No runs submitted for this category.
+      <a href="${url}" target="_blank" rel="noopener">Be the first!</a>
+    </td></tr>`;
   }
   html += '</tbody></table>';
   mount.innerHTML = html;
@@ -159,7 +160,7 @@ function renderSrcTable(mountId, rows){
       const dir = (sortState.col === col && sortState.dir === 'asc') ? 'desc' : 'asc';
       sortState = { col, dir };
       const tbody = mount.querySelector('tbody');
-      const rowsEl = Array.from(tbody.querySelectorAll('tr')).filter(tr => !tr.querySelector('.muted'));
+      const rowsEl = Array.from(tbody.querySelectorAll('tr')).filter(tr => !tr.querySelector('.empty'));
       const idx = COLS.indexOf(col) + 1;
       rowsEl.sort((rA, rB) => {
         const a = rA.querySelector(`td:nth-child(${idx})`).textContent.trim();
@@ -194,7 +195,7 @@ function renderSpeedriderStrip(mountId, entries){
   mount.innerHTML = `
     <div class="sr-strip" data-mount="${mountId}">
       <div class="sr-left">
-        <div class="sr-left-row" data-sort="time">Time <span class="sr-sort-ind">▲</span></div>
+        <div class="sr-left-row" data-sort="time">Time <span class="sr-sort-ind">◀</span></div>
         <div class="sr-left-row" data-sort="machine">Machine <span class="sr-sort-ind"></span></div>
         <div class="sr-left-row" data-sort="rider">Rider <span class="sr-sort-ind"></span></div>
         <div class="sr-left-row" data-sort="player">Player <span class="sr-sort-ind"></span></div>
@@ -224,7 +225,7 @@ function renderSpeedriderStrip(mountId, entries){
 function updateSrSortIndicators(strip, activeKey, dir){
   strip.querySelectorAll('.sr-left-row .sr-sort-ind').forEach(ind => ind.textContent = '');
   const row = strip.querySelector(`.sr-left-row[data-sort="${activeKey}"] .sr-sort-ind`);
-  if (row) row.textContent = dir === 'asc' ? '▲' : '▼';
+  if (row) row.textContent = dir === 'asc' ? '◀' : '▶'; // left/right arrows for horizontal sort
 }
 
 function sortSr(mountId, key, dir){
@@ -305,180 +306,174 @@ function buildSrIndex(rows){
 
 /* --- MAIN --- */
 async function loadAll(){
-  try {
-    const y = document.getElementById('year');
-    if (y) y.textContent = new Date().getFullYear();
+  const y = document.getElementById('year');
+  if (y) y.textContent = new Date().getFullYear();
 
-    // Fetch CSVs (no-cache to avoid CDN staleness)
-    const [srcRes, srTaRes, srFrRes] = await Promise.all([
-      fetch(SRC_CSV,  { cache:'no-cache' }),
-      fetch(SR_TA_CSV,{ cache:'no-cache' }),
-      fetch(SR_FR_CSV,{ cache:'no-cache' })
-    ]);
-    const [srcText, srTaText, srFrText] = await Promise.all([srcRes.text(), srTaRes.text(), srFrRes.text()]);
-    const srcRows  = parseCSV(srcText);
-    const srTaRows = parseCSV(srTaText);
-    const srFrRows = parseCSV(srFrText);
+  const [srcRes, srTaRes, srFrRes] = await Promise.all([
+    fetch(SRC_CSV,  { cache:'no-cache' }),
+    fetch(SR_TA_CSV,{ cache:'no-cache' }),
+    fetch(SR_FR_CSV,{ cache:'no-cache' })
+  ]);
+  const [srcText, srTaText, srFrText] = await Promise.all([srcRes.text(), srTaRes.text(), srFrRes.text()]);
+  const srcRows  = parseCSV(srcText);
+  const srTaRows = parseCSV(srTaText);
+  const srFrRows = parseCSV(srFrText);
 
-    // Parse headers
-    const srcHeader = srcRows[0].map(h => String(h).trim());
-    const SRC_IDX = {
-      Category:   idxOf(srcHeader,"Category"),
-      Subcategory:idxOf(srcHeader,"Subcategory"),
-      Machine:    idxOf(srcHeader,"Machine"),
-      Rider:      idxOf(srcHeader,"Rider"),
-      Player:     idxOf(srcHeader,"Player"),
-      Time:       idxOf(srcHeader,"Time"),
-      Link:       idxOf(srcHeader,"Link"),
-      Video:      idxOf(srcHeader,"Video")
+  // Parse headers
+  const srcHeader = srcRows[0].map(h => String(h).trim());
+  const SRC_IDX = {
+    Category:   idxOf(srcHeader,"Category"),
+    Subcategory:idxOf(srcHeader,"Subcategory"),
+    Machine:    idxOf(srcHeader,"Machine"),
+    Rider:      idxOf(srcHeader,"Rider"),
+    Player:     idxOf(srcHeader,"Player"),
+    Time:       idxOf(srcHeader,"Time"),
+    Link:       idxOf(srcHeader,"Link"),
+    Video:      idxOf(srcHeader,"Video")
+  };
+
+  // Bucket SRC by course + mode + rules
+  const srcByCourse = new Map();
+  srcRows.slice(1).forEach(r => {
+    const category = r[SRC_IDX.Category] ?? '';
+    const subcat   = r[SRC_IDX.Subcategory] ?? '';
+    if (!category || !subcat) return;
+
+    const mode = TA_LABEL.test(category) ? 'TA' : (FR_LABEL.test(category) ? 'FR' : 'OTHER');
+    if (mode === 'OTHER') return;
+
+    const parts = String(subcat ?? '').trim().replace(/\s*\+$/, '').split(/\s*\+\s*/);
+    const course = (parts[0] ?? '').trim();
+    const rulesText = (parts[1] ?? '').trim() || subcat;
+    const rules = RESTRICTED.test(rulesText) ? 'Restricted' : (UNRESTRICTED.test(rulesText) ? 'Unrestricted' : '');
+    if (!course || !rules) return;
+
+    const rowObj = {
+      Player:  r[SRC_IDX.Player],
+      Time:    r[SRC_IDX.Time],
+      Machine: r[SRC_IDX.Machine],
+      Rider:   r[SRC_IDX.Rider],
+      Link:    r[SRC_IDX.Link],
+      Video:   r[SRC_IDX.Video],
+      _ms:     toMillis(r[SRC_IDX.Time])
     };
-
-    // Bucket SRC by course + mode + rules
-    const srcByCourse = new Map();
-    srcRows.slice(1).forEach(r => {
-      const category = r[SRC_IDX.Category] ?? '';
-      const subcat   = r[SRC_IDX.Subcategory] ?? '';
-      if (!category || !subcat) return;
-
-      const mode = TA_LABEL.test(category) ? 'TA' : (FR_LABEL.test(category) ? 'FR' : 'OTHER');
-      if (mode === 'OTHER') return;
-
-      const { course, rules } = parseCourseAndRules(subcat);
-      if (!course || !(rules === 'Restricted' || rules === 'Unrestricted')) return;
-
-      const rowObj = {
-        Player:  r[SRC_IDX.Player],
-        Time:    r[SRC_IDX.Time],
-        Machine: r[SRC_IDX.Machine],
-        Rider:   r[SRC_IDX.Rider],
-        Link:    r[SRC_IDX.Link],
-        Video:   r[SRC_IDX.Video],
-        _ms:     toMillis(r[SRC_IDX.Time])
-      };
-      if (!srcByCourse.has(course)) {
-        srcByCourse.set(course, { TA:{Restricted:[],Unrestricted:[]}, FR:{Restricted:[],Unrestricted:[]} });
-      }
-      srcByCourse.get(course)[mode][rules].push(rowObj);
-    });
-
-    // Sort SRC lists
-    for (const course of srcByCourse.keys()){
-      ['TA','FR'].forEach(m => ['Restricted','Unrestricted'].forEach(rule => {
-        srcByCourse.get(course)[m][rule].sort((a,b) => a._ms - b._ms);
-      }));
+    if (!srcByCourse.has(course)) {
+      srcByCourse.set(course, { TA:{Restricted:[],Unrestricted:[]}, FR:{Restricted:[],Unrestricted:[]} });
     }
+    srcByCourse.get(course)[mode][rules].push(rowObj);
+  });
 
-    // Speedrider indices
-    const srTaByCourse = buildSrIndex(srTaRows);
-    const srFrByCourse = buildSrIndex(srFrRows);
-
-    // Mount points
-    const content = document.getElementById('content');
-    const nav     = document.getElementById('course-nav');
-
-    // Course ordering + TOC (with legacy divider)
-    const courseSet = new Set([...srcByCourse.keys(), ...srTaByCourse.keys(), ...srFrByCourse.keys()]);
-    const orderedCourses = COURSE_ORDER.filter(c => courseSet.has(c));
-
-    let navHtml = '';
-    orderedCourses.forEach(course => {
-      const id = makeAnchorId(course);
-      if (course === 'Fantasy Meadows'){
-        navHtml += '<div class="legacy-sep" aria-hidden="true"></div>';
-      }
-      navHtml += `<a href="#${id}">${course}</a>`;
-    });
-    nav.innerHTML = navHtml;
-
-    const sectionIds = [];
-    orderedCourses.forEach(courseName => {
-      const id = makeAnchorId(courseName);
-      sectionIds.push(id);
-
-      const srcCourse = srcByCourse.get(courseName) ?? { TA:{Restricted:[],Unrestricted:[]}, FR:{Restricted:[],Unrestricted:[]} };
-      const srTaCourse = srTaByCourse.get(courseName) ?? [];
-      const srFrCourse = srFrByCourse.get(courseName) ?? [];
-
-      // Section
-      const sec = document.createElement('section');
-      sec.className = 'course';
-
-      // Banner
-      const bannerPath = BANNERS[courseName] ?? '';
-
-      sec.innerHTML = `
-        <span id="${id}" class="anchor"></span>
-        <figure class="banner-wrap">
-          <figcaption class="banner-title">${courseName}</figcaption>
-        </figure>
-        <div class="tables-grid">
-          <article class="table-card">
-            <h3>Time Attack - Restricted</h3>
-            <div id="${id}-ta-r"></div>
-          </article>
-          <article class="table-card">
-            <h3>Time Attack - Unrestricted</h3>
-            <div id="${id}-ta-u"></div>
-          </article>
-          <article class="table-card">
-            <h3>Free Run - Restricted</h3>
-            <div id="${id}-fr-r"></div>
-          </article>
-          <article class="table-card">
-            <h3>Free Run - Unrestricted</h3>
-            <div id="${id}-fr-u"></div>
-          </article>
-          <article class="table-card wide">
-            <h3>Speedrider - Time Attack Records by Machine</h3>
-            <div id="${id}-sr-ta"></div>
-          </article>
-          <article class="table-card wide">
-            <h3>Speedrider - Free Run Records by Machine</h3>
-            <div id="${id}-sr-fr"></div>
-          </article>
-        </div>
-        <hr class="section-divider" />
-      `;
-
-      // Inject banner image
-      const fig = sec.querySelector('.banner-wrap');
-      if (bannerPath) {
-        const img = document.createElement('img');
-        img.className = 'course-banner';
-        img.src = bannerPath;
-        img.alt = `${courseName} banner`;
-        fig.insertBefore(img, fig.firstChild);
-      }
-      content.appendChild(sec);
-
-      // Render SRC tables
-      renderSrcTable(`${id}-ta-r`, srcCourse.TA.Restricted);
-      renderSrcTable(`${id}-ta-u`, srcCourse.TA.Unrestricted);
-      renderSrcTable(`${id}-fr-r`, srcCourse.FR.Restricted);
-      renderSrcTable(`${id}-fr-u`, srcCourse.FR.Unrestricted);
-
-      // Render Speedrider strips (sortable)
-      renderSpeedriderStrip(`${id}-sr-ta`, srTaCourse);
-      renderSpeedriderStrip(`${id}-sr-fr`, srFrCourse);
-    });
-
-    setupScrollSpy(sectionIds);
-
-    // Smooth scroll for TOC clicks
-    nav.querySelectorAll('a').forEach(a => {
-      a.addEventListener('click', e => {
-        e.preventDefault();
-        const target = document.querySelector(a.getAttribute('href'));
-        if (target) target.scrollIntoView({ behavior:'smooth', block:'start' });
-      });
-    });
-  } catch (err) {
-    console.error('Air Ride load error:', err);
-    const content = document.getElementById('content');
-    if (content) {
-      content.innerHTML = `<p class="muted">Failed to load data. Please hard-refresh or try again shortly.</p>`;
-    }
+  // Sort SRC lists
+  for (const course of srcByCourse.keys()){
+    ['TA','FR'].forEach(m => ['Restricted','Unrestricted'].forEach(rule => {
+      srcByCourse.get(course)[m][rule].sort((a,b) => a._ms - b._ms);
+    }));
   }
+
+  // Speedrider indices
+  const srTaByCourse = buildSrIndex(srTaRows);
+  const srFrByCourse = buildSrIndex(srFrRows);
+
+  // Mount points
+  const content = document.getElementById('content');
+  const nav     = document.getElementById('course-nav');
+
+  // Course ordering + TOC (with legacy divider)
+  const courseSet = new Set([...srcByCourse.keys(), ...srTaByCourse.keys(), ...srFrByCourse.keys()]);
+  const orderedCourses = COURSE_ORDER.filter(c => courseSet.has(c));
+
+  let navHtml = '';
+  orderedCourses.forEach(course => {
+    const id = makeAnchorId(course);
+    if (course === 'Fantasy Meadows'){
+      navHtml += '<div class="legacy-sep" aria-hidden="true"></div>';
+    }
+    navHtml += `<a href="#${id}">${course}</a>`;
+  });
+  nav.innerHTML = navHtml;
+
+  const sectionIds = [];
+  orderedCourses.forEach(courseName => {
+    const id = makeAnchorId(courseName);
+    sectionIds.push(id);
+
+    const srcCourse = srcByCourse.get(courseName) ?? { TA:{Restricted:[],Unrestricted:[]}, FR:{Restricted:[],Unrestricted:[]} };
+    const srTaCourse = srTaByCourse.get(courseName) ?? [];
+    const srFrCourse = srFrByCourse.get(courseName) ?? [];
+
+    // Section
+    const sec = document.createElement('section');
+    sec.className = 'course';
+
+    // Banner
+    const bannerPath = BANNERS[courseName] ?? '';
+
+    sec.innerHTML = `
+      <span id="${id}" class="anchor"></span>
+      <figure class="banner-wrap">
+        <figcaption class="banner-title">${courseName}</figcaption>
+      </figure>
+      <div class="tables-grid">
+        <article class="table-card">
+          <h3>Time Attack - Restricted</h3>
+          <div id="${id}-ta-r"></div>
+        </article>
+        <article class="table-card">
+          <h3>Time Attack - Unrestricted</h3>
+          <div id="${id}-ta-u"></div>
+        </article>
+        <article class="table-card">
+          <h3>Free Run - Restricted</h3>
+          <div id="${id}-fr-r"></div>
+        </article>
+        <article class="table-card">
+          <h3>Free Run - Unrestricted</h3>
+          <div id="${id}-fr-u"></div>
+        </article>
+        <article class="table-card wide">
+          <h3>Speedrider - Time Attack Records by Machine</h3>
+          <div id="${id}-sr-ta"></div>
+        </article>
+        <article class="table-card wide">
+          <h3>Speedrider - Free Run Records by Machine</h3>
+          <div id="${id}-sr-fr"></div>
+        </article>
+      </div>
+      <hr class="section-divider" />
+    `;
+
+    // Inject banner image
+    const fig = sec.querySelector('.banner-wrap');
+    if (bannerPath) {
+      const img = document.createElement('img');
+      img.className = 'course-banner';
+      img.src = bannerPath;
+      img.alt = `${courseName} banner`;
+      fig.insertBefore(img, fig.firstChild);
+    }
+    content.appendChild(sec);
+
+    // Render SRC tables (now pass context for empty-state link)
+    renderSrcTable(`${id}-ta-r`, srcCourse.TA.Restricted, { course:courseName, mode:'TA', rules:'Restricted' });
+    renderSrcTable(`${id}-ta-u`, srcCourse.TA.Unrestricted, { course:courseName, mode:'TA', rules:'Unrestricted' });
+    renderSrcTable(`${id}-fr-r`, srcCourse.FR.Restricted, { course:courseName, mode:'FR', rules:'Restricted' });
+    renderSrcTable(`${id}-fr-u`, srcCourse.FR.Unrestricted, { course:courseName, mode:'FR', rules:'Unrestricted' });
+
+    // Speedrider strips (sortable)
+    renderSpeedriderStrip(`${id}-sr-ta`, srTaCourse);
+    renderSpeedriderStrip(`${id}-sr-fr`, srFrCourse);
+  });
+
+  setupScrollSpy(sectionIds);
+
+  // Smooth scroll for TOC clicks
+  nav.querySelectorAll('a').forEach(a => {
+    a.addEventListener('click', e => {
+      e.preventDefault();
+      const target = document.querySelector(a.getAttribute('href'));
+      if (target) target.scrollIntoView({ behavior:'smooth', block:'start' });
+    });
+  });
 }
 
 /* Scroll‑spy */
