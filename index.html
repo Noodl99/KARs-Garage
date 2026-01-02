@@ -10,7 +10,7 @@
   <link rel="icon" href="icons/garage-icon-white.png" type="image/png" />
 
   <!-- Styles -->
-  <link rel="stylesheet" href="style.css" />
+  <link rel="stylesheet" href="style.css?v=7" />
 </head>
 <body>
   <!-- Fixed top bar -->
@@ -25,31 +25,27 @@
     </div>
   </header>
 
-  <!-- FULL-BLEED HERO (edge-to-edge) -->
-  <section class="hero hero--home" aria-label="Home hero">
+  <!-- Home hero -->
+  <section class="hero hero--home">
     <div class="hero-bg hero-bg--top" aria-hidden="true"></div>
     <div class="hero-content hero-content--center">
       <h1 class="hero-title--76">KIRBY AIR RIDERS GARAGE</h1>
     </div>
   </section>
 
-  <main>
-    <!-- Tiles (artwork already includes labels) -->
-    <section class="container" aria-label="Modes">
-      <div class="tile-grid tile-grid--shrink">
-        <a class="tile tile-airride" href="air-ride.html" aria-label="Air Ride"></a>
-        <a class="tile tile-topride" href="#" aria-label="Top Ride"></a>
-        <a class="tile tile-citytrial" href="#" aria-label="City Trial"></a>
-        <a class="tile tile-roadtrip" href="#" aria-label="Road Trip"></a>
-      </div>
-    </section>
-  </main>
+  <!-- Tiles (relative paths, case-sensitive) -->
+  <div class="tile-grid tile-grid--shrink">
+    <a class="tile tile-airride" href="air-ride.html" aria-label="Air Ride"></a>
+    <a class="tile tile-topride" href="#" aria-label="Top Ride (coming soon)"></a>
+    <a class="tile tile-citytrial" href="#" aria-label="City Trial (coming soon)"></a>
+    <a class="tile tile-roadtrip" href="#" aria-label="Road Trip (coming soon)"></a>
+  </div>
 
   <footer class="site-footer">
     <div class="container">© <span id="year"></span> KARs Garage</div>
   </footer>
 
-  <!-- Scripts -->
-  <script src="script.js"></script>
+  <!-- Script -->
+  <script src="script.js?v=7"></script>
 </body>
 </html>

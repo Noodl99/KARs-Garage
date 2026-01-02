@@ -11,7 +11,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const path = location.pathname.replace(/\/+$/, '') || '/';
   document.querySelectorAll('.site-nav a').forEach(a => {
     const href = a.getAttribute('href');
-    if ((href === '/' && path === '/') || href === path) {
+    if ((href === '/' && path === '/') || href === path || (href === './' && (path.endsWith('/') || path.endsWith('/index.html')))) {
       a.classList.add('active');
     } else {
       a.classList.remove('active');

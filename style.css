@@ -4,12 +4,11 @@
   --panel:#f7f7f7; --border:#e5e5e5;
   --accent:#ff5252;
   --link:#ff5252; --link-hover:#d60000;
-  --maxw:1440px;              /* ← global content width */
-  --container-pad:24px;       /* ← side padding for containers */
+  --maxw:1440px; /* ← global content width */
+  --container-pad:24px; /* ← side padding for containers */
   --topbar-h:56px;
-  --tile-scale:.75;           /* ← 25% shrink for home tiles */
+  --tile-scale:.75; /* ← 25% shrink for home tiles */
 }
-
 /* Reserve scroll space for fixed topbar on anchor jumps */
 html { scroll-padding-top: calc(var(--topbar-h) + 12px); }
 *{box-sizing:border-box}
@@ -54,7 +53,6 @@ body{
 .tile-topride{background:url('images/top-ride.png') center/cover no-repeat; aspect-ratio:17/9}
 .tile-citytrial{background:url('images/city-trial.png') center/cover no-repeat; aspect-ratio:17/9}
 .tile-roadtrip{background:url('images/road-trip.png') center/cover no-repeat; aspect-ratio:2.3948/1}
-
 @media (max-width:900px){.tile-grid{grid-template-columns:1fr}}
 
 /* ===== Air Ride page header ===== */
@@ -123,6 +121,7 @@ body{
   overflow:visible;
   text-overflow:clip;
 }
+
 /* Time column: hide overflow slightly to prevent bleed into next column */
 .table td.td--time{overflow:hidden; text-overflow:clip}
 
