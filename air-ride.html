@@ -6,12 +6,15 @@
   <title>KARs Garage — Air Ride</title>
   <meta name="viewport" content="width=device-width,initial-scale=1" />
 
+  <!-- Favicon -->
   <link rel="icon" href="icons/garage-icon-white.png" type="image/png" />
-  <link rel="stylesheet" href="style.css?v=18" />
+
+  <!-- Styles -->
+  <link rel="stylesheet" href="style.css?v=20" />
 </head>
 <body>
   <!-- Fixed top bar -->
-  <header class="topbar fixed">
+  <header class="topbar fixed" role="banner">
     <div class="container bar-inner">
       <img class="brand-logo-img" src="icons/garage-icon-white.png" alt="KARs Garage icon" />
       <div class="brand-name">KARs Garage</div>
@@ -22,31 +25,36 @@
     </div>
   </header>
 
-  <!-- Page layout -->
-  <main class="page">
-    <!-- Sidebar TOC -->
-    <aside class="sidebar">
-      <h2>Courses</h2>
-      <ul id="course-nav">
-        <!-- Populated by airride.js with proper anchors -->
-      </ul>
+  <!-- Page header + cadence + full-bleed underline -->
+  <section class="container site-header" aria-label="Page header">
+    <h1 class="brand">AIR RIDE</h1>
+    <p class="tagline">
+      Updates daily at 12am, 6am, 12pm, and 6pm EST.
+      Data pulled from
+      <a href="https://www.speedrun.com/kars" target="_blank" rel="noopener">speedrun.com/kars</a>
+      and
+      <a href="https://speedrider.coresv.net/?lang=en" target="_blank" rel="noopener">speedrider.coresv.net</a>.
+    </p>
+  </section>
+  <hr class="accent--fullbleed" aria-hidden="true" />
+
+  <!-- Layout: sticky TOC + content -->
+  <main class="container layout" role="main">
+    <aside class="sidebar" aria-label="Courses">
+      <nav id="course-nav"></nav>
     </aside>
 
-    <!-- Content -->
-    <section id="content">
-      <!-- airride.js will render course sections here -->
-      <noscript>
-        Please enable JavaScript to view Air Ride tables and Speedrider strips.
-      </noscript>
-    </section>
+    <!-- Dynamic content rendered by airride.js -->
+    <section id="content"></section>
   </main>
 
-  <footer class="site-footer">
-    <div class="container">© <span id="year"></span> KARs Garage</div>
+  <footer class="site-footer" role="contentinfo">
+    <div class="container">
+      © <span id="year"></span> KARs Garage • Air Ride
+    </div>
   </footer>
 
-  <script src="script.js?v=18"></script>
-  <script src="airride.js?v=18"></script>
+  <!-- Script -->
+  <script src="airride.js?v=20" defer></script>
 </body>
 </html>
-``

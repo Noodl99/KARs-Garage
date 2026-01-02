@@ -1,267 +1,587 @@
 
-// KARs Garage — Air Ride page
-// Renders course TOC, SRC tables (TA R/U, FR R/U), and Speedrider strips.
-// Ensures link cells are real <a> tags with ellipsized labels and correct anchors.
-// Adds scroll-spy for the sidebar.
+/* KARs Garage — Air Ride
+   - "Be the first!" links: exact URLs by course + mode + ruleset (from SRC URLs.txt)
+   - Speedrider sort triangles hidden until user clicks (like SRC tables)
+   - Red accent before times removed
+   - Correct rules parsing from column C "Subcategory" (check UNRESTRICTED first)
+*/
+const SRC_CSV  = "https://docs.google.com/spreadsheets/d/e/2PACX-1vRLdSEHHpUNrBHTlJlEZLBJmJpbBuxrnJ4AXQk_vqzhVoyliOzaM-uEAw-WXNskMOhcjZq7HWLctrBN/pub?output=csv";
+const SR_TA_CSV= "https://docs.google.com/spreadsheets/d/e/2PACX-1vRLLtoztu41AtY4reRXwNd00WqxhlFyTbn3RKoBwssrf1fXFGAZxO2b1dB62-0lrUOz4yi1dLuJrmml/pub?gid=1618721256&single=true&output=csv";
+const SR_FR_CSV= "https://docs.google.com/spreadsheets/d/e/2PACX-1vRLLtoztu41AtY4reRXwNd00WqxhlFyTbn3RKoBwssrf1fXFGAZxO2b1dB62-0lrUOz4yi1dLuJrmml/pub?gid=109124482&single=true&output=csv";
 
-(function () {
-  const COURSES = [
-    { id: 'sunny', name: 'Sunny Sky' },
-    { id: 'the-funnel', name: 'The Funnel' },
-    { id: 'forest', name: 'Forest' },
-    { id: 'sand', name: 'Sand' },
-    { id: 'snow', name: 'Snow' },
-    { id: 'magmac', name: 'Magmac' }
-    // Add more as needed
-  ];
+const TA_LABEL   = /time\s*attack/i;
+const FR_LABEL   = /free\s*run/i;
+const RESTRICTED   = /(?:^|[^a-z])restricted(?:$|[^a-z])/i;
+const UNRESTRICTED = /(?:^|[^a-z])unrestricted(?:$|[^a-z])/i;
 
-  // ✅ Exact filenames/case — must match /images/
-  const BANNERS = {
-    'sunny': 'images/Sunny Sky.webp',
-    'the-funnel': 'images/The Funnel.webp',
-    'forest': 'images/Forest.webp',
-    'sand': 'images/Sand.webp',
-    'snow': 'images/Snow.webp',
-    'magmac': 'images/Magmac.webp'
+/* Course order for TOC */
+const COURSE_ORDER = [
+  "Floria Fields","Waveflow Waters","Airtopia Ruins","Crystalline Fissure","Steamgust Forge",
+  "Cavernous Corners","Cyberion Highway","Mount Amberfalls","Galactic Nova","Fantasy Meadows",
+  "Celestial Valley","Sky Sands","Frozen Hillside","Magma Flows","Beanstalk Park",
+  "Machine Passage","Checker Knights","Nebula Belt"
+];
+
+/* Banners */
+const BANNERS = {
+  "Airtopia Ruins": "images/airtopia_banner.webp",
+  "Beanstalk Park": "images/beanstalk_banner.webp",
+  "Cavernous Corners": "images/Cavernous_banner.webp",
+  "Checker Knights": "images/checker_banner.webp",
+  "Celestial Valley": "images/Celestial_banner.webp",
+  "Crystalline Fissure":"images/Crystalline_banner.webp",
+  "Cyberion Highway": "images/Cyberion_Banner.webp",
+  "Fantasy Meadows": "images/Fantasy_banner.webp",
+  "Floria Fields": "images/Floria_banner.webp",
+  "Frozen Hillside": "images/Frozen_banner.webp",
+  "Galactic Nova": "images/Nova_Banner.webp",
+  "Machine Passage": "images/Machine_Banner.webp",
+  "Magma Flows": "images/Magma_Banner.webp",
+  "Mount Amberfalls": "images/Amberfalls_banner.webp",
+  "Nebula Belt": "images/Nebula_Banner.webp",
+  "Sky Sands": "images/Sky_Banner.webp",
+  "Steamgust Forge": "images/Steamgust_Banner.webp",
+  "Waveflow Waters": "images/Waveflow_Banner.webp"
+};
+
+/* --- "Be the first!" exact URLs (from SRC URLs.txt) --- */
+/* These are 1:1 copies, keyed by Course → URL per mode/ruleset. (Thanks for the file!)  [1](https://jrdunn-my.sharepoint.com/personal/victor_jrdunn_com/Documents/Microsoft%20Copilot%20Chat%20Files/SRC%20URLs.txt) */
+const SRC_EMPTY_LINKS = {
+  TA: {
+    Restricted: {
+      "Floria Fields": "https://www.speedrun.com/kars?h=levels-air-ride-time-attack-floria-fields-restricted&x=l_dy123jpd-z27qqvgk-ylq4rkmn.le2r4npl-kn0e5z38.192m988q",
+      "Waveflow Waters":"https://www.speedrun.com/kars?h=levels-air-ride-time-attack-waveflow-waters-restricted&x=l_dy123jpd-z27qqvgk-ylq4rkmn.q5vn54rl-kn0e5z38.192m988q",
+      "Airtopia Ruins":"https://www.speedrun.com/kars?h=levels-air-ride-time-attack-airtopia-ruins-restricted&x=l_dy123jpd-z27qqvgk-ylq4rkmn.lx5p8gj1-kn0e5z38.192m988q",
+      "Crystalline Fissure":"https://www.speedrun.com/kars?h=levels-air-ride-time-attack-crystalline-fissure-restricted&x=l_dy123jpd-z27qqvgk-ylq4rkmn.14oyv9wq-kn0e5z38.192m988q",
+      "Steamgust Forge":"https://www.speedrun.com/kars?h=levels-air-ride-time-attack-steamgust-forge-restricted&x=l_dy123jpd-z27qqvgk-ylq4rkmn.192m95jq-kn0e5z38.192m988q",
+      "Cavernous Corners":"https://www.speedrun.com/kars?h=levels-air-ride-time-attack-cavernous-corners-restricted&x=l_dy123jpd-z27qqvgk-ylq4rkmn.12vdwovq-kn0e5z38.192m988q",
+      "Cyberion Highway":"https://www.speedrun.com/kars?h=levels-air-ride-time-attack-cyberion-highway-restricted&x=l_dy123jpd-z27qqvgk-ylq4rkmn.1pyp04e1-kn0e5z38.192m988q",
+      "Mount Amberfalls":"https://www.speedrun.com/kars?h=levels-air-ride-time-attack-mount-amberfalls-restricted&x=l_dy123jpd-z27qqvgk-ylq4rkmn.qkej499q-kn0e5z38.192m988q",
+      "Galactic Nova":"https://www.speedrun.com/kars?h=levels-air-ride-time-attack-galactic-nova-restricted&x=l_dy123jpd-z27qqvgk-ylq4rkmn.q75j49n1-kn0e5z38.192m988q",
+      "Fantasy Meadows":"https://www.speedrun.com/kars?h=levels-air-ride-time-attack-fantasy-meadows-restricted&x=l_dy123jpd-z27qqvgk-ylq4rkmn.1gn84exl-kn0e5z38.192m988q",
+      "Celestial Valley":"https://www.speedrun.com/kars?h=levels-air-ride-time-attack-celestial-valley-restricted&x=l_dy123jpd-z27qqvgk-ylq4rkmn.qznp5v4q-kn0e5z38.192m988q",
+      "Sky Sands":"https://www.speedrun.com/kars?h=levels-air-ride-time-attack-sky-sands-restricted&x=l_dy123jpd-z27qqvgk-ylq4rkmn.lr3p0j0l-kn0e5z38.192m988q",
+      "Frozen Hillside":"https://www.speedrun.com/kars?h=levels-air-ride-time-attack-frozen-hillside-restricted&x=l_dy123jpd-z27qqvgk-ylq4rkmn.q75j49r1-kn0e5z38.192m988q",
+      "Magma Flows":"https://www.speedrun.com/kars?h=levels-air-ride-time-attack-magma-flows-restricted&x=l_dy123jpd-z27qqvgk-ylq4rkmn.1gn84eol-kn0e5z38.192m988q",
+      "Beanstalk Park":"https://www.speedrun.com/kars?h=levels-air-ride-time-attack-beanstalk-park-restricted&x=l_dy123jpd-z27qqvgk-ylq4rkmn.qznp5vkq-kn0e5z38.192m988q",
+      "Machine Passage":"https://www.speedrun.com/kars?h=levels-air-ride-time-attack-machine-passage-restricted&x=l_dy123jpd-z27qqvgk-ylq4rkmn.lr3p0jwl-kn0e5z38.192m988q",
+      "Checker Knights":"https://www.speedrun.com/kars?h=levels-air-ride-time-attack-checker-knights-restricted&x=l_dy123jpd-z27qqvgk-ylq4rkmn.1dkzyvgl-kn0e5z38.192m988q",
+      "Nebula Belt":"https://www.speedrun.com/kars?h=levels-air-ride-time-attack-nebula-belt-restricted&x=l_dy123jpd-z27qqvgk-ylq4rkmn.q8k6026q-kn0e5z38.192m988q"
+    },
+    Unrestricted: {
+      "Floria Fields":"https://www.speedrun.com/kars?h=levels-air-ride-time-attack-floria-fields-unrestricted&x=l_dy123jpd-z27qqvgk-ylq4rkmn.le2r4npl-kn0e5z38.1pyp0d81",
+      "Waveflow Waters":"https://www.speedrun.com/kars?h=levels-air-ride-time-attack-waveflow-waters-unrestricted&x=l_dy123jpd-z27qqvgk-ylq4rkmn.q5vn54rl-kn0e5z38.1pyp0d81",
+      "Airtopia Ruins":"https://www.speedrun.com/kars?h=levels-air-ride-time-attack-airtopia-ruins-unrestricted&x=l_dy123jpd-z27qqvgk-ylq4rkmn.lx5p8gj1-kn0e5z38.1pyp0d81",
+      "Crystalline Fissure":"https://www.speedrun.com/kars?h=levels-air-ride-time-attack-crystalline-fissure-unrestricted&x=l_dy123jpd-z27qqvgk-ylq4rkmn.14oyv9wq-kn0e5z38.1pyp0d81",
+      "Steamgust Forge":"https://www.speedrun.com/kars?h=levels-air-ride-time-attack-steamgust-forge-unrestricted&x=l_dy123jpd-z27qqvgk-ylq4rkmn.192m95jq-kn0e5z38.1pyp0d81",
+      "Cavernous Corners":"https://www.speedrun.com/kars?h=levels-air-ride-time-attack-cavernous-corners-unrestricted&x=l_dy123jpd-z27qqvgk-ylq4rkmn.12vdwovq-kn0e5z38.1pyp0d81",
+      "Cyberion Highway":"https://www.speedrun.com/kars?h=levels-air-ride-time-attack-cyberion-highway-unrestricted&x=l_dy123jpd-z27qqvgk-ylq4rkmn.1pyp04e1-kn0e5z38.1pyp0d81",
+      "Mount Amberfalls":"https://www.speedrun.com/kars?h=levels-air-ride-time-attack-mount-amberfalls-unrestricted&x=l_dy123jpd-z27qqvgk-ylq4rkmn.qkej499q-kn0e5z38.1pyp0d81",
+      "Galactic Nova":"https://www.speedrun.com/kars?h=levels-air-ride-time-attack-galactic-nova-unrestricted&x=l_dy123jpd-z27qqvgk-ylq4rkmn.q75j49n1-kn0e5z38.1pyp0d81",
+      "Fantasy Meadows":"https://www.speedrun.com/kars?h=levels-air-ride-time-attack-fantasy-meadows-unrestricted&x=l_dy123jpd-z27qqvgk-ylq4rkmn.1gn84exl-kn0e5z38.1pyp0d81",
+      "Celestial Valley":"https://www.speedrun.com/kars?h=levels-air-ride-time-attack-celestial-valley-unrestricted&x=l_dy123jpd-z27qqvgk-ylq4rkmn.qznp5v4q-kn0e5z38.1pyp0d81",
+      "Sky Sands":"https://www.speedrun.com/kars?h=levels-air-ride-time-attack-sky-sands-unrestricted&x=l_dy123jpd-z27qqvgk-ylq4rkmn.lr3p0j0l-kn0e5z38.1pyp0d81",
+      "Frozen Hillside":"https://www.speedrun.com/kars?h=levels-air-ride-time-attack-frozen-hillside-unrestricted&x=l_dy123jpd-z27qqvgk-ylq4rkmn.q75j49r1-kn0e5z38.1pyp0d81",
+      "Magma Flows":"https://www.speedrun.com/kars?h=levels-air-ride-time-attack-magma-flows-unrestricted&x=l_dy123jpd-z27qqvgk-ylq4rkmn.1gn84eol-kn0e5z38.1pyp0d81",
+      "Beanstalk Park":"https://www.speedrun.com/kars?h=levels-air-ride-time-attack-beanstalk-park-unrestricted&x=l_dy123jpd-z27qqvgk-ylq4rkmn.qznp5vkq-kn0e5z38.1pyp0d81",
+      "Machine Passage":"https://www.speedrun.com/kars?h=levels-air-ride-time-attack-machine-passage-unrestricted&x=l_dy123jpd-z27qqvgk-ylq4rkmn.lr3p0jwl-kn0e5z38.1pyp0d81",
+      "Checker Knights":"https://www.speedrun.com/kars?h=levels-air-ride-time-attack-checker-knights-unrestricted&x=l_dy123jpd-z27qqvgk-ylq4rkmn.1dkzyvgl-kn0e5z38.1pyp0d81",
+      "Nebula Belt":"https://www.speedrun.com/kars?h=levels-air-ride-time-attack-nebula-belt-unrestricted&x=l_dy123jpd-z27qqvgk-ylq4rkmn.q8k6026q-kn0e5z38.1pyp0d81"
+    }
+  },
+  FR: {
+    Restricted: {
+      "Floria Fields":"https://www.speedrun.com/kars?h=levels-air-ride-free-run-floria-fields-restricted&x=l_dy123jpd-zdnjjyqk-gnxq7rj8.qyzpy5d1-ql6964jl.qkej4mkq",
+      "Waveflow Waters":"https://www.speedrun.com/kars?h=levels-air-ride-free-run-waveflow-waters-restricted&x=l_dy123jpd-zdnjjyqk-gnxq7rj8.ln8w0dnl-ql6964jl.qkej4mkq",
+      "Airtopia Ruins":"https://www.speedrun.com/kars?h=levels-air-ride-free-run-airtopia-ruins-restricted&x=l_dy123jpd-zdnjjyqk-gnxq7rj8.10vzm0pl-ql6964jl.qkej4mkq",
+      "Crystalline Fissure":"https://www.speedrun.com/kars?h=levels-air-ride-free-run-crystalline-fissure-restricted&x=l_dy123jpd-zdnjjyqk-gnxq7rj8.qj704woq-ql6964jl.qkej4mkq",
+      "Steamgust Forge":"https://www.speedrun.com/kars?h=levels-air-ride-free-run-steamgust-forge-restricted&x=l_dy123jpd-zdnjjyqk-gnxq7rj8.q650xyol-ql6964jl.qkej4mkq",
+      "Cavernous Corners":"https://www.speedrun.com/kars?h=levels-air-ride-free-run-cavernous-corners-restricted&x=l_dy123jpd-zdnjjyqk-gnxq7rj8.lmok4801-ql6964jl.qkej4mkq",
+      "Cyberion Highway":"https://www.speedrun.com/kars?h=levels-air-ride-free-run-cyberion-highway-restricted&x=l_dy123jpd-zdnjjyqk-gnxq7rj8.1w4pde6q-ql6964jl.qkej4mkq",
+      "Mount Amberfalls":"https://www.speedrun.com/kars?h=levels-air-ride-free-run-mount-amberfalls-restricted&x=l_dy123jpd-zdnjjyqk-gnxq7rj8.qoxp3m4q-ql6964jl.qkej4mkq",
+      "Galactic Nova":"https://www.speedrun.com/kars?h=levels-air-ride-free-run-galactic-nova-restricted&x=l_dy123jpd-zdnjjyqk-gnxq7rj8.1398mwy1-ql6964jl.qkej4mkq",
+      "Fantasy Meadows":"https://www.speedrun.com/kars?h=levels-air-ride-free-run-fantasy-meadows-restricted&x=l_dy123jpd-zdnjjyqk-gnxq7rj8.qvvpr6yq-ql6964jl.qkej4mkq",
+      "Celestial Valley":"https://www.speedrun.com/kars?h=levels-air-ride-free-run-celestial-valley-restricted&x=l_dy123jpd-zdnjjyqk-gnxq7rj8.le2r4k6l-ql6964jl.qkej4mkq",
+      "Sky Sands":"https://www.speedrun.com/kars?h=levels-air-ride-free-run-sky-sands-restricted&x=l_dy123jpd-zdnjjyqk-gnxq7rj8.q5vn5ovl-ql6964jl.qkej4mkq",
+      "Frozen Hillside":"https://www.speedrun.com/kars?h=levels-air-ride-free-run-frozen-hillside-restricted&x=l_dy123jpd-zdnjjyqk-gnxq7rj8.lx5p8xg1-ql6964jl.qkej4mkq",
+      "Magma Flows":"https://www.speedrun.com/kars?h=levels-air-ride-free-run-magma-flows-restricted&x=l_dy123jpd-zdnjjyqk-gnxq7rj8.14oyvxkq-ql6964jl.qkej4mkq",
+      "Beanstalk Park":"https://www.speedrun.com/kars?h=levels-air-ride-free-run-beanstalk-park-restricted&x=l_dy123jpd-zdnjjyqk-gnxq7rj8.192m944q-ql6964jl.qkej4mkq",
+      "Machine Passage":"https://www.speedrun.com/kars?h=levels-air-ride-free-run-machine-passage-restricted&x=l_dy123jpd-zdnjjyqk-gnxq7rj8.12vdw52q-ql6964jl.qkej4mkq",
+      "Checker Knights":"https://www.speedrun.com/kars?h=levels-air-ride-free-run-checker-knights-restricted&x=l_dy123jpd-zdnjjyqk-gnxq7rj8.1pyp07n1-ql6964jl.qkej4mkq",
+      "Nebula Belt":"https://www.speedrun.com/kars?h=levels-air-ride-free-run-nebula-belt-restricted&x=l_dy123jpd-zdnjjyqk-gnxq7rj8.qkej4r4q-ql6964jl.qkej4mkq"
+    },
+    Unrestricted: {
+      "Floria Fields":"https://www.speedrun.com/kars?h=levels-air-ride-free-run-floria-fields-unrestricted&x=l_dy123jpd-zdnjjyqk-gnxq7rj8.qyzpy5d1-ql6964jl.q75j4rd1",
+      "Waveflow Waters":"https://www.speedrun.com/kars?h=levels-air-ride-free-run-waveflow-waters-unrestricted&x=l_dy123jpd-zdnjjyqk-gnxq7rj8.ln8w0dnl-ql6964jl.q75j4rd1",
+      "Airtopia Ruins":"https://www.speedrun.com/kars?h=levels-air-ride-free-run-airtopia-ruins-unrestricted&x=l_dy123jpd-zdnjjyqk-gnxq7rj8.10vzm0pl-ql6964jl.q75j4rd1",
+      "Crystalline Fissure":"https://www.speedrun.com/kars?h=levels-air-ride-free-run-crystalline-fissure-unrestricted&x=l_dy123jpd-zdnjjyqk-gnxq7rj8.qj704woq-ql6964jl.q75j4rd1",
+      "Steamgust Forge":"https://www.speedrun.com/kars?h=levels-air-ride-free-run-steamgust-forge-unrestricted&x=l_dy123jpd-zdnjjyqk-gnxq7rj8.q650xyol-ql6964jl.q75j4rd1",
+      "Cavernous Corners":"https://www.speedrun.com/kars?h=levels-air-ride-free-run-cavernous-corners-unrestricted&x=l_dy123jpd-zdnjjyqk-gnxq7rj8.lmok4801-ql6964jl.q75j4rd1",
+      "Cyberion Highway":"https://www.speedrun.com/kars?h=levels-air-ride-free-run-cyberion-highway-unrestricted&x=l_dy123jpd-zdnjjyqk-gnxq7rj8.1w4pde6q-ql6964jl.q75j4rd1",
+      "Mount Amberfalls":"https://www.speedrun.com/kars?h=levels-air-ride-free-run-mount-amberfalls-unrestricted&x=l_dy123jpd-zdnjjyqk-gnxq7rj8.qoxp3m4q-ql6964jl.q75j4rd1",
+      "Galactic Nova":"https://www.speedrun.com/kars?h=levels-air-ride-free-run-galactic-nova-unrestricted&x=l_dy123jpd-zdnjjyqk-gnxq7rj8.1398mwy1-ql6964jl.q75j4rd1",
+      "Fantasy Meadows":"https://www.speedrun.com/kars?h=levels-air-ride-free-run-fantasy-meadows-unrestricted&x=l_dy123jpd-zdnjjyqk-gnxq7rj8.qvvpr6yq-ql6964jl.q75j4rd1",
+      "Celestial Valley":"https://www.speedrun.com/kars?h=levels-air-ride-free-run-celestial-valley-unrestricted&x=l_dy123jpd-zdnjjyqk-gnxq7rj8.le2r4k6l-ql6964jl.q75j4rd1",
+      "Sky Sands":"https://www.speedrun.com/kars?h=levels-air-ride-free-run-sky-sands-unrestricted&x=l_dy123jpd-zdnjjyqk-gnxq7rj8.q5vn5ovl-ql6964jl.q75j4rd1",
+      "Frozen Hillside":"https://www.speedrun.com/kars?h=levels-air-ride-free-run-frozen-hillside-unrestricted&x=l_dy123jpd-zdnjjyqk-gnxq7rj8.lx5p8xg1-ql6964jl.q75j4rd1",
+      "Magma Flows":"https://www.speedrun.com/kars?h=levels-air-ride-free-run-magma-flows-unrestricted&x=l_dy123jpd-zdnjjyqk-gnxq7rj8.14oyvxkq-ql6964jl.q75j4rd1",
+      "Beanstalk Park":"https://www.speedrun.com/kars?h=levels-air-ride-free-run-beanstalk-park-unrestricted&x=l_dy123jpd-zdnjjyqk-gnxq7rj8.192m944q-ql6964jl.q75j4rd1",
+      "Machine Passage":"https://www.speedrun.com/kars?h=levels-air-ride-free-run-machine-passage-unrestricted&x=l_dy123jpd-zdnjjyqk-gnxq7rj8.12vdw52q-ql6964jl.q75j4rd1",
+      "Checker Knights":"https://www.speedrun.com/kars?h=levels-air-ride-free-run-checker-knights-unrestricted&x=l_dy123jpd-zdnjjyqk-gnxq7rj8.1pyp07n1-ql6964jl.q75j4rd1",
+      "Nebula Belt":"https://www.speedrun.com/kars?h=levels-air-ride-free-run-nebula-belt-unrestricted&x=l_dy123jpd-zdnjjyqk-gnxq7rj8.qkej4r4q-ql6964jl.q75j4rd1"
+    }
+  }
+};
+
+/* --- CSV parsing (minimal) --- */
+function parseCSV(text){
+  const rows = [];
+  let row = [], cur = '', inQuotes = false;
+  for (let i=0; i<text.length; i++){
+    const ch = text[i], next = text[i+1];
+    if (inQuotes){
+      if (ch === '"' && next === '"'){ cur += '"'; i++; }
+      else if (ch === '"'){ inQuotes = false; }
+      else { cur += ch; }
+    } else {
+      if (ch === '"'){ inQuotes = true; }
+      else if (ch === ','){ row.push(cur); cur = ''; }
+      else if (ch === '\n'){ row.push(cur); rows.push(row); row = []; cur = ''; }
+      else { cur += ch; }
+    }
+  }
+  if (cur.length || row.length){ row.push(cur); rows.push(row); }
+  return rows.filter(r => r.length && r.some(v => String(v).trim().length));
+}
+
+/* --- Helpers --- */
+function idxOf(header, colName){
+  const i = header.findIndex(h => String(h).trim().toLowerCase() === String(colName).toLowerCase());
+  return i < 0 ? null : i;
+}
+function makeAnchorId(name){
+  return String(name).toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-+|-+$/g,'');
+}
+function stripPrefix(url){
+  return String(url ?? '').replace(/^https?:\/\/(www\.)?/i,'');
+}
+function linkCell(url){
+  const u = String(url ?? '').trim();
+  if (!u) return '';
+  const label = stripPrefix(u);
+  return `${u}${label}</a>`;
+}
+
+/* Build empty-table link from exact map */
+function buildSrcCategoryUrl(course, mode, rules){
+  const byMode = SRC_EMPTY_LINKS[mode] || {};
+  const byRule = byMode[rules] || {};
+  return byRule[course] || '';
+}
+
+/* Parse time to ms for sorting */
+function toMillis(t){
+  const s = String(t ?? '').trim();
+  let m;
+  if ((m = s.match(/^(\d+)'(\d{2})"(\d{2,3})$/))){
+    const mm = +m[1], ss = +m[2], frac = +m[3];
+    const ms = m[3].length === 2 ? frac * 10 : frac;
+    return (mm*60 + ss) * 1000 + ms;
+  }
+  if ((m = s.match(/^(\d+):(\d{2})\.(\d{3})$/))){
+    const mm = +m[1], ss = +m[2], ms = +m[3];
+    return (mm*60 + ss) * 1000 + ms;
+  }
+  if ((m = s.match(/^(\d+):(\d{2}):(\d{2})\.(\d{3})$/))){
+    const hh = +m[1], mm = +m[2], ss = +m[3], ms = +m[4];
+    return ((hh*3600)+(mm*60)+ss)*1000 + ms;
+  }
+  return Number.POSITIVE_INFINITY;
+}
+
+/* --- SRC tables --- */
+function renderSrcTable(mountId, rows, ctx){
+  const mount = document.getElementById(mountId); if (!mount) return;
+  const COLS = ["Player","Time","Machine","Rider","SRC Link","Video"];
+  const colgroup = `
+    <colgroup>
+      <col style="width:18%">
+      <col style="width:16%"><!-- Time -->
+      <col style="width:18%">
+      <col style="width:18%">
+      <col style="width:15%">
+      <col style="width:15%">
+    </colgroup>
+  `;
+  let html = `<table class="table">${colgroup}<thead><tr>`;
+  COLS.forEach(c => { html += `<th data-col="${c}">${c}<span class="sort-ind"></span></th>`; });
+  html += '</tr></thead><tbody>';
+  if (rows && rows.length){
+    const sorted = rows.slice().sort((a,b) => (a._ms - b._ms));
+    sorted.forEach(r => {
+      html += '<tr>';
+      html += `<td>${r.Player ?? ''}</td>`;
+      html += `<td class="td--time">${r.Time ?? ''}</td>`;
+      html += `<td>${r.Machine ?? ''}</td>`;
+      html += `<td>${r.Rider ?? ''}</td>`;
+      html += `<td>${linkCell(r.Link)}</td>`;
+      html += `<td>${linkCell(r.Video)}</td>`;
+      html += '</tr>';
+    });
+  } else {
+    const url = buildSrcCategoryUrl(ctx.course, ctx.mode, ctx.rules);
+    const linkHtml = url ? `${url}Be the first!</a>` : '';
+    html += `<tr><td class="empty" colspan="${COLS.length}">
+      <span class="empty-msg">
+        <span>No runs submitted for this category.</span>
+        ${linkHtml}
+      </span>
+    </td></tr>`;
+  }
+  html += '</tbody></table>';
+  mount.innerHTML = html;
+
+  // Click-sort
+  const ths = mount.querySelectorAll('th'); let sortState = {};
+  ths.forEach(th => {
+    th.addEventListener('click', () => {
+      const col = th.getAttribute('data-col');
+      const dir = (sortState.col === col && sortState.dir === 'asc') ? 'desc' : 'asc';
+      sortState = { col, dir };
+      const tbody = mount.querySelector('tbody');
+      const rowsEl = Array.from(tbody.querySelectorAll('tr')).filter(tr => !tr.querySelector('.empty'));
+      const idx = COLS.indexOf(col) + 1;
+      rowsEl.sort((rA, rB) => {
+        const a = rA.querySelector(`td:nth-child(${idx})`).textContent.trim();
+        const b = rB.querySelector(`td:nth-child(${idx})`).textContent.trim();
+        let cmp;
+        if (col === 'Time'){ cmp = toMillis(a) - toMillis(b); }
+        else { cmp = a.localeCompare(b, undefined, { numeric:true, sensitivity:'base' }); }
+        return dir === 'asc' ? cmp : -cmp;
+      });
+      rowsEl.forEach(el => tbody.appendChild(el));
+      mount.querySelectorAll('.sort-ind').forEach(i => i.textContent = '');
+      th.querySelector('.sort-ind').textContent = dir === 'asc' ? '▲' : '▼';
+    });
+  });
+}
+
+/* --- Speedrider strips (aligned, compact, sortable) --- */
+const SR_STATE = new Map(); // mountId -> { entries:[], sortKey:'time'|'machine'|'rider'|'player', dir:'asc'|'desc' }
+
+function renderSpeedriderStrip(mountId, entries){
+  const mount = document.getElementById(mountId); if (!mount) return;
+  if (!entries || entries.length === 0){ mount.innerHTML = '<p class="muted">No data</p>'; return; }
+
+  // Default sort: fastest time to the left (no arrow shown until user clicks)
+  const sorted = entries.slice().sort((a,b) => {
+    const ax = (typeof a._sec === 'number' && !isNaN(a._sec)) ? a._sec : Infinity;
+    const bx = (typeof b._sec === 'number' && !isNaN(b._sec)) ? b._sec : Infinity;
+    return ax - bx;
+  });
+  SR_STATE.set(mountId, { entries: sorted, sortKey:'time', dir:'asc' });
+
+  mount.innerHTML = `
+    <div class="sr-strip" data-mount="${mountId}">
+      <div class="sr-left">
+        <div class="sr-left-row" data-sort="time">Time <span class="sr-sort-ind"></span></div>
+        <div class="sr-left-row" data-sort="machine">Machine <span class="sr-sort-ind"></span></div>
+        <div class="sr-left-row" data-sort="rider">Rider <span class="sr-sort-ind"></span></div>
+        <div class="sr-left-row" data-sort="player">Player <span class="sr-sort-ind"></span></div>
+        <div class="sr-left-row" data-sort="link" aria-disabled="true">Link</div>
+      </div>
+      <div class="sr-records"></div>
+    </div>
+  `;
+
+  paintSrRecords(mountId);
+
+  // Sorting handlers (horizontal sort with ◀ ▶ arrows)
+  const strip = mount.querySelector('.sr-strip');
+  strip.querySelectorAll('.sr-left-row').forEach(row => {
+    const key = row.getAttribute('data-sort');
+    if (key === 'link') return; // non-sortable
+    row.addEventListener('click', () => {
+      const state = SR_STATE.get(mountId);
+      let dir = 'asc';
+      if (state.sortKey === key) dir = (state.dir === 'asc') ? 'desc' : 'asc';
+      sortSr(mountId, key, dir);
+      updateSrSortIndicators(strip, key, dir);
+    });
+  });
+}
+
+function updateSrSortIndicators(strip, activeKey, dir){
+  strip.querySelectorAll('.sr-left-row .sr-sort-ind').forEach(ind => ind.textContent = '');
+  const row = strip.querySelector(`.sr-left-row[data-sort="${activeKey}"] .sr-sort-ind`);
+  if (row) row.textContent = dir === 'asc' ? '◀' : '▶';
+}
+
+function sortSr(mountId, key, dir){
+  const state = SR_STATE.get(mountId);
+  const entries = state.entries.slice();
+  const cmpStr = (a,b) => a.localeCompare(b, undefined, { numeric:true, sensitivity:'base' });
+  let cmp;
+  switch (key){
+    case 'machine': cmp = (a,b) => cmpStr(a.Machine ?? '', b.Machine ?? ''); break;
+    case 'rider':   cmp = (a,b) => cmpStr(a.Rider ?? '',   b.Rider ?? '');   break;
+    case 'player':  cmp = (a,b) => cmpStr(a.Player ?? '',  b.Player ?? '');  break;
+    case 'time':    cmp = (a,b) => {
+      const ax = (typeof a._sec === 'number' && !isNaN(a._sec)) ? a._sec : Infinity;
+      const bx = (typeof b._sec === 'number' && !isNaN(b._sec)) ? b._sec : Infinity;
+      return ax - bx;
+    }; break;
+    default:        cmp = () => 0;
+  }
+  entries.sort((a,b) => (dir === 'asc' ? cmp(a,b) : -cmp(a,b)));
+  SR_STATE.set(mountId, { entries, sortKey:key, dir });
+  paintSrRecords(mountId);
+}
+
+function paintSrRecords(mountId){
+  const strip = document.querySelector(`[data-mount="${mountId}"]`);
+  const list = strip.querySelector('.sr-records');
+  const { entries } = SR_STATE.get(mountId);
+  list.innerHTML = entries.map((e, i) => {
+    const cls = (i === 0) ? 'sr-col first' : (i === entries.length - 1 ? 'sr-col last' : 'sr-col');
+    return `
+      <div class="${cls}">
+        <div class="sr-time">${e.Time ?? ''}</div>
+        <div class="sr-row">${e.Machine ?? ''}</div>
+        <div class="sr-row">${e.Rider ?? ''}</div>
+        <div class="sr-row">${e.Player ?? ''}</div>
+        <div class="sr-row">${linkCell(e["Player Link"] ?? '')}</div>
+      </div>
+    `;
+  }).join('');
+}
+
+/* --- Build Speedrider index from CSV --- */
+function buildSrIndex(rows){
+  const header = rows[0].map(h => String(h).trim());
+  const IDX = {
+    Course:    idxOf(header,"Course"),
+    Machine:   idxOf(header,"Machine"),
+    Rider:     idxOf(header,"Rider"),
+    Player:    idxOf(header,"Player"),
+    Time:      idxOf(header,"Time"),
+    TimeSec:   idxOf(header,"Time (sec)"),
+    PlayerLink:idxOf(header,"Player Link")
+  };
+  const byCourse = new Map();
+  rows.slice(1).forEach(r => {
+    const course = r[IDX.Course] ?? ''; if (!course) return;
+    const entry = {
+      "Time": r[IDX.Time],
+      "Machine": r[IDX.Machine],
+      "Rider": r[IDX.Rider],
+      "Player": r[IDX.Player],
+      "Player Link": r[IDX.PlayerLink],
+      _sec: Number(r[IDX.TimeSec] ?? NaN)
+    };
+    if (!byCourse.has(course)) byCourse.set(course, []);
+    byCourse.get(course).push(entry);
+  });
+  byCourse.forEach(arr => {
+    arr.sort((a,b) => {
+      const ax = (typeof a._sec === 'number' && !isNaN(a._sec)) ? a._sec : Infinity;
+      const bx = (typeof b._sec === 'number' && !isNaN(b._sec)) ? b._sec : Infinity;
+      return ax - bx;
+    });
+  });
+  return byCourse;
+}
+
+/* --- MAIN --- */
+async function loadAll(){
+  const y = document.getElementById('year');
+  if (y) y.textContent = new Date().getFullYear();
+
+  const [srcRes, srTaRes, srFrRes] = await Promise.all([
+    fetch(SRC_CSV,  { cache:'no-cache' }),
+    fetch(SR_TA_CSV,{ cache:'no-cache' }),
+    fetch(SR_FR_CSV,{ cache:'no-cache' })
+  ]);
+  const [srcText, srTaText, srFrText] = await Promise.all([srcRes.text(), srTaRes.text(), srFrRes.text()]);
+  const srcRows  = parseCSV(srcText);
+  const srTaRows = parseCSV(srTaText);
+  const srFrRows = parseCSV(srFrText);
+
+  // Parse headers
+  const srcHeader = srcRows[0].map(h => String(h).trim());
+  const SRC_IDX = {
+    Category:    idxOf(srcHeader,"Category"),
+    Subcategory: idxOf(srcHeader,"Subcategory"),   // Column C (course + rules)
+    Machine:     idxOf(srcHeader,"Machine"),
+    Rider:       idxOf(srcHeader,"Rider"),
+    Player:      idxOf(srcHeader,"Player"),
+    Time:        idxOf(srcHeader,"Time"),
+    Link:        idxOf(srcHeader,"Link"),
+    Video:       idxOf(srcHeader,"Video")
   };
 
-  // Utility: strip protocol and www for label
-  function stripPrefix(url) {
-    try {
-      const u = new URL(url);
-      const host = u.hostname.replace(/^www\./, '');
-      return host + u.pathname;
-    } catch {
-      return url;
+  // Bucket SRC by course + mode + rules
+  const srcByCourse = new Map();
+  srcRows.slice(1).forEach(r => {
+    const category = r[SRC_IDX.Category] ?? '';
+    const subcat   = r[SRC_IDX.Subcategory] ?? '';
+    if (!category || !subcat) return;
+
+    const mode = TA_LABEL.test(category) ? 'TA' : (FR_LABEL.test(category) ? 'FR' : 'OTHER');
+    if (mode === 'OTHER') return;
+
+    const parts = String(subcat).trim().replace(/\s*\+$/, '').split(/\s*\+\s*/);
+    const course = (parts[0] ?? '').trim();
+    const rulesText = (parts[1] ?? '').trim() || subcat;
+
+    // IMPORTANT: check UNRESTRICTED first (contains "restricted")
+    let rules = '';
+    if (UNRESTRICTED.test(rulesText)) rules = 'Unrestricted';
+    else if (RESTRICTED.test(rulesText)) rules = 'Restricted';
+    if (!course || !rules) return;
+
+    const rowObj = {
+      Player:  r[SRC_IDX.Player],
+      Time:    r[SRC_IDX.Time],
+      Machine: r[SRC_IDX.Machine],
+      Rider:   r[SRC_IDX.Rider],
+      Link:    r[SRC_IDX.Link],
+      Video:   r[SRC_IDX.Video],
+      _ms:     toMillis(r[SRC_IDX.Time])
+    };
+    if (!srcByCourse.has(course)) {
+      srcByCourse.set(course, { TA:{Restricted:[],Unrestricted:[]}, FR:{Restricted:[],Unrestricted:[]} });
     }
-  }
-
-  // ✅ Link cell builder — always returns <a>
-  function linkCell(url, textOverride) {
-    if (!url) return '';
-    const label = textOverride || stripPrefix(url);
-    const a = document.createElement('a');
-    a.href = url;
-    a.target = '_blank';
-    a.rel = 'noopener';
-    a.textContent = label;
-    return a;
-  }
-
-  // Build TOC anchors
-  function buildTOC(courses) {
-    const nav = document.getElementById('course-nav');
-    if (!nav) return;
-    nav.innerHTML = '';
-    courses.forEach(c => {
-      const li = document.createElement('li');
-      const a = document.createElement('a');         // ✅ real anchor
-      a.href = `#${c.id}`;                           // e.g., #sunny
-      a.textContent = c.name;
-      li.appendChild(a);
-      nav.appendChild(li);
-    });
-  }
-
-  // Build a table (generic renderer)
-  function renderTable(title, rows) {
-    const wrap = document.createElement('div');
-    wrap.className = 'table-block';
-
-    const table = document.createElement('table');
-    table.className = 'table';
-
-    // ✅ colgroup plan to fix widths and avoid overflow
-    const cg = document.createElement('colgroup');
-    [
-      ['player', 'player'],
-      ['time', 'time'],
-      ['machine', 'machine'],
-      ['rider', 'rider'],
-      ['src', 'src'],
-      ['video', 'video']
-    ].forEach(([cls]) => {
-      const col = document.createElement('col');
-      col.className = cls;
-      cg.appendChild(col);
-    });
-    table.appendChild(cg);
-
-    const thead = document.createElement('thead');
-    thead.innerHTML = `
-      <tr>
-        <th colspan="6">${title}</th>
-      </tr>
-      <tr>
-        <th>Player</th>
-        <th>Time</th>
-        <th>Machine</th>
-        <th>Rider</th>
-        <th>SRC Link</th>
-        <th>Video</th>
-      </tr>`;
-    table.appendChild(thead);
-
-    const tbody = document.createElement('tbody');
-
-    if (!rows || rows.length === 0) {
-      const tr = document.createElement('tr');
-      const td = document.createElement('td');
-      td.colSpan = 6;
-      td.textContent = 'No data yet';
-      tr.appendChild(td);
-      tbody.appendChild(tr);
-    } else {
-      rows.forEach(r => {
-        const tr = document.createElement('tr');
-
-        const tdPlayer = document.createElement('td'); tdPlayer.className = 'td--player'; tdPlayer.textContent = r.player || '';
-        const tdTime   = document.createElement('td'); tdTime.className   = 'td--time';   tdTime.textContent   = r.time || '';
-        const tdMachine= document.createElement('td'); tdMachine.className= 'td--machine';tdMachine.textContent= r.machine || '';
-        const tdRider  = document.createElement('td'); tdRider.className  = 'td--rider';  tdRider.textContent  = r.rider || '';
-
-        const tdSRC    = document.createElement('td'); tdSRC.className    = 'td--src';
-        const tdVideo  = document.createElement('td'); tdVideo.className  = 'td--video';
-
-        const srcA = linkCell(r.src);
-        const vidA = linkCell(r.video);
-
-        if (srcA) tdSRC.appendChild(srcA);
-        if (vidA) tdVideo.appendChild(vidA);
-
-        tr.append(tdPlayer, tdTime, tdMachine, tdRider, tdSRC, tdVideo);
-        tbody.appendChild(tr);
-      });
-    }
-
-    table.appendChild(tbody);
-    wrap.appendChild(table);
-    return wrap;
-  }
-
-  // Speedrider strip renderer (simple)
-  function renderSpeedriderStrip(title, items) {
-    const wrap = document.createElement('div');
-    const h = document.createElement('h4');
-    h.textContent = title;
-    wrap.appendChild(h);
-
-    const grid = document.createElement('div');
-    grid.className = 'speedrider-strip';
-
-    if (!items || items.length === 0) {
-      const empty = document.createElement('div');
-      empty.className = 'speedrider-card';
-      empty.textContent = 'No data yet';
-      grid.appendChild(empty);
-    } else {
-      items.forEach(it => {
-        const card = document.createElement('div');
-        card.className = 'speedrider-card';
-        card.innerHTML = `
-          <div><strong>${it.player || ''}</strong></div>
-          <div>${it.time || ''}</div>
-          <div>${it.machine || ''} — ${it.rider || ''}</div>
-        `;
-        const links = document.createElement('div');
-        links.style.marginTop = '4px';
-        const a1 = linkCell(it.src, 'SRC');
-        const a2 = linkCell(it.video, 'Video');
-        if (a1) { a1.style.marginRight = '8px'; links.appendChild(a1); }
-        if (a2) links.appendChild(a2);
-        card.appendChild(links);
-        grid.appendChild(card);
-      });
-    }
-
-    wrap.appendChild(grid);
-    return wrap;
-  }
-
-  // Compose course section with banner and the four SRC tables + two Speedrider strips
-  function renderCourseSection(course, data) {
-    const section = document.createElement('section');
-    section.className = 'course-section';
-    section.id = course.id;
-
-    const banner = document.createElement('div');
-    banner.className = 'course-banner';
-
-    const img = document.createElement('img');
-    const bannerPath = BANNERS[course.id];
-    if (bannerPath) {
-      img.src = bannerPath; // ✅ real image path used
-      img.alt = `${course.name} banner`;
-    } else {
-      img.alt = `${course.name}`;
-    }
-    banner.appendChild(img);
-
-    const title = document.createElement('h3');
-    title.textContent = course.name;
-    banner.appendChild(title);
-
-    section.appendChild(banner);
-
-    // Tables: TA R/U side-by-side, then FR R/U beneath
-    const wrapTA = document.createElement('div');
-    wrapTA.className = 'table-wrap';
-    wrapTA.appendChild(renderTable('Time Attack — Restricted', data?.ta?.restricted || []));
-    wrapTA.appendChild(renderTable('Time Attack — Unrestricted', data?.ta?.unrestricted || []));
-    section.appendChild(wrapTA);
-
-    const wrapFR = document.createElement('div');
-    wrapFR.className = 'table-wrap';
-    wrapFR.appendChild(renderTable('Free Run — Restricted', data?.fr?.restricted || []));
-    wrapFR.appendChild(renderTable('Free Run — Unrestricted', data?.fr?.unrestricted || []));
-    section.appendChild(wrapFR);
-
-    // Speedrider strips: TA then FR
-    section.appendChild(renderSpeedriderStrip('Speedrider — Time Attack', data?.speedrider?.ta || []));
-    section.appendChild(renderSpeedriderStrip('Speedrider — Free Run', data?.speedrider?.fr || []));
-
-    return section;
-  }
-
-  // Simple scroll spy
-  function setupScrollSpy() {
-    const links = Array.from(document.querySelectorAll('.sidebar a'));
-    const sections = links
-      .map(a => document.querySelector(a.getAttribute('href')))
-      .filter(Boolean);
-
-    function onScroll() {
-      const y = window.scrollY + 100; // offset
-      let active = null;
-      for (const s of sections) {
-        if (s.offsetTop <= y) active = s;
-      }
-      links.forEach(a => a.classList.toggle('active', active && a.getAttribute('href') === `#${active.id}`));
-    }
-    window.addEventListener('scroll', onScroll, { passive: true });
-    onScroll();
-  }
-
-  document.addEventListener('DOMContentLoaded', () => {
-    // Build TOC
-    buildTOC(COURSES);
-
-    // Render content sections — placeholder/sample structure.
-    const content = document.getElementById('content');
-    COURSES.forEach(c => {
-      // In production, you’ll pass real WR/current data from your pipeline:
-      const sample = {
-        ta: { restricted: [], unrestricted: [] },
-        fr: { restricted: [], unrestricted: [] },
-        speedrider: { ta: [], fr: [] }
-      };
-      content.appendChild(renderCourseSection(c, sample));
-    });
-
-    setupScrollSpy();
-
-    // Ensure footer year is set
-    const y = document.getElementById('year');
-    if (y) y.textContent = new Date().getFullYear();
+    srcByCourse.get(course)[mode][rules].push(rowObj);
   });
-})();
+
+  // Sort SRC lists
+  for (const course of srcByCourse.keys()){
+    ['TA','FR'].forEach(m => ['Restricted','Unrestricted'].forEach(rule => {
+      srcByCourse.get(course)[m][rule].sort((a,b) => a._ms - b._ms);
+    }));
+  }
+
+  // Speedrider indices
+  const srTaByCourse = buildSrIndex(srTaRows);
+  const srFrByCourse = buildSrIndex(srFrRows);
+
+  // Mount points
+  const content = document.getElementById('content');
+  const nav     = document.getElementById('course-nav');
+
+  // Course ordering + TOC (with legacy divider)
+  const courseSet = new Set([...srcByCourse.keys(), ...srTaByCourse.keys(), ...srFrByCourse.keys()]);
+  const orderedCourses = COURSE_ORDER.filter(c => courseSet.has(c));
+
+  let navHtml = '';
+  orderedCourses.forEach(course => {
+    const id = makeAnchorId(course);
+    if (course === 'Fantasy Meadows'){
+      navHtml += '<div class="legacy-sep" aria-hidden="true"></div>';
+    }
+    navHtml += `#${id}${course}</a>`;
+  });
+  nav.innerHTML = navHtml;
+
+  const sectionIds = [];
+  orderedCourses.forEach(courseName => {
+    const id = makeAnchorId(courseName);
+    sectionIds.push(id);
+
+    const srcCourse = srcByCourse.get(courseName) ?? { TA:{Restricted:[],Unrestricted:[]}, FR:{Restricted:[],Unrestricted:[]} };
+    const srTaCourse = srTaByCourse.get(courseName) ?? [];
+    const srFrCourse = srFrByCourse.get(courseName) ?? [];
+
+    // Section
+    const sec = document.createElement('section');
+    sec.className = 'course';
+
+    // Banner
+    const bannerPath = BANNERS[courseName] ?? '';
+
+    sec.innerHTML = `
+      <span id="${id}" class="anchor"></span>
+      <figure class="banner-wrap">
+        <figcaption class="banner-title">${courseName}</figcaption>
+      </figure>
+      <div class="tables-grid">
+        <article class="table-card">
+          <h3>Time Attack - Restricted</h3>
+          <div id="${id}-ta-r"></div>
+        </article>
+        <article class="table-card">
+          <h3>Time Attack - Unrestricted</h3>
+          <div id="${id}-ta-u"></div>
+        </article>
+        <article class="table-card">
+          <h3>Free Run - Restricted</h3>
+          <div id="${id}-fr-r"></div>
+        </article>
+        <article class="table-card">
+          <h3>Free Run - Unrestricted</h3>
+          <div id="${id}-fr-u"></div>
+        </article>
+        <article class="table-card wide">
+          <h3>Speedrider - Time Attack Records by Machine</h3>
+          <div id="${id}-sr-ta"></div>
+        </article>
+        <article class="table-card wide">
+          <h3>Speedrider - Free Run Records by Machine</h3>
+          <div id="${id}-sr-fr"></div>
+        </article>
+      </div>
+      <hr class="section-divider" />
+    `;
+
+    // Inject banner image
+    const fig = sec.querySelector('.banner-wrap');
+    if (bannerPath) {
+      const img = document.createElement('img');
+      img.className = 'course-banner';
+      img.src = bannerPath;
+      img.alt = `${courseName} banner`;
+      fig.insertBefore(img, fig.firstChild);
+    }
+    content.appendChild(sec);
+
+    // Render SRC tables (pass context for empty-state link)
+    renderSrcTable(`${id}-ta-r`, srcCourse.TA.Restricted, { course:courseName, mode:'TA', rules:'Restricted' });
+    renderSrcTable(`${id}-ta-u`, srcCourse.TA.Unrestricted, { course:courseName, mode:'TA', rules:'Unrestricted' });
+    renderSrcTable(`${id}-fr-r`, srcCourse.FR.Restricted, { course:courseName, mode:'FR', rules:'Restricted' });
+    renderSrcTable(`${id}-fr-u`, srcCourse.FR.Unrestricted, { course:courseName, mode:'FR', rules:'Unrestricted' });
+
+    // Speedrider strips (sortable)
+    renderSpeedriderStrip(`${id}-sr-ta`, srTaCourse);
+    renderSpeedriderStrip(`${id}-sr-fr`, srFrCourse);
+  });
+
+  setupScrollSpy(sectionIds);
+
+  // Smooth scroll for TOC clicks
+  nav.querySelectorAll('a').forEach(a => {
+    a.addEventListener('click', e => {
+      e.preventDefault();
+      const target = document.querySelector(a.getAttribute('href'));
+      if (target) target.scrollIntoView({ behavior:'smooth', block:'start' });
+    });
+  });
+}
+
+/* Scroll‑spy */
+function setupScrollSpy(sectionIds){
+  const links = sectionIds.map(id => ({ id, el: document.querySelector(`#course-nav a[href="#${id}"]`) })).filter(x => x.el);
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      const id = entry.target.id;
+      const link = links.find(l => l.id === id)?.el; if (!link) return;
+      if (entry.isIntersecting){
+        links.forEach(l => l.el.classList.remove('active'));
+        link.classList.add('active');
+      }
+    });
+  },{root:null, rootMargin:'0px 0px -60% 0px', threshold:0.25});
+  sectionIds.forEach(id => { const sec = document.getElementById(id); if (sec) observer.observe(sec); });
+}
+
+document.addEventListener('DOMContentLoaded', loadAll);
