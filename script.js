@@ -13,7 +13,7 @@ document.addEventListener('DOMContentLoaded', () => {
     .replace(/\/+$/, '/') || '/';
 
   document.querySelectorAll('.site-nav a').forEach(a => {
-    const url = new URL(a.getAttribute('href'), location.origin);
+    const url = new URL(a.getAttribute('href'), location.href);
     const target = url.pathname
       .replace(/index\.html$/i, '')
       .replace(/\/+$/, '/') || '/';
