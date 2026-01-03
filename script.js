@@ -6,12 +6,20 @@ document.addEventListener('DOMContentLoaded', () => {
   if (y) y.textContent = new Date().getFullYear();
 
   // Top nav "active" state (supports "/" and "/index.html")
-  const path = (location.pathname || '/').replace(/\/+$/, '') || '/';
+
+  // --- Robust top-nav "active" highlighting ---
+  const here = location.pathname
+    .replace(/index\.html$/i, '')   // treat / and /index.html as the same
+    .replace(/\/+$/, '/') || '/';
+
   document.querySelectorAll('.site-nav a').forEach(a => {
-    const href = a.getAttribute('href');
-    const isHome = href === './' || href === '/' || href === '/index.html';
-    const isOnHome = path === '' || path === '/' || path.endsWith('/index.html');
-    const match = (href && href.replace(/\/+$/, '') === path) || (isHome && isOnHome);
-    if (match) a.classList.add('active');
+    const url = new URL(a.getAttribute('href'), location.origin);
+    const target = url.pathname
+      .replace(/index\.html$/i, '')
+      .replace(/\/+$/, '/') || '/';
+
+    if (target === here) {
+      a.classList.add('active');
+    }
   });
 });
