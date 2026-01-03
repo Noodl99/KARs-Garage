@@ -9,7 +9,7 @@
   --topbar-h:56px;
 
   /* Speedrider tuning (smaller, less crowded) */
-  --sr-left-w:140px;
+  --sr-left-w:85px;
   --sr-col-w:148px;
   --sr-row-pad:2px;
   --sr-font:12px;          /* requested 12px */
