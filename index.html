@@ -1,44 +1,49 @@
-<!doctype html>
+
+<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="utf-8" />
   <title>KARs Garage — Home</title>
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-
-  <link rel="icon" href="icons/garage-icon-white.png">
-
-  <link rel="stylesheet" href="style.css?v=16">
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="stylesheet" href="style.css" />
 </head>
 <body>
+  <!-- Top bar -->
   <header class="topbar fixed">
     <div class="container bar-inner">
-      <img src="icons/garage-icon-white.png" alt="Logo" class="brand-logo-img">
-      <div class="brand-name">KARs Garage</div>
-      <nav class="site-nav" aria-label="Primary">
+      <img class="brand-logo-img" src="images/kars-icon.svg" alt="KARs logo" />
+      <span class="brand-name">KARs Garage</span>
+      <nav class="site-nav" aria-label="Site">
         <a href="./">Home</a>
         <a href="air-ride.html">Air Ride</a>
       </nav>
     </div>
   </header>
 
-  <section class="hero hero--home">
+  <!-- Hero -->
+  <section class="hero hero--home" aria-label="Intro">
     <div class="hero-bg hero-bg--top" aria-hidden="true"></div>
     <div class="hero-content hero-content--center">
       <h1 class="hero-title--76">KIRBY AIR RIDERS GARAGE</h1>
     </div>
   </section>
 
-  <div class="tile-grid tile-grid--shrink">
-    <a href="air-ride.html" class="tile tile-airride"></a>
-    <a href="#" class="tile tile-topride"></a>
-    <a href="#" class="tile tile-citytrial"></a>
-    <a href="#" class="tile tile-roadtrip"></a>
-  </div>
+  <!-- Tiles -->
+  <section class="tile-grid tile-grid--shrink" aria-label="Game modes">
+    <a class="tile tile-airride" href="air-ride.html" aria-label="Air Ride"></a>
+    <a class="tile tile-topride" href="#" aria-label="Top Ride (coming soon)"></a>
+    <a class="tile tile-citytrial" href="#" aria-label="City Trial (coming soon)"></a>
+    <a class="tile tile-roadtrip" href="#" aria-label="Road Trip (coming soon)"></a>
+  </section>
 
+  <!-- Footer -->
   <footer class="site-footer">
-    <div class="container">© <span id="year"></span> KARs Garage</div>
+    <div class="container">
+      <span>© <span id="year">2026</span> KARs Garage</span>
+    </div>
   </footer>
 
-  <script src="script.js?v=16"></script>
+  <script src="script.js"></script>
 </body>
 </html>
