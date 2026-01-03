@@ -222,6 +222,9 @@ body.page-airride .site-nav a.active{ border-bottom-color:var(--accent); } /* re
   .hero-title--76{
     font-size:42px;   /* smaller for mobile */
     margin:36px 0;    /* optional: reduce top/bottom spacing */
+
+@media (max-width:600px){
+  .hero {
+    min-height:30vh; /* 30% of viewport height */
   }
 }
-
