@@ -7,6 +7,7 @@
   --maxw:1440px;
   --container-pad:24px;
   --topbar-h:56px;
+  --courses-h:44px; /* height of the sticky Courses bar */
   --toc-w:180px;       /* base TOC width */
   --toc-offset:-24px;   /* horizontal nudge to the right */
 
@@ -19,7 +20,7 @@
   --sr-line:1.25;
 }
 
-html { scroll-padding-top: calc(var(--topbar-h) + 12px); }
+html { scroll-padding-top: calc(var(--topbar-h) + var(--courses-h) + 12px); }
 *{box-sizing:border-box}
 html,body{height:100%}
 body{
@@ -33,6 +34,38 @@ body{
 /* ===== Fixed top bar ===== */
 .topbar.fixed{position:fixed; top:0; left:0; right:0; z-index:1000; background:#000; color:#fff; height:var(--topbar-h)}
 .bar-inner{display:flex; align-items:center; gap:12px; height:var(--topbar-h)}
+
+/* Sticky "Courses" bar — sits below the red accent, sticks under the top bar */
+.courses-bar{
+  position:sticky;
+  top:var(--topbar-h);       /* sticks right beneath the fixed top bar */
+  z-index:900;               /* below topbar (1000), above page content */
+  background:#fff;           /* solid background so it doesn't show content through */
+  padding:8px 0;             /* comfortable touch target height */
+  border-bottom:1px solid var(--border);
+  display:flex; align-items:center;
+  min-height: var(--courses-h);
+  align-items: center; /* keep the button vertically centered */
+
+}
+
+/* The button itself — minimal style, matches your site */
+.courses-btn{
+  appearance:none;
+  background:#fff;
+  color:var(--text);
+  border:1px solid var(--border);
+  border-radius:999px;       /* pill */
+  padding:8px 12px;
+  font-size:14px;
+  font-weight:600;
+  cursor:pointer;
+}
+
+.courses-btn:hover{
+  background:#f7f7f7;
+}
+
 .brand-logo-img{width:24px; height:24px}
 .brand-name{font-weight:700}
 .site-nav a{
@@ -87,8 +120,8 @@ body.page-airride .site-nav a.active{ border-bottom-color:var(--accent); } /* re
 /* ===== Air Ride layout (TOC + content) ===== */
 .layout{display:grid; grid-template-columns:calc(var(--toc-w) - var(--toc-offset)) 1fr; gap:32px}
 @media (max-width:900px){.layout{grid-template-columns:1fr}}
-.sidebar{padding:8px 0; margin-left:0; transform: translateX(var(--toc-offset));}
-#course-nav{position:sticky; top:calc(var(--topbar-h) + 12px); padding-right:8px}
+.sidebar{padding:8px 0; margin-left: var(--toc-offset);}
+#course-nav{position:sticky; top:calc(var(--topbar-h) + var(--courses-h) + 12px); padding-right:8px}
 #course-nav a{display:block; padding:6px 2px; color:var(--text); text-decoration:underline; text-decoration-color:transparent; border-bottom:2px solid transparent}
 #course-nav a:hover{border-bottom-color:#999}
 #course-nav a.active{border-bottom-color:var(--accent)}
