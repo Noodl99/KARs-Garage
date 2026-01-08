@@ -20,15 +20,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
     if (target === here) {
       a.classList.add('active');
-
-  const coursesBtn = document.querySelector('.courses-btn');
-  if (coursesBtn) {
-    coursesBtn.addEventListener('click', (e) => {
-      e.preventDefault();
-      const toc = document.getElementById('course-nav');
-      if (toc) toc.scrollIntoView({ behavior:'smooth', block:'start' });
-    });
-  }
     }
   });
 });
