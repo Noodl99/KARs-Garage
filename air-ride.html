@@ -35,7 +35,13 @@
   </div>
   <hr class="accent--fullbleed" />
 
-  <!-- Layout: sticky TOC + content -->
+  <div class="container">
+    <button class="toc-toggle" type="button" aria-expanded="false" aria-controls="toc-drawer">
+      Courses <span aria-hidden="true">▾</span>
+    </button>
+    <div id="toc-drawer" class="toc-drawer"></div>
+  </div>
+
   <div class="container layout">
     <aside class="sidebar" aria-label="Course navigation">
       <nav id="course-nav"></nav>

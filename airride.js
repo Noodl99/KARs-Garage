@@ -609,5 +609,44 @@ function setupScrollSpy(sectionIds) {
   });
 }
 
+
+function placeCourseNavForViewport(){
+  const nav = document.getElementById('course-nav');
+  const drawer = document.getElementById('toc-drawer');
+  const sidebar = document.querySelector('.sidebar');
+
+  if (!nav || !drawer || !sidebar) return;
+
+  if (window.matchMedia('(min-width: 901px)').matches) {
+    // Desktop: keep nav in the sidebar (sticky via CSS)
+    if (nav.parentElement !== sidebar) {
+      sidebar.appendChild(nav);
+    }
+  } else {
+    // Mobile: move nav into the collapsible drawer (not sticky)
+    if (nav.parentElement !== drawer) {
+      drawer.appendChild(nav);
+    }
+  }
+}
+
+function setupTocToggle(){
+  const btn = document.querySelector('.toc-toggle');
+  const drawer = document.getElementById('toc-drawer');
+  if (!btn || !drawer) return;
+
+  btn.addEventListener('click', () => {
+    const opened = drawer.classList.toggle('open');
+    btn.setAttribute('aria-expanded', opened ? 'true' : 'false');
+  });
+}
+
 document.addEventListener('DOMContentLoaded', loadAll);
+
+document.addEventListener('DOMContentLoaded', () => {
+  setupTocToggle();
+  placeCourseNavForViewport();
+  window.addEventListener('resize', placeCourseNavForViewport);
+});
+
 ``

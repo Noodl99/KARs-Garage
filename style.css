@@ -7,12 +7,15 @@
   --maxw:1440px;
   --container-pad:24px;
   --topbar-h:56px;
+  --toc-w:150px;       /* base TOC width */
+  --toc-offset:24px;   /* horizontal nudge to the right */
+
 
   /* Speedrider tuning (smaller, less crowded) */
   --sr-left-w:85px;
   --sr-col-w:148px;
   --sr-row-pad:2px;
-  --sr-font:12px;          /* requested 12px */
+  --sr-font:12px;
   --sr-line:1.25;
 }
 
@@ -82,10 +85,10 @@ body.page-airride .site-nav a.active{ border-bottom-color:var(--accent); } /* re
 }
 
 /* ===== Air Ride layout (TOC + content) ===== */
-.layout{display:grid; grid-template-columns:150px 1fr; gap:32px}
+.layout{display:grid; grid-template-columns:calc(var(--toc-w) - var(--toc-offset)) 1fr; gap:32px}
 @media (max-width:900px){.layout{grid-template-columns:1fr}}
-.sidebar{padding:8px 0; margin-left:-32px}
-#course-nav{position:sticky; top:calc(var(--topbar-h) + 12px)}
+.sidebar{padding:8px 0; margin-left:0; transform: translateX(var(--toc-offset));}
+#course-nav{position:sticky; top:calc(var(--topbar-h) + 12px); padding-right:8px}
 #course-nav a{display:block; padding:6px 2px; color:var(--text); text-decoration:underline; text-decoration-color:transparent; border-bottom:2px solid transparent}
 #course-nav a:hover{border-bottom-color:#999}
 #course-nav a.active{border-bottom-color:var(--accent)}
@@ -226,6 +229,49 @@ body.page-airride .site-nav a.active{ border-bottom-color:var(--accent); } /* re
   .hero {
     min-height:15vh; /* 15% of viewport height */
   }
+}
+
+/* Mobile TOC toggle (hidden on desktop) */
+.toc-toggle{display:none}
+
+@media (max-width:900px){
+  .toc-toggle{
+    display:inline-flex;
+    align-items:center;
+    gap:8px;
+    padding:8px 12px;
+    border-radius:999px;
+    border:1px solid var(--border);
+    background:#fff;
+    color:#000;
+    font-weight:600;
+    cursor:pointer;
+    user-select:none;
+    margin:8px 0 4px 0;
+  }
+
+  .toc-drawer{
+    max-height:0;
+    overflow:hidden;
+    transition:max-height .25s ease;
+    border:1px solid var(--border);
+    border-radius:12px;
+    background:#fff;
+  }
+  .toc-drawer.open{ max-height:60vh; } /* expands when opened */
+
+  /* Inside the drawer, make nav non-sticky and scrollable */
+  .toc-drawer #course-nav{
+    position:relative;
+    top:auto;
+    max-height:60vh;
+    overflow:auto;
+    padding:8px 12px;
+    transform:none;
+  }
+
+  /* On mobile, no sidebar shift */
+  .sidebar{ transform:none; }
 }
 
 @supports (height: 1svh) {
