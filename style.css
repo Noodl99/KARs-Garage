@@ -228,3 +228,11 @@ body.page-airride .site-nav a.active{ border-bottom-color:var(--accent); } /* re
     min-height:15vh; /* 30% of viewport height */
   }
 }
+
+@supports (height: 1svh) {
+  @media (max-width:600px){
+    .hero{
+      min-height: 15svh; /* more reliable than vh on mobile */
+    }
+  }
+}
