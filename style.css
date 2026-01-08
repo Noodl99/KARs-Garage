@@ -8,7 +8,7 @@
   --container-pad:24px;
   --topbar-h:56px;
   --toc-w:180px;       /* base TOC width */
-  --toc-offset:0px;   /* horizontal nudge to the right */
+  --toc-offset:-20px;   /* horizontal nudge to the right */
 
 
   /* Speedrider tuning (smaller, less crowded) */
