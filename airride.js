@@ -674,7 +674,7 @@ document.addEventListener('DOMContentLoaded', () => {
   window.addEventListener('resize', () => {    // ← wrap resize to call both
     placeCourseNavForViewport();
     placeTocToggleForViewport();     
-
+  });
 });
 
 ``
