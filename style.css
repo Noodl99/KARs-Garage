@@ -248,18 +248,6 @@ body.page-airride .site-nav a.active{ border-bottom-color:var(--accent); } /* re
     cursor:pointer;
     user-select:none;
     margin:8px 0 4px 0;
-
-  /* Floating placement under the fixed top bar */
-  #toc-float-anchor{
-    position: sticky;
-    top: calc(var(--topbar-h) + 6px); /* sits just under navbar */
-    z-index: 999;                      /* above content, below navbar */
-    padding: 0 var(--container-pad);
-  }
-
-  /* When the button is floating, give it a subtle elevation */
-  .toc-toggle.is-floating{
-    box-shadow: 0 2px 8px rgba(0,0,0,.12);
   }
 
   .toc-drawer{
@@ -280,15 +268,6 @@ body.page-airride .site-nav a.active{ border-bottom-color:var(--accent); } /* re
     overflow:auto;
     padding:8px 12px;
     transform:none;
-
-  /* Mobile-only extra padding for the page header */
-  .site-header .brand{
-    padding-left: 8px;
-    padding-right: 8px;
-  }
-  .site-header .tagline{
-    padding-left: 8px;
-    padding-right: 8px;
   }
 
   /* On mobile, no sidebar shift */
