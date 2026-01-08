@@ -234,7 +234,17 @@ body.page-airride .site-nav a.active{ border-bottom-color:var(--accent); } /* re
 /* Mobile TOC toggle (hidden on desktop) */
 .toc-toggle{display:none}
 
+
 @media (max-width:900px){
+  /* Sticky wrapper that keeps the toggle visible while scrolling */
+  .toc-wrap{
+    position: sticky;
+    top: calc(var(--topbar-h) + 6px);
+    z-index: 950; /* below .topbar (1000) but above content */
+    /* Ensure the wrapper participates in layout and doesn't block clicks below it */
+    background: transparent;
+  }
+
   .toc-toggle{
     display:inline-flex;
     align-items:center;
@@ -248,8 +258,10 @@ body.page-airride .site-nav a.active{ border-bottom-color:var(--accent); } /* re
     cursor:pointer;
     user-select:none;
     margin:8px 0 4px 0;
+    box-shadow:0 1px 4px rgba(0,0,0,.06);
   }
 
+  /* Default (closed) drawer stays inline and collapsed */
   .toc-drawer{
     max-height:0;
     overflow:hidden;
@@ -258,21 +270,34 @@ body.page-airride .site-nav a.active{ border-bottom-color:var(--accent); } /* re
     border-radius:12px;
     background:#fff;
   }
-  .toc-drawer.open{ max-height:60vh; } /* expands when opened */
 
-  /* Inside the drawer, make nav non-sticky and scrollable */
-  .toc-drawer #course-nav{
-    position:relative;
-    top:auto;
-    max-height:60vh;
-    overflow:auto;
-    padding:8px 12px;
-    transform:none;
+  /* When opened on mobile, make the drawer fixed under the top bar.
+     This keeps it visible even after you scroll past the initial position. */
+  .toc-drawer.open{
+    position: fixed;
+    left: var(--container-pad);
+    right: var(--container-pad);
+    top: calc(var(--topbar-h) + 48px); /* toggle height + small gap */
+    max-height: 60vh;
+    overflow: hidden; /* container controls overflow; inner nav scrolls */
+    z-index: 900; /* below sticky wrapper so toggle stays clickable */
+    box-shadow: 0 6px 16px rgba(0,0,0,.12);
+  }
+
+  /* Inside the fixed drawer, make nav scrollable */
+  .toc-drawer.open #course-nav{
+    position: relative;
+    top: auto;
+    max-height: 60vh;
+    overflow: auto;
+    padding: 8px 12px;
+    transform: none;
   }
 
   /* On mobile, no sidebar shift */
   .sidebar{ transform:none; }
 }
+
 
 @supports (height: 1svh) {
   @media (max-width:600px){
