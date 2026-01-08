@@ -641,12 +641,40 @@ function setupTocToggle(){
   });
 }
 
+function placeTocToggleForViewport(){
+  const btn = document.querySelector('.toc-toggle');
+  const floatAnchor = document.getElementById('toc-float-anchor');
+  const drawerWrap = document.getElementById('toc-drawer')?.parentElement; // the <div class="container"> holding the drawer
+
+  if (!btn || !floatAnchor || !drawerWrap) return;
+
+  if (window.matchMedia('(max-width: 900px)').matches) {
+    // Mobile: move button to the floating anchor and mark it as floating
+    if (btn.parentElement !== floatAnchor) {
+      floatAnchor.appendChild(btn);
+    }
+    btn.classList.add('is-floating');
+  } else {
+    // Desktop: move button back above the drawer and remove floating style
+    if (btn.parentElement !== drawerWrap) {
+      drawerWrap.insertBefore(btn, drawerWrap.firstChild);
+    }
+    btn.classList.remove('is-floating');
+  }
+}
+
+
 document.addEventListener('DOMContentLoaded', loadAll);
 
 document.addEventListener('DOMContentLoaded', () => {
   setupTocToggle();
   placeCourseNavForViewport();
-  window.addEventListener('resize', placeCourseNavForViewport);
+  placeTocToggleForViewport();
+
+  window.addEventListener('resize', () => {    // ← wrap resize to call both
+    placeCourseNavForViewport();
+    placeTocToggleForViewport();     
+
 });
 
 ``
