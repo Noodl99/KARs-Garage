@@ -240,13 +240,17 @@ body.page-airride .site-nav a.active{ border-bottom-color:var(--accent); } /* re
   /* Show mobile controls */
   .toc-wrap { display: block; }
   .toc-drawer { display: block; }
-
-  /* Keep the toggle visible while scrolling */
   .toc-wrap{
-    position: sticky;
+    position: fixed;
+    left: var(--container-pad);
+    right: var(--container-pad);
     top: calc(var(--topbar-h) + 6px);
     z-index: 950; /* below .topbar (1000) but above content */
     background: transparent;
+  }
+
+  .layout{
+    margin-top: 56px; /* adjust if your button + margins are taller/shorter */
   }
 
   /* Toggle button styles */

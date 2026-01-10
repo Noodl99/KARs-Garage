@@ -103,15 +103,4 @@ document.addEventListener('DOMContentLoaded', () => {
       });
     }
   })();
-
-  // Optional: close if the user scrolls the page
-  let scrollCloseTimer = null;
-  window.addEventListener('scroll', () => {
-    if (!drawer.classList.contains('open')) return;
-    clearTimeout(scrollCloseTimer);
-    scrollCloseTimer = setTimeout(() => {
-      drawer.classList.remove('open');
-      toggle.setAttribute('aria-expanded', 'false');
-    }, 250);
-  }, { passive: true });
 })();
