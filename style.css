@@ -280,6 +280,9 @@ body.page-airride .site-nav a.active{ border-bottom-color:var(--accent); } /* re
     background:#fff;
   }
 
+  // Defensive: ensure drawer element can be displayed
+  drawer.style.display = 'block';
+
   /* When opened on mobile, make the drawer fixed under the top bar.
      This keeps it visible even after you scroll past the initial position. */
   .toc-drawer.open{
