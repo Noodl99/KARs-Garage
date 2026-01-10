@@ -334,14 +334,48 @@ body.page-airride .site-nav a.active{ border-bottom-color:var(--accent); } /* re
     padding: 3px 8px;
   }
 
-  /* Mobile tables: auto layout so columns size to their content */
-  .table{
-    table-layout: auto;    /* overrides base fixed layout */
-    width: max-content;
-    min-width: 100%;
-  }
-  .table colgroup{ display: none !important; }
-  .table col{ width: auto !important; }
+
+/* Mobile tables: fixed layout with explicit column widths */
+.table{
+  table-layout: fixed;       /* force the table to honor widths below */
+  width: 100%;
+}
+
+/* Ignore desktop colgroup hints on mobile */
+.table colgroup{ display: none !important; }
+
+/* Column widths (tweak to taste; sum ≈ 100%) */
+.table th:nth-child(1), .table td:nth-child(1){ width: 24%; }  /* Player */
+.table th:nth-child(2), .table td:nth-child(2){ width: 14%; }  /* Time */
+.table th:nth-child(3), .table td:nth-child(3){ width: 18%; }  /* Machine */
+.table th:nth-child(4), .table td:nth-child(4){ width: 18%; }  /* Rider */
+.table th:nth-child(5), .table td:nth-child(5){ width: 13%; }  /* SRC Link */
+.table th:nth-child(6), .table td:nth-child(6){ width: 13%; }  /* Video */
+
+/* Link columns: single line + ellipsis inside the fixed-width cells */
+.table td:nth-child(5) a,
+.table td:nth-child(6) a{
+  display: block;            /* fill the cell width */
+  width: 100%;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* Let Player/Machine/Rider wrap as needed in their fixed-width cells */
+.table th:nth-child(1), .table td:nth-child(1),
+.table th:nth-child(3), .table td:nth-child(3),
+.table th:nth-child(4), .table td:nth-child(4){
+  white-space: normal;
+  overflow-wrap: anywhere;
+  word-break: break-word;
+}
+
+/* Keep Time readable */
+.table th:nth-child(2), .table td:nth-child(2){
+  min-width: 96px;
+}
+
 
   /* Link columns (5 & 6): single line + ellipsis, narrower on mobile */
   .table th:nth-child(5), .table td:nth-child(5),
@@ -399,84 +433,6 @@ body.page-airride .site-nav a.active{ border-bottom-color:var(--accent); } /* re
   /* On mobile, hide desktop sidebar/nav */
   .sidebar{ display: none; transform:none; }
   #course-nav { display: none !important; }
-}
-
-/* ====== DEBUG: FORCE TINY MOBILE COLUMN WIDTHS ====== */
-
-/* 0) Make sure table uses auto layout and can scroll if needed */
-.table{
-  table-layout: auto !important;
-  width: max-content !important;  /* allow table to grow wider than viewport */
-  min-width: 100% !important;
-}
-
-/* 1) Completely neutralize desktop column hints */
-.table colgroup{ display: none !important; }
-.table col{ width: auto !important; }
-
-/* 2) Force absurdly small widths on each column to test specificity */
-/* Player */
-.table thead th:nth-child(1),
-.table tbody td:nth-child(1){
-  width: 10px !important;
-  max-width: 10px !important;
-}
-
-/* Time */
-.table thead th:nth-child(2),
-.table tbody td:nth-child(2){
-  width: 10px !important;
-  max-width: 10px !important;
-}
-
-/* Machine */
-.table thead th:nth-child(3),
-.table tbody td:nth-child(3){
-  width: 10px !important;
-  max-width: 10px !important;
-}
-
-/* Rider */
-.table thead th:nth-child(4),
-.table tbody td:nth-child(4){
-  width: 10px !important;
-  max-width: 10px !important;
-}
-
-/* SRC Link */
-.table thead th:nth-child(5),
-.table tbody td:nth-child(5){
-  width: 10px !important;
-  max-width: 10px !important;
-  white-space: nowrap !important;
-  overflow: hidden !important;
-  text-overflow: ellipsis !important;
-}
-
-/* Video */
-.table thead th:nth-child(6),
-.table tbody td:nth-child(6){
-  width: 10px !important;
-  max-width: 10px !important;
-  white-space: nowrap !important;
-  overflow: hidden !important;
-  text-overflow: ellipsis !important;
-}
-
-/* 3) Allow non-link columns to wrap (so you can visually see the 10px pinch) */
-.table td:nth-child(1),
-.table td:nth-child(3),
-.table td:nth-child(4){
-  white-space: normal !important;
-  overflow-wrap: anywhere !important;
-  word-break: break-word !important;
-}
-
-/* 4) Ensure the scroll wrapper actually scrolls */
-.table-scroll{
-  overflow-x: auto !important;
-  -webkit-overflow-scrolling: touch !important;
-  outline: 1px dashed red; /* debug: remove later */
 }
 
 @media (min-width:901px){
