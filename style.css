@@ -395,6 +395,55 @@ body.page-airride .site-nav a.active{ border-bottom-color:var(--accent); } /* re
   }
 }
 
+/* 1) Stack cards (you already have this; reassert with page scope) */
+.page-airride .tables-grid{
+  grid-template-columns: 1fr;
+  gap: 14px;
+}
+.page-airride .table-card.wide{
+  grid-column: 1 / -1;
+}
+
+/* 2) Make tables auto-layout and STOP using the colgroup widths */
+.page-airride .table{
+  table-layout: auto !important;   /* force auto layout on mobile */
+  width: 100%;
+}
+/* Hide colgroup so its width hints are ignored entirely */
+.page-airride .table colgroup{
+  display: none !important;
+}
+/* (Extra belt-and-suspenders) reset any col width that might still apply */
+.page-airride .table col{
+  width: auto !important;
+}
+
+/* 3) Keep link columns single-line with ellipsis, and give them sensible narrow width */
+.page-airride .table th:nth-child(5), .page-airride .table td:nth-child(5),
+.page-airride .table th:nth-child(6), .page-airride .table td:nth-child(6){
+  width: 160px !important;         /* try 160–180px to taste */
+  max-width: 160px !important;
+}
+
+.page-airride .table td:nth-child(5), .page-airride .table td:nth-child(6),
+.page-airride .table a{
+  white-space: nowrap;              /* single line */
+  overflow: hidden;
+  text-overflow: ellipsis;          /* trailing … */
+}
+
+/* 4) Optional: keep the Time column readable */
+.page-airride .table th:nth-child(2), .page-airride .table td:nth-child(2){
+  min-width: 96px;                  /* adjust to match your time formats */
+}
+
+/* 5) Optional: slightly tighter cell paddings on mobile for readability */
+.page-airride .table th, .page-airride .table td{
+  padding: 3px 8px;                 /* was 4px 10px */
+  /* If you want: font-size: 11px; line-height: 20px; */
+}
+
+
 @supports (height: 1svh) {
   @media (max-width:600px){
     .hero{
