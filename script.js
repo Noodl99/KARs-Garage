@@ -25,81 +25,26 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 });
 
-// Mobile TOC button + drawer behavior
+
+// Mobile TOC toggle — minimal version (for debugging)
 (function(){
-  // "Define drawer" just means: get the drawer element by its id.
-  const toggle = document.querySelector('.toc-toggle');             // the Courses button
-  const drawer = document.getElementById('toc-drawer');             // the dropdown panel
+  const toggle = document.querySelector('.toc-toggle');     // the Courses button
+  const drawer = document.getElementById('toc-drawer');     // the dropdown panel
 
   if (!toggle || !drawer) return;
 
-  // Ensure drawer can be displayed (CSS should handle this on mobile; extra-safe)
+  // Ensure drawer can be displayed (extra-safe; CSS should do this on mobile)
   drawer.style.display = 'block';
 
-  // Toggle open/closed
+  // Log once so we know we attached
+  console.log('[TOC] minimal toggle ready');
+
   toggle.addEventListener('click', (e) => {
-    e.stopPropagation(); // don't let outside-click immediately close it
-    console.log('[TOC] before:', drawer.className);
-    const isOpen = drawer.classList.toggle('open');
-    console.log('[TOC] after:', drawer.className, 'isOpen=', isOpen);
-    toggle.setAttribute('aria-expanded', String(isOpen));
+    e.preventDefault();
+    e.stopPropagation();
+    const willOpen = !drawer.classList.contains('open');
+    drawer.classList.toggle('open', willOpen);
+    toggle.setAttribute('aria-expanded', String(willOpen));
+    console.log('[TOC] toggled. drawer.class=', drawer.className, 'aria-expanded=', toggle.getAttribute('aria-expanded'));
   });
-
-  // Click outside to close
-  document.addEventListener('click', (e) => {
-    setTimeout(() => {
-      const isOpen = drawer.classList.contains('open');
-      if (!isOpen) return;
-
-      const clickedInside = drawer.contains(e.target) || toggle.contains(e.target);
-      if (!clickedInside) {
-        drawer.classList.remove('open');
-        toggle.setAttribute('aria-expanded', 'false');
-      }
-    }, 0);
-  });
-
-  // Close on Escape
-  document.addEventListener('keydown', (e) => {
-    if (e.key === 'Escape' && drawer.classList.contains('open')) {
-      drawer.classList.remove('open');
-      toggle.setAttribute('aria-expanded', 'false');
-      toggle.focus();
-    }
-  });
-
-  // Close after clicking a link inside the drawer
-  drawer.addEventListener('click', (e) => {
-    const a = e.target.closest('a');
-    if (!a) return;
-    drawer.classList.remove('open');
-    toggle.setAttribute('aria-expanded', 'false');
-  });
-})();
-
-// Mirror desktop course nav into the mobile drawer automatically
-(function(){
-  const desktopNav = document.getElementById('course-nav');         // left sidebar nav
-  const mobileNav  = document.getElementById('course-nav-mobile');   // nav inside drawer
-  if (!desktopNav || !mobileNav) return;
-
-  function copyNavIfReady() {
-    // If desktop nav now has links, copy them once
-    if (desktopNav.children.length > 0 || desktopNav.textContent.trim().length > 0) {
-      mobileNav.innerHTML = desktopNav.innerHTML;
-      return true;
-    }
-    return false;
-  }
-
-  // Try immediately
-  if (copyNavIfReady()) return;
-
-  // Otherwise, watch for when airride.js populates it
-  const obs = new MutationObserver(() => {
-    if (copyNavIfReady()) {
-      obs.disconnect();
-    }
-  });
-  obs.observe(desktopNav, { childList: true, subtree: true, characterData: true });
 })();
