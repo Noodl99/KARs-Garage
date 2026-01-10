@@ -339,6 +339,8 @@ body.page-airride .site-nav a.active{ border-bottom-color:var(--accent); } /* re
     table-layout: auto;    /* overrides base fixed layout */
     width: 100%;
   }
+  .table colgroup{ display: none !important; }
+  .table col{ width: auto !important; }
 
   /* Link columns (5 & 6): single line + ellipsis, narrower on mobile */
   .table th:nth-child(5), .table td:nth-child(5),
