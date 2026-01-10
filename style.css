@@ -334,82 +334,33 @@ body.page-airride .site-nav a.active{ border-bottom-color:var(--accent); } /* re
     padding: 3px 8px;
   }
 
+/* ===== MOBILE TABLES: FIT WITHIN VIEWPORT BY WRAPPING CONTENT ===== */
 
-/* Mobile tables: fixed layout with explicit column widths */
+/* Use auto layout and let the table fill the container */
 .table{
-  table-layout: fixed;       /* force the table to honor widths below */
+  table-layout: auto;
   width: 100%;
 }
 
-/* Ignore desktop colgroup hints on mobile */
+/* Drop desktop column hints on mobile so auto sizing can work freely */
 .table colgroup{ display: none !important; }
 
-/* Column widths (tweak to taste; sum ≈ 100%) */
-.table th:nth-child(1), .table td:nth-child(1){ width: 24%; }  /* Player */
-.table th:nth-child(2), .table td:nth-child(2){ width: 14%; }  /* Time */
-.table th:nth-child(3), .table td:nth-child(3){ width: 18%; }  /* Machine */
-.table th:nth-child(4), .table td:nth-child(4){ width: 18%; }  /* Rider */
-.table th:nth-child(5), .table td:nth-child(5){ width: 13%; }  /* SRC Link */
-.table th:nth-child(6), .table td:nth-child(6){ width: 13%; }  /* Video */
-
-/* Link columns: single line + ellipsis inside the fixed-width cells */
-.table td:nth-child(5) a,
-.table td:nth-child(6) a{
-  display: block;            /* fill the cell width */
-  width: 100%;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
+/* Allow ALL cells to wrap; let the browser pick sensible column widths */
+.table th, .table td{
+  white-space: normal !important;
+  overflow-wrap: anywhere;   /* break long words when needed */
+  word-break: break-word;    /* fallback */
 }
 
-/* Let Player/Machine/Rider wrap as needed in their fixed-width cells */
-.table th:nth-child(1), .table td:nth-child(1),
-.table th:nth-child(3), .table td:nth-child(3),
-.table th:nth-child(4), .table td:nth-child(4){
-  white-space: normal;
+/* Links: override the desktop rule that forces nowrap */
+.table a{
+  white-space: normal !important;
   overflow-wrap: anywhere;
   word-break: break-word;
 }
 
-/* Keep Time readable */
-.table th:nth-child(2), .table td:nth-child(2){
-  min-width: 96px;
-}
-
-
-  /* Link columns (5 & 6): single line + ellipsis, narrower on mobile */
-  .table th:nth-child(5), .table td:nth-child(5),
-  .table th:nth-child(6), .table td:nth-child(6){
-    width: 160px !important;
-    max-width: 160px !important;
-  }
-
-  .table td:nth-child(5), .table td:nth-child(6),
-  .table a{
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-  }
-
-/* Mobile: allow Player/Machine/Rider to wrap so the table fits the viewport */
-.table th:nth-child(1), .table td:nth-child(1),  /* Player */
-.table th:nth-child(3), .table td:nth-child(3),  /* Machine */
-.table th:nth-child(4), .table td:nth-child(4) { /* Rider */
-  white-space: normal;           /* allow wrapping */
-  overflow-wrap: anywhere;       /* break long words/usernames if needed */
-  word-break: break-word;        /* fallback for older engines */
-}
-
-  /* Keep Time column readable */
-  .table th:nth-child(2), .table td:nth-child(2){
-    min-width: 96px;
-  }
-
-/* Mobile: horizontal scroll wrapper for tables */
-.table-scroll{
-  overflow-x: auto;                 /* scroll horizontally when needed */
-  -webkit-overflow-scrolling: touch;/* smooth scroll on iOS */
-}
+/* Optional: if headers should stay single-line, you can comment these back in */
+/* .table thead th{ white-space: nowrap !important; } */
 
   /* Smaller banners on mobile (about half height + half title size) */
   .banner-wrap{ height: clamp(44px, 7vw, 56px); }
@@ -435,14 +386,6 @@ body.page-airride .site-nav a.active{ border-bottom-color:var(--accent); } /* re
   #course-nav { display: none !important; }
 }
 
-@media (min-width:901px){
-  .tables-grid{ grid-template-columns: 1fr 1fr; } /* keep 2-up on desktop */
-  .table{ table-layout: fixed; }
-  .table th:nth-child(5), .table td:nth-child(5),
-  .table th:nth-child(6), .table td:nth-child(6){
-    width: 240px; max-width: 240px;
-  }
-}
 
 @supports (height: 1svh) {
   @media (max-width:600px){
