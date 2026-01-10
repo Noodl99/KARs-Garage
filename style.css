@@ -359,6 +359,8 @@ body.page-airride .site-nav a.active{ border-bottom-color:var(--accent); } /* re
     min-width: 96px;
   }
 
+  .table colgroup{ display: none !important; }
+
   /* Smaller banners on mobile (about half height + half title size) */
   .banner-wrap{ height: clamp(44px, 7vw, 56px); }
   .banner-title{ font-size: clamp(24px, 5.5vw, 32px); }
@@ -381,6 +383,15 @@ body.page-airride .site-nav a.active{ border-bottom-color:var(--accent); } /* re
   /* On mobile, hide desktop sidebar/nav */
   .sidebar{ display: none; transform:none; }
   #course-nav { display: none !important; }
+}
+
+@media (min-width:901px){
+  .tables-grid{ grid-template-columns: 1fr 1fr; } /* keep 2-up on desktop */
+  .table{ table-layout: fixed; }
+  .table th:nth-child(5), .table td:nth-child(5),
+  .table th:nth-child(6), .table td:nth-child(6){
+    width: 240px; max-width: 240px;
+  }
 }
 
 @supports (height: 1svh) {

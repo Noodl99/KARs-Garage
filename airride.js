@@ -251,9 +251,9 @@ function renderSrcTable(mountId, rows, ctx) {
   const mount = document.getElementById(mountId);
   if (!mount) return;
 
+
   const COLS = ["Player","Time","Machine","Rider","SRC Link","Video"];
-  const isMobile = window.matchMedia('(max-width: 900px)').matches;
-  const colgroup = isMobile ? '' : `
+  const colgroup = `
     <colgroup>
       <col style="width:18%">
       <col style="width:16%">
