@@ -237,10 +237,13 @@ body.page-airride .site-nav a.active{ border-bottom-color:var(--accent); } /* re
 .toc-drawer { display: none; }
 .toc-toggle { display: none; }
 
+
 @media (max-width:900px){
   /* Show mobile controls */
   .toc-wrap { display: block; }
   .toc-drawer { display: block; }
+
+  /* Keep the toggle visible while scrolling (fixed, top controlled by --toc-top) */
   .toc-wrap{
     position: fixed;
     left: var(--container-pad);
@@ -250,13 +253,14 @@ body.page-airride .site-nav a.active{ border-bottom-color:var(--accent); } /* re
     background: transparent;
   }
 
+  /* Give content room so it doesn't sit under the fixed button */
   .layout{
-    margin-top: 56px; /* adjust if your button + margins are taller/shorter */
+    margin-top: 56px;
   }
 
-  /* Slight extra left space for the Air Ride header text on mobile */
+  /* Slight extra space for the Air Ride header text on mobile (both sides) */
   .container.site-header{
-    padding-left: calc(var(--container-pad) + 6px);
+    padding-left:  calc(var(--container-pad) + 6px);
     padding-right: calc(var(--container-pad) + 6px);
   }
 
@@ -277,7 +281,7 @@ body.page-airride .site-nav a.active{ border-bottom-color:var(--accent); } /* re
     box-shadow:0 1px 4px rgba(0,0,0,.06);
   }
 
-  /* Drawer (closed) */
+  /* Drawer (closed) — no gray line */
   .toc-drawer{
     max-height:0;
     overflow:hidden;
@@ -287,7 +291,7 @@ body.page-airride .site-nav a.active{ border-bottom-color:var(--accent); } /* re
     background:#fff;
   }
 
-  /* Drawer (open, fixed under top bar) */
+  /* Drawer (open, fixed under top bar) — 50% viewport width */
   .toc-drawer.open{
     position: fixed;
     left: var(--container-pad);
@@ -299,6 +303,8 @@ body.page-airride .site-nav a.active{ border-bottom-color:var(--accent); } /* re
     overflow: hidden;
     z-index: 900;
     box-shadow: 0 6px 16px rgba(0,0,0,.12);
+    border: 1px solid var(--border);
+    border-radius: 12px;
   }
 
   .toc-drawer #course-nav-mobile{
@@ -310,140 +316,72 @@ body.page-airride .site-nav a.active{ border-bottom-color:var(--accent); } /* re
     transform:none;
   }
 
-/* Stack course tables vertically on mobile */
-.tables-grid{
-  grid-template-columns: 1fr;  /* was: 1fr 1fr */
-  gap: 14px;                    /* small gap between stacked cards */
-}
-
-/* The wide cards (Speedrider strips) still take full width */
-.table-card.wide{
-  grid-column: 1 / -1;
-}
-
-/* Optional: slightly tighten table typography on mobile for readability */
-.table th, .table td{
-  font-size: 11px;              /* was 12px; tweak to taste */
-  line-height: 20px;            /* was 22px; keeps rows a bit tighter */
-  padding: 3px 8px;            /* was 4px 10px */
-}
-
-/* Mobile tables: use auto layout so columns size to their content */
-.table{
-  table-layout: auto;          /* was fixed; lets browser size columns by content */
-  width: 100%;
-}
-
-/* Ignore fixed widths declared in <colgroup> on mobile */
-.table col{
-  width: auto !important;
-}
-
-/* Link columns (5 & 6): single line + ellipsis, narrower on mobile */
-.table th:nth-child(5), .table td:nth-child(5),
-.table th:nth-child(6), .table td:nth-child(6){
-  width: 160px !important;     /* try 160–180px to taste */
-  max-width: 160px !important;
-}
-
-.table td:nth-child(5), .table td:nth-child(6),
-.table a{
-  white-space: nowrap;         /* single line */
-  overflow: hidden;
-  text-overflow: ellipsis;     /* show trailing … when it doesn't fit */
-}
-
-.table th:nth-child(2), .table td:nth-child(2){
-  min-width: 96px;             /* adjust to your time format */
-}
-
-.banner-wrap{ height: clamp(44px, 7vw, 56px); }
-.banner-title{ font-size: clamp(24px, 5.5vw, 32px); }
-
-/* Mobile drawer nav: mimic desktop TOC look */
-.toc-drawer #course-nav-mobile a{
-  display: block;
-  padding: 6px 2px;
-  color: var(--text);
-  text-decoration: underline;
-  text-decoration-color: transparent; /* keep underline hidden until hover/active */
-  border-bottom: 2px solid transparent; /* same subtle divider behavior */
-}
-
-/* Hover: subtle underline via bottom border */
-.toc-drawer #course-nav-mobile a:hover{
-  border-bottom-color: #999;
-}
-
-/* Active link: accent bottom border */
-.toc-drawer #course-nav-mobile a.active{
-  border-bottom-color: var(--accent);
-}
-
-/* Legacy divider line inside the mobile drawer */
-.toc-drawer #course-nav-mobile .legacy-sep{
-  height: 1px;
-  background: #c7c7c7;
-  margin: 6px 0;
-}
-
-  /* On mobile, no sidebar shift */
-  .sidebar{
-    display: none;
-    transform:none;
+  /* Stack course tables vertically on mobile */
+  .tables-grid{
+    grid-template-columns: 1fr;
+    gap: 14px;
   }
-    #course-nav { display: none !important; }
+
+  /* Wide Speedrider cards still span full width */
+  .table-card.wide{
+    grid-column: 1 / -1;
   }
-}
 
-/* 1) Stack cards (you already have this; reassert with page scope) */
-.page-airride .tables-grid{
-  grid-template-columns: 1fr;
-  gap: 14px;
-}
-.page-airride .table-card.wide{
-  grid-column: 1 / -1;
-}
+  /* Slightly tighter table typography on mobile */
+  .table th, .table td{
+    font-size: 11px;
+    line-height: 20px;
+    padding: 3px 8px;
+  }
 
-/* 2) Make tables auto-layout and STOP using the colgroup widths */
-.page-airride .table{
-  table-layout: auto !important;   /* force auto layout on mobile */
-  width: 100%;
-}
-/* Hide colgroup so its width hints are ignored entirely */
-.page-airride .table colgroup{
-  display: none !important;
-}
-/* (Extra belt-and-suspenders) reset any col width that might still apply */
-.page-airride .table col{
-  width: auto !important;
-}
+  /* Mobile tables: auto layout so columns size to their content */
+  .table{
+    table-layout: auto;    /* overrides base fixed layout */
+    width: 100%;
+  }
 
-/* 3) Keep link columns single-line with ellipsis, and give them sensible narrow width */
-.page-airride .table th:nth-child(5), .page-airride .table td:nth-child(5),
-.page-airride .table th:nth-child(6), .page-airride .table td:nth-child(6){
-  width: 160px !important;         /* try 160–180px to taste */
-  max-width: 160px !important;
-}
+  /* Link columns (5 & 6): single line + ellipsis, narrower on mobile */
+  .table th:nth-child(5), .table td:nth-child(5),
+  .table th:nth-child(6), .table td:nth-child(6){
+    width: 160px !important;
+    max-width: 160px !important;
+  }
 
-.page-airride .table td:nth-child(5), .page-airride .table td:nth-child(6),
-.page-airride .table a{
-  white-space: nowrap;              /* single line */
-  overflow: hidden;
-  text-overflow: ellipsis;          /* trailing … */
-}
+  .table td:nth-child(5), .table td:nth-child(6),
+  .table a{
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
 
-/* 4) Optional: keep the Time column readable */
-.page-airride .table th:nth-child(2), .page-airride .table td:nth-child(2){
-  min-width: 96px;                  /* adjust to match your time formats */
-}
+  /* Keep Time column readable */
+  .table th:nth-child(2), .table td:nth-child(2){
+    min-width: 96px;
+  }
 
-/* 5) Optional: slightly tighter cell paddings on mobile for readability */
-.page-airride .table th, .page-airride .table td{
-  padding: 3px 8px;                 /* was 4px 10px */
-  /* If you want: font-size: 11px; line-height: 20px; */
-}
+  /* Smaller banners on mobile (about half height + half title size) */
+  .banner-wrap{ height: clamp(44px, 7vw, 56px); }
+  .banner-title{ font-size: clamp(24px, 5.5vw, 32px); }
 
+  /* Mobile drawer nav: mimic desktop TOC look */
+  .toc-drawer #course-nav-mobile a{
+    display: block;
+    padding: 6px 2px;
+    color: var(--text);
+    text-decoration: underline;
+    text-decoration-color: transparent;
+    border-bottom: 2px solid transparent;
+  }
+  .toc-drawer #course-nav-mobile a:hover{ border-bottom-color: #999; }
+  .toc-drawer #course-nav-mobile a.active{ border-bottom-color: var(--accent); }
+  .toc-drawer #course-nav-mobile .legacy-sep{
+    height: 1px; background: #c7c7c7; margin: 6px 0;
+  }
+
+  /* On mobile, hide desktop sidebar/nav */
+  .sidebar{ display: none; transform:none; }
+  #course-nav { display: none !important; }
+}
 
 @supports (height: 1svh) {
   @media (max-width:600px){
