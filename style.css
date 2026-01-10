@@ -238,22 +238,29 @@ body.page-airride .site-nav a.active{ border-bottom-color:var(--accent); } /* re
 .toc-toggle{display:none}
 
 
+
+/* Mobile TOC controls — hidden by default on desktop */
+.toc-wrap { display: none; }
+.toc-drawer { display: none; }
+.toc-toggle { display: none; }
+
 @media (max-width:900px){
-  /* Sticky wrapper that keeps the toggle visible while scrolling */
+  /* Show mobile controls */
   .toc-wrap { display: block; }
   .toc-drawer { display: block; }
 
+  /* Keep the toggle visible while scrolling */
   .toc-wrap{
     position: sticky;
     top: calc(var(--topbar-h) + 6px);
     z-index: 950; /* below .topbar (1000) but above content */
-    /* Ensure the wrapper participates in layout and doesn't block clicks below it */
     background: transparent;
   }
 
-  /* DEBUG: visualize drawer when it opens */
+  /* DEBUG: red outline when the drawer is open */
   .toc-drawer.open { outline: 2px solid red; }
 
+  /* Toggle button styles */
   .toc-toggle{
     display:inline-flex;
     align-items:center;
@@ -270,7 +277,7 @@ body.page-airride .site-nav a.active{ border-bottom-color:var(--accent); } /* re
     box-shadow:0 1px 4px rgba(0,0,0,.06);
   }
 
-  /* Default (closed) drawer stays inline and collapsed */
+  /* Drawer (closed) */
   .toc-drawer{
     max-height:0;
     overflow:hidden;
@@ -280,24 +287,19 @@ body.page-airride .site-nav a.active{ border-bottom-color:var(--accent); } /* re
     background:#fff;
   }
 
-  // Defensive: ensure drawer element can be displayed
-  drawer.style.display = 'block';
-
-  /* When opened on mobile, make the drawer fixed under the top bar.
-     This keeps it visible even after you scroll past the initial position. */
+  /* Drawer (open, fixed under top bar) */
   .toc-drawer.open{
     position: fixed;
     left: var(--container-pad);
     right: var(--container-pad);
-    top: calc(var(--topbar-h) + 48px); /* toggle height + small gap */
+    top: calc(var(--topbar-h) + 48px); /* just below the top bar + space for button */
     max-height: 60vh;
-    overflow: hidden; /* container controls overflow; inner nav scrolls */
+    overflow: hidden; /* outer container controls overflow */
     z-index: 900; /* below sticky wrapper so toggle stays clickable */
     box-shadow: 0 6px 16px rgba(0,0,0,.12);
   }
 
-  /* Inside the fixed drawer, make nav scrollable */
-
+  /* Mobile nav inside the drawer scrolls */
   .toc-drawer #course-nav-mobile{
     position:relative;
     top:auto;
@@ -305,13 +307,11 @@ body.page-airride .site-nav a.active{ border-bottom-color:var(--accent); } /* re
     overflow:auto;
     padding:8px 12px;
     transform:none;
-}
-
+  }
 
   /* On mobile, no sidebar shift */
   .sidebar{ transform:none; }
 }
-
 
 @supports (height: 1svh) {
   @media (max-width:600px){
