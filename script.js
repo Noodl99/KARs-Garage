@@ -70,3 +70,31 @@ document.addEventListener('DOMContentLoaded', () => {
     toggle.setAttribute('aria-expanded', 'false');
   });
 })();
+
+// --- Mirror desktop course nav into the mobile drawer automatically ---
+(function(){
+  const desktopNav = document.getElementById('course-nav');
+  const mobileNav = document.getElementById('course-nav-mobile');
+  if (!desktopNav || !mobileNav) return;
+
+  function copyNavIfReady() {
+    // If desktop nav now has links, copy them once
+    if (desktopNav.children.length > 0 || desktopNav.textContent.trim().length > 0) {
+      mobileNav.innerHTML = desktopNav.innerHTML;
+      return true;
+    }
+    return false;
+  }
+
+  // Try immediately (in case it's already populated)
+  if (copyNavIfReady()) return;
+
+  // Otherwise, watch for when airride.js populates it
+  const obs = new MutationObserver(() => {
+    if (copyNavIfReady()) {
+      obs.disconnect();
+    }
+  });
+  obs.observe(desktopNav, { childList: true, subtree: true, characterData: true });
+})();
+``

@@ -285,14 +285,16 @@ body.page-airride .site-nav a.active{ border-bottom-color:var(--accent); } /* re
   }
 
   /* Inside the fixed drawer, make nav scrollable */
-  .toc-drawer.open #course-nav{
-    position: relative;
-    top: auto;
-    max-height: 60vh;
-    overflow: auto;
-    padding: 8px 12px;
-    transform: none;
-  }
+
+  .toc-drawer #course-nav-mobile{
+    position:relative;
+    top:auto;
+    max-height:60vh;
+    overflow:auto;
+    padding:8px 12px;
+    transform:none;
+}
+
 
   /* On mobile, no sidebar shift */
   .sidebar{ transform:none; }
