@@ -256,7 +256,8 @@ body.page-airride .site-nav a.active{ border-bottom-color:var(--accent); } /* re
 
   /* Slight extra left space for the Air Ride header text on mobile */
   .container.site-header{
-    padding-left: calc(var(--container-pad) + 6px); /* adjust 6px to taste (e.g., 8px or 10px) */
+    padding-left: calc(var(--container-pad) + 6px);
+    padding-right: calc(var(--container-pad) + 6px);
   }
 
   /* Toggle button styles */
@@ -308,6 +309,9 @@ body.page-airride .site-nav a.active{ border-bottom-color:var(--accent); } /* re
     padding:8px 12px;
     transform:none;
   }
+
+.banner-wrap{ height: clamp(44px, 7vw, 56px); }
+.banner-title{ font-size: clamp(24px, 5.5vw, 32px); }
 
 /* Mobile drawer nav: mimic desktop TOC look */
 .toc-drawer #course-nav-mobile a{
