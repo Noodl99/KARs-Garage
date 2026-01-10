@@ -327,11 +327,6 @@ body.page-airride .site-nav a.active{ border-bottom-color:var(--accent); } /* re
   line-height: 20px;            /* was 22px; keeps rows a bit tighter */
 }
 
-/* Optional: let long link text break more naturally on mobile */
-.table td:nth-child(5), .table td:nth-child(6){
-  max-width: none;              /* allow full width since tables are stacked */
-}
-
 .banner-wrap{ height: clamp(44px, 7vw, 56px); }
 .banner-title{ font-size: clamp(24px, 5.5vw, 32px); }
 
