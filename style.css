@@ -254,6 +254,11 @@ body.page-airride .site-nav a.active{ border-bottom-color:var(--accent); } /* re
     margin-top: 56px; /* adjust if your button + margins are taller/shorter */
   }
 
+  /* Slight extra left space for the Air Ride header text on mobile */
+  .container.site-header{
+    padding-left: calc(var(--container-pad) + 6px); /* adjust 6px to taste (e.g., 8px or 10px) */
+  }
+
   /* Toggle button styles */
   .toc-toggle{
     display:inline-flex;
@@ -285,15 +290,16 @@ body.page-airride .site-nav a.active{ border-bottom-color:var(--accent); } /* re
   .toc-drawer.open{
     position: fixed;
     left: var(--container-pad);
-    right: var(--container-pad);
-    top: calc(var(--topbar-h) + 48px); /* just below the top bar + space for button */
+    right: auto;
+    width: 50vw;
+    max-width: calc(100vw - (var(--container-pad) * 2));
+    top: calc(var(--topbar-h) + 48px);
     max-height: 60vh;
-    overflow: hidden; /* outer container controls overflow */
-    z-index: 900; /* below sticky wrapper so toggle stays clickable */
+    overflow: hidden;
+    z-index: 900;
     box-shadow: 0 6px 16px rgba(0,0,0,.12);
   }
 
-  /* Mobile nav inside the drawer scrolls */
   .toc-drawer #course-nav-mobile{
     position:relative;
     top:auto;
