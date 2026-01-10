@@ -264,7 +264,7 @@ function renderSrcTable(mountId, rows, ctx) {
     </colgroup>
   `;
 
-  let html = `<table class="table">${colgroup}<thead><tr>`;
+  let html = `<div class="table-scroll"><table class="table">${colgroup}<thead><tr>`;
   COLS.forEach(c => { html += `<th data-col="${c}">${c}<span class="sort-ind"></span></th>`; });
   html += '</tr></thead><tbody>';
 
@@ -290,7 +290,7 @@ function renderSrcTable(mountId, rows, ctx) {
       </span>
     </td></tr>`;
   }
-  html += '</tbody></table>';
+  html += '</tbody></table></div>';
   mount.innerHTML = html;
 
   // Click-sort logic
