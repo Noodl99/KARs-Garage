@@ -9,6 +9,7 @@
   --topbar-h:56px;
   --toc-w:180px;       /* base TOC width */
   --toc-offset:-24px;   /* horizontal nudge to the right */
+  --toc-top: calc(var(--topbar-h) + 6px);  /* default docked under the black bar */
 
 
   /* Speedrider tuning (smaller, less crowded) */
@@ -244,13 +245,13 @@ body.page-airride .site-nav a.active{ border-bottom-color:var(--accent); } /* re
     position: fixed;
     left: var(--container-pad);
     right: var(--container-pad);
-    top: calc(var(--topbar-h) + 6px);
-    z-index: 950; /* below .topbar (1000) but above content */
+    top: var(--toc-top);
+    z-index: 950;
     background: transparent;
   }
 
   .layout{
-    margin-top: 56px; /* adjust if your button + margins are taller/shorter */
+    margin-top: 46px; /* adjust if your button + margins are taller/shorter */
   }
 
   /* Toggle button styles */
@@ -275,7 +276,7 @@ body.page-airride .site-nav a.active{ border-bottom-color:var(--accent); } /* re
     max-height:0;
     overflow:hidden;
     transition:max-height .25s ease;
-    border:1px solid var(--border);
+    border:none;
     border-radius:12px;
     background:#fff;
   }

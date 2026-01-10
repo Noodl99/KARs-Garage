@@ -103,4 +103,38 @@ document.addEventListener('DOMContentLoaded', () => {
       });
     }
   })();
+
+// Mobile: position the Courses button under the red line at load,
+// then dock under the black navbar when you scroll.
+(function(){
+  const wrap = document.querySelector('.toc-wrap');
+  const accent = document.querySelector('.accent--fullbleed');
+
+  if (!wrap || !accent) return;
+
+  const dockTop = `calc(var(--topbar-h) + 6px)`; // under black navbar
+  let initialTop = dockTop;
+
+  function setInitialTop() {
+    // Get the bottom of the red line relative to the viewport, plus a small gap
+    const rect = accent.getBoundingClientRect();
+    // rect.bottom is the bottom edge; add 8px breathing room
+    const px = Math.max(rect.bottom + 8, 0);
+    initialTop = `${Math.round(px)}px`;
+  }
+
+  function updatePosition() {
+    const scrolled = window.scrollY || document.documentElement.scrollTop || 0;
+    const topVal = (scrolled <= 2) ? initialTop : dockTop;
+    document.documentElement.style.setProperty('--toc-top', topVal);
+  }
+
+  // Initialize
+  setInitialTop();
+  updatePosition();
+
+  // Recalculate on scroll and resize (orientation changes, etc.)
+  window.addEventListener('scroll', updatePosition, { passive: true });
+  window.addEventListener('resize', () => { setInitialTop(); updatePosition(); });
+})();
 })();
