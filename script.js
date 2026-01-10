@@ -34,13 +34,13 @@ document.addEventListener('DOMContentLoaded', () => {
   if (!toggle || !drawer) return;
 
   // Toggle open/closed
-
-  // Toggle open/closed
   toggle.addEventListener('click', () => {
-    console.log('[TOC] toggle clicked'); // DEBUG
+    console.log('[TOC] before:', drawer.className);
     const isOpen = drawer.classList.toggle('open');
+    console.log('[TOC] after:', drawer.className, 'isOpen=', isOpen);
     toggle.setAttribute('aria-expanded', String(isOpen));
   });
+
 
   // Click outside to close when drawer is fixed/open
   document.addEventListener('click', (e) => {
