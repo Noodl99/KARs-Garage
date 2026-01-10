@@ -231,14 +231,6 @@ body.page-airride .site-nav a.active{ border-bottom-color:var(--accent); } /* re
   }
 }
 
-
-/* Mobile TOC controls — hidden by default on desktop */
-.toc-wrap { display: none; }
-.toc-drawer { display: none; }
-.toc-toggle{display:none}
-
-
-
 /* Mobile TOC controls — hidden by default on desktop */
 .toc-wrap { display: none; }
 .toc-drawer { display: none; }
@@ -256,9 +248,6 @@ body.page-airride .site-nav a.active{ border-bottom-color:var(--accent); } /* re
     z-index: 950; /* below .topbar (1000) but above content */
     background: transparent;
   }
-
-  /* DEBUG: red outline when the drawer is open */
-  .toc-drawer.open { outline: 2px solid red; }
 
   /* Toggle button styles */
   .toc-toggle{
@@ -308,6 +297,33 @@ body.page-airride .site-nav a.active{ border-bottom-color:var(--accent); } /* re
     padding:8px 12px;
     transform:none;
   }
+
+/* Mobile drawer nav: mimic desktop TOC look */
+.toc-drawer #course-nav-mobile a{
+  display: block;
+  padding: 6px 2px;
+  color: var(--text);
+  text-decoration: underline;
+  text-decoration-color: transparent; /* keep underline hidden until hover/active */
+  border-bottom: 2px solid transparent; /* same subtle divider behavior */
+}
+
+/* Hover: subtle underline via bottom border */
+.toc-drawer #course-nav-mobile a:hover{
+  border-bottom-color: #999;
+}
+
+/* Active link: accent bottom border */
+.toc-drawer #course-nav-mobile a.active{
+  border-bottom-color: var(--accent);
+}
+
+/* Legacy divider line inside the mobile drawer */
+.toc-drawer #course-nav-mobile .legacy-sep{
+  height: 1px;
+  background: #c7c7c7;
+  margin: 6px 0;
+}
 
   /* On mobile, no sidebar shift */
   .sidebar{ transform:none; }
