@@ -231,12 +231,17 @@ body.page-airride .site-nav a.active{ border-bottom-color:var(--accent); } /* re
   }
 }
 
-/* Mobile TOC toggle (hidden on desktop) */
+
+/* Mobile TOC controls — hidden by default on desktop */
+.toc-wrap { display: none; }
+.toc-drawer { display: none; }
 .toc-toggle{display:none}
 
 
 @media (max-width:900px){
   /* Sticky wrapper that keeps the toggle visible while scrolling */
+  .toc-wrap { display: block; }
+  .toc-drawer { display: block; }
   .toc-wrap{
     position: sticky;
     top: calc(var(--topbar-h) + 6px);
