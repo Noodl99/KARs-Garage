@@ -243,10 +243,6 @@ body.page-airride .site-nav a.active{ border-bottom-color:var(--accent); } /* re
   .toc-wrap { display: block; }
   .toc-drawer { display: block; }
 
-  // TEMP: force drawer open on load to confirm CSS works
-  drawer.classList.add('open');
-  toggle.setAttribute('aria-expanded', 'true');
-
   .toc-wrap{
     position: sticky;
     top: calc(var(--topbar-h) + 6px);

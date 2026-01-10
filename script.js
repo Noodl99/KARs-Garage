@@ -34,7 +34,9 @@ document.addEventListener('DOMContentLoaded', () => {
   if (!toggle || !drawer) return;
 
   // Toggle open/closed
-  toggle.addEventListener('click', () => {
+
+  toggle.addEventListener('click', (e) => {
+    e.stopPropagation();           // prevent immediate "outside click" from seeing this as outside
     console.log('[TOC] before:', drawer.className);
     const isOpen = drawer.classList.toggle('open');
     console.log('[TOC] after:', drawer.className, 'isOpen=', isOpen);
@@ -42,17 +44,23 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 
 
-  // Click outside to close when drawer is fixed/open
-  document.addEventListener('click', (e) => {
-    const isOpen = drawer.classList.contains('open');
-    if (!isOpen) return;
 
-    const clickedInside = drawer.contains(e.target) || toggle.contains(e.target);
-    if (!clickedInside) {
-      drawer.classList.remove('open');
-      toggle.setAttribute('aria-expanded', 'false');
-    }
+  // Click outside to close when drawer is fixed/open
+
+  document.addEventListener('click', (e) => {
+    // Defer a tick so the toggle click can finish without being treated as "outside"
+    setTimeout(() => {
+      const isOpen = drawer.classList.contains('open');
+      if (!isOpen) return;
+
+      const clickedInside = drawer.contains(e.target) || toggle.contains(e.target);
+      if (!clickedInside) {
+        drawer.classList.remove('open');
+        toggle.setAttribute('aria-expanded', 'false');
+      }
+    }, 0);
   });
+
 
   // Close on Escape
   document.addEventListener('keydown', (e) => {
