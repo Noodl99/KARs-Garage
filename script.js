@@ -33,9 +33,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
   if (!toggle || !drawer) return;
 
-  // Ensure drawer can be displayed (extra-safe; CSS should do this on mobile)
-  drawer.style.display = 'block';
-
   // Toggle open/close on button click
   toggle.addEventListener('click', (e) => {
     e.preventDefault();

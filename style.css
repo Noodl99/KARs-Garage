@@ -326,7 +326,11 @@ body.page-airride .site-nav a.active{ border-bottom-color:var(--accent); } /* re
 }
 
   /* On mobile, no sidebar shift */
-  .sidebar{ transform:none; }
+  .sidebar{
+    display: none;
+    transform:none;
+    #course-nav { display: none !important; }
+  }
 }
 
 @supports (height: 1svh) {
