@@ -34,7 +34,10 @@ document.addEventListener('DOMContentLoaded', () => {
   if (!toggle || !drawer) return;
 
   // Toggle open/closed
+
+  // Toggle open/closed
   toggle.addEventListener('click', () => {
+    console.log('[TOC] toggle clicked'); // DEBUG
     const isOpen = drawer.classList.toggle('open');
     toggle.setAttribute('aria-expanded', String(isOpen));
   });

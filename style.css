@@ -250,6 +250,9 @@ body.page-airride .site-nav a.active{ border-bottom-color:var(--accent); } /* re
     background: transparent;
   }
 
+  /* DEBUG: visualize drawer when it opens */
+  .toc-drawer.open { outline: 2px solid red; }
+
   .toc-toggle{
     display:inline-flex;
     align-items:center;
