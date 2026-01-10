@@ -325,6 +325,36 @@ body.page-airride .site-nav a.active{ border-bottom-color:var(--accent); } /* re
 .table th, .table td{
   font-size: 11px;              /* was 12px; tweak to taste */
   line-height: 20px;            /* was 22px; keeps rows a bit tighter */
+  padding: 3px 8px;            /* was 4px 10px */
+}
+
+/* Mobile tables: use auto layout so columns size to their content */
+.table{
+  table-layout: auto;          /* was fixed; lets browser size columns by content */
+  width: 100%;
+}
+
+/* Ignore fixed widths declared in <colgroup> on mobile */
+.table col{
+  width: auto !important;
+}
+
+/* Link columns (5 & 6): single line + ellipsis, narrower on mobile */
+.table th:nth-child(5), .table td:nth-child(5),
+.table th:nth-child(6), .table td:nth-child(6){
+  width: 160px !important;     /* try 160–180px to taste */
+  max-width: 160px !important;
+}
+
+.table td:nth-child(5), .table td:nth-child(6),
+.table a{
+  white-space: nowrap;         /* single line */
+  overflow: hidden;
+  text-overflow: ellipsis;     /* show trailing … when it doesn't fit */
+}
+
+.table th:nth-child(2), .table td:nth-child(2){
+  min-width: 96px;             /* adjust to your time format */
 }
 
 .banner-wrap{ height: clamp(44px, 7vw, 56px); }
