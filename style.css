@@ -310,6 +310,28 @@ body.page-airride .site-nav a.active{ border-bottom-color:var(--accent); } /* re
     transform:none;
   }
 
+/* Stack course tables vertically on mobile */
+.tables-grid{
+  grid-template-columns: 1fr;  /* was: 1fr 1fr */
+  gap: 14px;                    /* small gap between stacked cards */
+}
+
+/* The wide cards (Speedrider strips) still take full width */
+.table-card.wide{
+  grid-column: 1 / -1;
+}
+
+/* Optional: slightly tighten table typography on mobile for readability */
+.table th, .table td{
+  font-size: 11px;              /* was 12px; tweak to taste */
+  line-height: 20px;            /* was 22px; keeps rows a bit tighter */
+}
+
+/* Optional: let long link text break more naturally on mobile */
+.table td:nth-child(5), .table td:nth-child(6){
+  max-width: none;              /* allow full width since tables are stacked */
+}
+
 .banner-wrap{ height: clamp(44px, 7vw, 56px); }
 .banner-title{ font-size: clamp(24px, 5.5vw, 32px); }
 
