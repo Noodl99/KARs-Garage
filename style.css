@@ -391,6 +391,7 @@ body.page-airride .site-nav a.active{ border-bottom-color:var(--accent); } /* re
   .sidebar{
     display: none;
     transform:none;
+  }
     #course-nav { display: none !important; }
   }
 }
