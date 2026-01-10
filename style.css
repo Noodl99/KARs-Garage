@@ -356,6 +356,23 @@ body.page-airride .site-nav a.active{ border-bottom-color:var(--accent); } /* re
     text-overflow: ellipsis;
   }
 
+/* Mobile: allow Player/Machine/Rider to wrap so the table fits the viewport */
+.table th:nth-child(1), .table td:nth-child(1),  /* Player */
+.table th:nth-child(3), .table td:nth-child(3),  /* Machine */
+.table th:nth-child(4), .table td:nth-child(4) { /* Rider */
+  white-space: normal;           /* allow wrapping */
+  overflow-wrap: anywhere;       /* break long words/usernames if needed */
+  word-break: break-word;        /* fallback for older engines */
+}
+
+/* Mobile: enable horizontal scrolling if the table still exceeds viewport */
+.table{
+  table-layout: auto;            /* you already set this */
+  width: 100%;
+  overflow-x: auto;              /* allow horizontal scroll instead of clipping */
+  -webkit-overflow-scrolling: touch; /* smooth scroll on iOS */
+}
+
   /* Keep Time column readable */
   .table th:nth-child(2), .table td:nth-child(2){
     min-width: 96px;
