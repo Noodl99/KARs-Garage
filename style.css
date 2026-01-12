@@ -432,7 +432,7 @@ body.page-airride .site-nav a.active{ border-bottom-color:var(--accent); } /* re
 .table thead th:nth-child(1),
 .table tbody td:nth-child(1){
   width: auto !important;        /* let it take its natural width */
-  max-width: none !important;    /* remove any max-width constraint */
+  max-width: 18ch !important;    /* remove any max-width constraint */
   white-space: nowrap !important;/* keep on one line */
   overflow: visible !important;  /* show full text */
   text-overflow: clip !important;/* no ellipsis */
@@ -447,31 +447,14 @@ body.page-airride .site-nav a.active{ border-bottom-color:var(--accent); } /* re
   white-space: nowrap;
 }
 
-/* === MOBILE: shrink Player (col 1) and Time (col 2) with hard widths === */
-.table thead th:nth-child(1),
-.table tbody td:nth-child(1){
-  width: 12ch !important;          /* hard width drives fixed-layout columns */
-  max-width: 20ch !important;
-  white-space: nowrap !important;
-  overflow: hidden !important;
-  text-overflow: ellipsis !important;
-}
-
 .table thead th:nth-child(2),
 .table tbody td:nth-child(2){
   width: 12ch !important;
   max-width: 20ch !important;
   white-space: nowrap !important;
   overflow: hidden !important;
-  text-overflow: ellipsis !important;
+  text-overflow: clip !important;
 }
-
-/* If a desktop rule restored visible overflow for col 1, suppress it on mobile */
-.table tbody td:nth-child(1){
-  overflow: hidden !important;
-  text-overflow: ellipsis !important;
-}
-
 
   /* Drop the fixed 240px width for SRC/Video columns on mobile */
   .table th:nth-child(5), .table td:nth-child(5),
