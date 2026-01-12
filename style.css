@@ -399,7 +399,7 @@ body.page-airride .site-nav a.active{ border-bottom-color:var(--accent); } /* re
   .table td:nth-child(5) a,
   .table td:nth-child(6) a{
     display: block;                 /* reliable ellipsis in block */
-    width: 100%
+    width: 100%;
     white-space: nowrap !important; /* override global mobile wrapping */
     overflow: hidden;
     text-overflow: ellipsis;
