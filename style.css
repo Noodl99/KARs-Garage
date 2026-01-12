@@ -417,7 +417,7 @@ body.page-airride .site-nav a.active{ border-bottom-color:var(--accent); } /* re
 /* MOBILE: limit Player and Time columns to ~10 characters */
 .table th:nth-child(1), .table td:nth-child(1),  /* Player column */
 .table th:nth-child(2), .table td:nth-child(2){ /* Time column */
-  max-width: 12ch;           
+  max-width: 18ch;           
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
@@ -427,7 +427,7 @@ body.page-airride .site-nav a.active{ border-bottom-color:var(--accent); } /* re
 .table thead th:nth-child(1),
 .table tbody td:nth-child(1){
   width: 12ch !important;          /* hard width drives fixed-layout columns */
-  max-width: 15ch !important;
+  max-width: 18ch !important;
   white-space: nowrap !important;
   overflow: hidden !important;
   text-overflow: ellipsis !important;
@@ -436,7 +436,7 @@ body.page-airride .site-nav a.active{ border-bottom-color:var(--accent); } /* re
 .table thead th:nth-child(2),
 .table tbody td:nth-child(2){
   width: 12ch !important;
-  max-width: 15ch !important;
+  max-width: 18ch !important;
   white-space: nowrap !important;
   overflow: hidden !important;
   text-overflow: ellipsis !important;
