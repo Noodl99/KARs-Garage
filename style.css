@@ -399,6 +399,16 @@ body.page-airride .site-nav a.active{ border-bottom-color:var(--accent); } /* re
   overflow-wrap: anywhere;
   word-break: break-word;
 }
+
+/* MOBILE: limit Player and Time columns to ~10 characters */
+.table th:nth-child(1), .table td:nth-child(1),  /* Player column */
+.table th:nth-child(2), .table td:nth-child(2){ /* Time column */
+  max-width: 10ch;           /* roughly 10 character cells */
+  overflow: hidden;          /* hide overflow */
+  text-overflow: ellipsis;   /* show trailing ... */
+  white-space: nowrap;       /* keep on one line */
+}
+
   /* Drop the fixed 240px width for SRC/Video columns on mobile */
   .table th:nth-child(5), .table td:nth-child(5),
   .table th:nth-child(6), .table td:nth-child(6){
