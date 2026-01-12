@@ -428,6 +428,16 @@ body.page-airride .site-nav a.active{ border-bottom-color:var(--accent); } /* re
   text-overflow: clip !important; /* explicitly no ... */
 }
 
+/* === MOBILE: Player column must never truncate and never wrap === */
+.table thead th:nth-child(1),
+.table tbody td:nth-child(1){
+  width: auto !important;        /* let it take its natural width */
+  max-width: none !important;    /* remove any max-width constraint */
+  white-space: nowrap !important;/* keep on one line */
+  overflow: visible !important;  /* show full text */
+  text-overflow: clip !important;/* no ellipsis */
+}
+
 /* MOBILE: limit Player and Time columns to ~10 characters */
 .table th:nth-child(1), .table td:nth-child(1),  /* Player column */
 .table th:nth-child(2), .table td:nth-child(2){ /* Time column */
