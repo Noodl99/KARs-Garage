@@ -166,6 +166,19 @@ body.page-airride .site-nav a.active{ border-bottom-color:var(--accent); } /* re
 }
 .table a:hover{color:var(--link-hover); text-decoration:underline}
 
+/* SRC tables: Machine/Rider hybrid cells (icon + text in the DOM) */
+.table td.cell--machine .cell-icon,
+.table td.cell--rider  .cell-icon{
+  display: none;              /* wide screens show text */
+  align-items: center;
+  justify-content: center;
+}
+
+.table td.cell--machine .cell-icon img,
+.table td.cell--rider  .cell-icon img{
+  width: 20px; height: 20px; display: block; object-fit: contain;
+}
+
 
 /* ===== Speedrider strips (aligned grid, compact, sortable) ===== */
 .table-card.wide{
@@ -438,6 +451,31 @@ body.page-airride .site-nav a.active{ border-bottom-color:var(--accent); } /* re
   /* On mobile, hide desktop sidebar/nav */
   .sidebar{ display: none; transform:none; }
   #course-nav { display: none !important; }
+}
+
+/* Below 1440px: show icons; visually hide text but keep it accessible */
+@media (max-width:1440px){
+  .table td.cell--machine.has-icon .cell-icon,
+  .table td.cell--rider.has-icon  .cell-icon{
+    display: inline-flex;
+  }
+
+  .table td.cell--machine.has-icon .cell-text,
+  .table td.cell--rider.has-icon  .cell-text{
+    /* "sr-only" pattern — text stays for screen readers */
+    position: absolute;
+    width: 1px; height: 1px; padding: 0; margin: -1px;
+    overflow: hidden; clip: rect(0,0,0,0); clip-path: inset(50%);
+    white-space: nowrap; border: 0;
+  }
+
+  /* Make Machine (3) and Rider (4) columns compact for icons */
+  .table th:nth-child(3), .table td:nth-child(3),
+  .table th:nth-child(4), .table td:nth-child(4){
+    width: 44px !important;       /* tune to 40–56px if you like */
+    max-width: 56px !important;
+    text-align: center;
+  }
 }
 
 
