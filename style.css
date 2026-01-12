@@ -400,10 +400,17 @@ body.page-airride .site-nav a.active{ border-bottom-color:var(--accent); } /* re
   word-break: break-word;
 }
 
+/* Ensure all table headers stay single-line on mobile */
+.table thead th{
+  white-space: nowrap !important;
+  text-overflow: clip; /* prevents ellipsis on headers */
+}
+
+
 /* MOBILE: limit Player and Time columns to ~10 characters */
 .table th:nth-child(1), .table td:nth-child(1),  /* Player column */
 .table th:nth-child(2), .table td:nth-child(2){ /* Time column */
-  max-width: 10ch;           /* roughly 10 character cells */
+  max-width: 5ch;           
   overflow: hidden;          /* hide overflow */
   text-overflow: ellipsis;   /* show trailing ... */
   white-space: nowrap;       /* keep on one line */
