@@ -410,7 +410,7 @@ body.page-airride .site-nav a.active{ border-bottom-color:var(--accent); } /* re
 /* MOBILE: limit Player and Time columns to ~10 characters */
 .table th:nth-child(1), .table td:nth-child(1),  /* Player column */
 .table th:nth-child(2), .table td:nth-child(2){ /* Time column */
-  max-width: 5ch;           
+  max-width: 1ch;           
   overflow: hidden;          /* hide overflow */
   text-overflow: ellipsis;   /* show trailing ... */
   white-space: nowrap;       /* keep on one line */
