@@ -432,7 +432,7 @@ body.page-airride .site-nav a.active{ border-bottom-color:var(--accent); } /* re
 .table thead th:nth-child(1),
 .table tbody td:nth-child(1){
   width: auto !important;        /* let it take its natural width */
-  max-width: 18ch !important;    /* remove any max-width constraint */
+  max-width: 22ch !important;    /* remove any max-width constraint */
   white-space: nowrap !important;/* keep on one line */
   overflow: visible !important;  /* show full text */
   text-overflow: clip !important;/* no ellipsis */
