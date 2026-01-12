@@ -361,7 +361,7 @@ body.page-airride .site-nav a.active{ border-bottom-color:var(--accent); } /* re
 
 /* Use auto layout and let the table fill the container */
 .table{
-  table-layout: auto;
+  table-layout: fixed;
   width: 100%;
   max-width: 100vw;
 }
@@ -389,7 +389,8 @@ body.page-airride .site-nav a.active{ border-bottom-color:var(--accent); } /* re
   /* Drop the fixed 240px width for SRC/Video columns on mobile */
   .table th:nth-child(5), .table td:nth-child(5),
   .table th:nth-child(6), .table td:nth-child(6){
-    width: 1%;
+    width: 0;
+    max-width: 0;
     white-space: nowrap !important;
     overflow: hidden;           /* cell-level overflow for safety */
     text-overflow: ellipsis;    /* fallback if anchor styles don’t apply */
@@ -398,10 +399,10 @@ body.page-airride .site-nav a.active{ border-bottom-color:var(--accent); } /* re
   .table td:nth-child(5) a,
   .table td:nth-child(6) a{
     display: block;                 /* reliable ellipsis in block */
+    width: 100%
     white-space: nowrap !important; /* override global mobile wrapping */
     overflow: hidden;
     text-overflow: ellipsis;
-    max-width: 45vw;                /* bound link width to viewport so table fits */
   }
 
   /* Optional: adjust for very small phones */
