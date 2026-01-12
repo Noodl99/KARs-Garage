@@ -253,8 +253,7 @@ function renderSrcTable(mountId, rows, ctx) {
 
 
   const COLS = ["Player","Time","Machine","Rider","SRC Link","Video"];
-  const isMobile = window.matchMedia('(max-width: 900px)').matches;
-  const colgroup = isMobile ? '' : `
+  const colgroup = `
     <colgroup>
       <col style="width:18%">
       <col style="width:16%">
@@ -264,6 +263,7 @@ function renderSrcTable(mountId, rows, ctx) {
       <col style="width:15%">
     </colgroup>
   `;
+
 
   let html = `<div class="table-scroll"><table class="table">${colgroup}<thead><tr>`;
   COLS.forEach(c => { html += `<th data-col="${c}">${c}<span class="sort-ind"></span></th>`; });

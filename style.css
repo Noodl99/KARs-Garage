@@ -166,11 +166,29 @@ body.page-airride .site-nav a.active{ border-bottom-color:var(--accent); } /* re
 }
 .table a:hover{color:var(--link-hover); text-decoration:underline}
 
+
 /* ===== Speedrider strips (aligned grid, compact, sortable) ===== */
-.table-card.wide{grid-column:1/-1}
+.table-card.wide{
+  grid-column: 1 / -1;
+  min-width: 0;            /* <-- allow the grid item to shrink so inner strip can scroll */
+}
+
 
 /* Whole strip: left header + record columns with zero gap */
-.sr-strip{display:flex; gap:0; overflow-x:auto; padding-bottom:8px}
+.sr-strip{
+  display: flex;
+  gap: 0;
+  overflow-x: auto;
+  padding-bottom: 8px;
+  -webkit-overflow-scrolling: touch;  /* smooth scroll (macOS/iOS) */
+  scrollbar-width: thin;               /* Firefox thin scrollbar */
+}
+
+
+/* Optional custom scrollbar for Chromium browsers */
+.sr-strip::-webkit-scrollbar{ height: 8px; }
+.sr-strip::-webkit-scrollbar-thumb{ background: #ccc; border-radius: 6px; }
+.sr-strip::-webkit-scrollbar-track{ background: transparent; }
 
 /* Left labels column — smaller font, tight line-height, rounded */
 .sr-left{
@@ -188,7 +206,12 @@ body.page-airride .site-nav a.active{ border-bottom-color:var(--accent); } /* re
 .sr-left .sr-left-row .sr-sort-ind{margin-left:8px; opacity:.85;}
 
 /* Record columns — compact width, squared edges in-between */
-.sr-records{display:flex; gap:0;}
+
+.sr-records{
+  display: flex;
+  gap: 0;
+  min-width: max-content;
+}
 .sr-col{
   flex:0 0 var(--sr-col-w);
   display:grid; grid-template-rows:repeat(5,min-content); row-gap:0;
@@ -412,7 +435,7 @@ body.page-airride .site-nav a.active{ border-bottom-color:var(--accent); } /* re
 
 
 @supports (height: 1svh) {
-  @media (max-width:600px){
+  @media (max-width:900px){
     .hero{
       min-height: 15svh; /* more reliable than vh on mobile */
     }
