@@ -431,7 +431,7 @@ body.page-airride .site-nav a.active{ border-bottom-color:var(--accent); } /* re
 /* === MOBILE: Player column must never truncate and never wrap === */
 .table thead th:nth-child(1),
 .table tbody td:nth-child(1){
-  width: auto !important;        /* let it take its natural width */
+  width: 14ch !important;        /* let it take its natural width */
   max-width: 20ch !important;    /* remove any max-width constraint */
   white-space: nowrap !important;/* keep on one line */
   overflow: visible !important;  /* show full text */
