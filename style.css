@@ -342,8 +342,32 @@ body.page-airride .site-nav a.active{ border-bottom-color:var(--accent); } /* re
   width: 100%;
 }
 
-/* Drop desktop column hints on mobile so auto sizing can work freely */
-.table colgroup{ display: none !important; }
+
+  /* Ensure col/colgroup do not impose widths on mobile */
+  .table colgroup,
+  .table col{
+    display: none !important;
+    width: auto !important;   /* neutralize any column sizing */
+  }
+
+  /* Drop the fixed 240px width for SRC/Video columns on mobile */
+  .table th:nth-child(5), .table td:nth-child(5),
+  .table th:nth-child(6), .table td:nth-child(6){
+    width: auto !important;
+    max-width: none !important;
+  }
+
+  /* Keep long URLs tidy without forcing table to grow wider than viewport */
+  .table td:nth-child(5), .table td:nth-child(6){
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  /* Failsafe: never let the table overflow the viewport width */
+  .table{
+    max-width: 100vw;
+  }
+
 
 /* Allow ALL cells to wrap; let the browser pick sensible column widths */
 .table th, .table td{
