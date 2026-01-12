@@ -428,23 +428,14 @@ body.page-airride .site-nav a.active{ border-bottom-color:var(--accent); } /* re
   text-overflow: clip !important; /* explicitly no ... */
 }
 
-/* MOBILE: limit Player and Time columns to ~10 characters */
-.table th:nth-child(1), .table td:nth-child(1),  /* Player column */
-.table th:nth-child(2), .table td:nth-child(2){ /* Time column */
-  max-width: 18ch;           
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-
-/* === MOBILE: shrink Player (col 1) and Time (col 2) with hard widths === */
+/* === MOBILE: Player column must never truncate and never wrap === */
 .table thead th:nth-child(1),
 .table tbody td:nth-child(1){
-  width: 12ch !important;          /* hard width drives fixed-layout columns */
-  max-width: 18ch !important;
-  white-space: nowrap !important;
-  overflow: hidden !important;
-  text-overflow: ellipsis !important;
+  width: auto !important;        /* let it take its natural width */
+  max-width: none !important;    /* remove any max-width constraint */
+  white-space: nowrap !important;/* keep on one line */
+  overflow: visible !important;  /* show full text */
+  text-overflow: clip !important;/* no ellipsis */
 }
 
 .table thead th:nth-child(2),
@@ -455,13 +446,6 @@ body.page-airride .site-nav a.active{ border-bottom-color:var(--accent); } /* re
   overflow: hidden !important;
   text-overflow: ellipsis !important;
 }
-
-/* If a desktop rule restored visible overflow for col 1, suppress it on mobile */
-.table tbody td:nth-child(1){
-  overflow: hidden !important;
-  text-overflow: ellipsis !important;
-}
-
 
   /* Drop the fixed 240px width for SRC/Video columns on mobile */
   .table th:nth-child(5), .table td:nth-child(5),
