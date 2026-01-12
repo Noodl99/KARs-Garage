@@ -406,6 +406,31 @@ body.page-airride .site-nav a.active{ border-bottom-color:var(--accent); } /* re
   word-break: break-word;
 }
 
+  /* Make SRC Link (col 5) and Video (col 6) single-line with ellipsis on mobile */
+  .table th:nth-child(5), .table td:nth-child(5),
+  .table th:nth-child(6), .table td:nth-child(6){
+    /* keep columns flexible (no fixed 240px), but prevent wrapping */
+    white-space: nowrap !important;
+  }
+
+  /* The actual anchor inside the link cells: block + ellipsis + viewport-bounded width */
+  .table td:nth-child(5) a,
+  .table td:nth-child(6) a{
+    display: block;                /* ensure ellipsis applies reliably */
+    white-space: nowrap !important;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 45vw;               /* cap each link to ~45% of viewport */
+  }
+
+  /* Optional: tighten width a bit on very small phones */
+  @media (max-width:480px){
+    .table td:nth-child(5) a,
+    .table td:nth-child(6) a{
+      max-width: 60vw;
+    }
+  }
+
 /* Optional: if headers should stay single-line, you can comment these back in */
 /* .table thead th{ white-space: nowrap !important; } */
 
