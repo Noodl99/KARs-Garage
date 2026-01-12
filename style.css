@@ -391,13 +391,13 @@ body.page-airride .site-nav a.active{ border-bottom-color:var(--accent); } /* re
 .table th, .table td{
   white-space: normal !important;
   overflow-wrap: anywhere;   /* break long words when needed */
-  word-break: normal;    /* fallback */
+  word-break: break-word;    /* fallback */
 }
 /* Links: override the desktop rule that forces nowrap */
 .table a{
   white-space: normal !important;
   overflow-wrap: anywhere;
-  word-break: normal;
+  word-break: break-word;
 }
 
 /* Ensure all table headers stay single-line on mobile */
