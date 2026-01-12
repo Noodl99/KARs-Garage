@@ -258,7 +258,7 @@ body.page-airride .site-nav a.active{ border-bottom-color:var(--accent); } /* re
 /* Utility */
 .muted{color:#777}
 
-@media (max-width:600px){
+@media (max-width:900px){
   .hero-title--76{
     font-size:42px;   /* smaller for mobile */
     margin:12px 0;    /* optional: reduce top/bottom spacing */
