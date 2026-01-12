@@ -402,7 +402,7 @@ body.page-airride .site-nav a.active{ border-bottom-color:var(--accent); } /* re
   /* Drop the fixed 240px width for SRC/Video columns on mobile */
   .table th:nth-child(5), .table td:nth-child(5),
   .table th:nth-child(6), .table td:nth-child(6){
-    width: 10ch;
+    width: 4ch;
     max-width: 15ch;
     white-space: nowrap !important;
     overflow: hidden;           /* cell-level overflow for safety */
