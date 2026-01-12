@@ -391,30 +391,63 @@ body.page-airride .site-nav a.active{ border-bottom-color:var(--accent); } /* re
 .table th, .table td{
   white-space: normal !important;
   overflow-wrap: anywhere;   /* break long words when needed */
-  word-break: break-word;    /* fallback */
+  word-break: normal;    /* fallback */
 }
 /* Links: override the desktop rule that forces nowrap */
 .table a{
   white-space: normal !important;
   overflow-wrap: anywhere;
-  word-break: break-word;
+  word-break: normal;
 }
 
 /* Ensure all table headers stay single-line on mobile */
 .table thead th{
   white-space: nowrap !important;
-  text-overflow: clip; /* prevents ellipsis on headers */
+  overflow: hidden !important;
+  text-overflow: clip !important; 
 }
 
+.table thead th:nth-child(5),
+.table thead th:nth-child(6){
+  text-overflow: clip !important;
+  overflow: hidden !important;
+  white-space: nowrap !important;
+}
 
 /* MOBILE: limit Player and Time columns to ~10 characters */
 .table th:nth-child(1), .table td:nth-child(1),  /* Player column */
 .table th:nth-child(2), .table td:nth-child(2){ /* Time column */
-  max-width: 1ch;           
-  overflow: hidden;          /* hide overflow */
-  text-overflow: ellipsis;   /* show trailing ... */
-  white-space: nowrap;       /* keep on one line */
+  max-width: 10ch;           
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
+
+/* === MOBILE: shrink Player (col 1) and Time (col 2) with hard widths === */
+.table thead th:nth-child(1),
+.table tbody td:nth-child(1){
+  width: 10ch !important;          /* hard width drives fixed-layout columns */
+  max-width: 10ch !important;
+  white-space: nowrap !important;
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
+}
+
+.table thead th:nth-child(2),
+.table tbody td:nth-child(2){
+  width: 10ch !important;
+  max-width: 10ch !important;
+  white-space: nowrap !important;
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
+}
+
+/* If a desktop rule restored visible overflow for col 1, suppress it on mobile */
+.table tbody td:nth-child(1){
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
+}
+
 
   /* Drop the fixed 240px width for SRC/Video columns on mobile */
   .table th:nth-child(5), .table td:nth-child(5),
