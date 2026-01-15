@@ -568,15 +568,15 @@ function paintSrRecords(mountId) {
 
   list.innerHTML = entries.map((e, i) => {
     const cls = (i === 0) ? 'sr-col first' : (i === entries.length - 1 ? 'sr-col last' : 'sr-col');
-    const playerHref = normalizeUrl(e["Player Link"] ?? '');
-    const playerLink = playerHref ? `<a href="${playerHref}" target="_blank" rel="noopener">${labelForUrl(playerHref)}</a>` : '';
+    const nodeHref = normalizeUrl(e["Node Link"] ?? '') || normalizeUrl(e["Player Link"] ?? '');
+    const linkHtml = nodeHref ? `<a href="${nodeHref}" target="_blank" rel="noopener">${labelForUrl(nodeHref)}</a>` : '';
     return `
       <div class="${cls}">
         <div class="sr-time">${e.Time ?? ''}</div>
         <div class="sr-row">${e.Machine ?? ''}</div>
         <div class="sr-row">${e.Rider ?? ''}</div>
         <div class="sr-row">${e.Player ?? ''}</div>
-        <div class="sr-row">${playerLink}</div>
+        <div class="sr-row">${linkHtml}</div>
       </div>
     `;
   }).join('');
@@ -592,6 +592,7 @@ function buildSrIndex(rows) {
     Player:     idxOf(header,"Player"),
     Time:       idxOf(header,"Time"),
     TimeSec:    idxOf(header,"Time (sec)"),
+    NodeLink:   idxOf(header,"Node Link"),
     PlayerLink: idxOf(header,"Player Link")
   };
 
@@ -603,6 +604,7 @@ function buildSrIndex(rows) {
       "Machine":     r[IDX.Machine],
       "Rider":       r[IDX.Rider],
       "Player":      r[IDX.Player],
+      "Node Link":   r[IDX.NodeLink],
       "Player Link": r[IDX.PlayerLink],
       _sec: Number(r[IDX.TimeSec] ?? NaN)
     };
