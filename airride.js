@@ -376,6 +376,25 @@ function labelForUrl(u) {
   }
 }
 
+/* For speedrider.coresv.net links, prefer English by forcing lang=en */
+function preferEnglishUrl(u) {
+  const href = normalizeUrl(u);
+  if (!href) return '';
+
+  try {
+    const url = new URL(href);
+    // Only touch Speedrider host(s)
+    if (/^(.+\.)?speedrider\.coresv\.net$/i.test(url.hostname)) {
+      // Add or overwrite the lang param
+      url.searchParams.set('lang', 'en');
+      return url.toString();
+    }
+    return href;
+  } catch {
+    return href;
+  }
+}
+
 /* Build an anchor cell */
 function linkCell(url) {
   const href = normalizeUrl(url);
@@ -568,7 +587,8 @@ function paintSrRecords(mountId) {
 
   list.innerHTML = entries.map((e, i) => {
     const cls = (i === 0) ? 'sr-col first' : (i === entries.length - 1 ? 'sr-col last' : 'sr-col');
-    const nodeHref = normalizeUrl(e["Node Link"] ?? '') || normalizeUrl(e["Player Link"] ?? '');
+    const rawHref = normalizeUrl(e["Node Link"] ?? '') || normalizeUrl(e["Player Link"] ?? '');
+    const nodeHref = preferEnglishUrl(rawHref);
     const linkHtml = nodeHref ? `<a href="${nodeHref}" target="_blank" rel="noopener">${labelForUrl(nodeHref)}</a>` : '';
     return `
       <div class="${cls}">
