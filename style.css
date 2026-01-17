@@ -580,6 +580,61 @@ body.page-airride .site-nav a.active{ border-bottom-color:var(--accent); } /* re
   }
 }
 
+/* === About page layout/typography helpers === */
+.about-wrap{max-width:900px; margin:0 auto 28px; padding:8px 0;}
+.h-xxl-i{font-size:clamp(28px,4vw,48px); font-weight:800; font-style:italic; margin:12px 0;}
+.h-md-i{font-size:clamp(20px,2.6vw,28px); font-weight:800; font-style:italic; margin:18px 0 6px;}
+.p-base{font-size:16px; line-height:1.65; margin:6px 0 16px;}
+.about-links a{color:var(--link); text-decoration:none;}
+.about-links a:hover{color:var(--link-hover); text-decoration:underline;}
+
+/* Title + toggle above the red line */
+.about-hero{
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;  /* centers the title */
+  min-height: 64px;
+  padding-top: 10px;
+}
+.about-title{ margin: 12px 0; text-align:center; }
+
+/* EN | JP toggle aligned to the right of the title */
+.lang-switch{
+  position:absolute;
+  right:0; top:50%; transform:translateY(-50%);
+  display:inline-flex; gap:8px; align-items:center;
+}
+.lang-switch .sep{opacity:.6}
+.lang-switch button{
+  border:1px solid var(--border); background:#fff; color:#000;
+  padding:6px 10px; border-radius:999px; cursor:pointer; font-weight:700;
+}
+.lang-switch .is-active{ background:#000; color:#fff; border-color:#000; }
+
+/* Roadmap checkboxes */
+.roadmap{margin:4px 0 24px;}
+.roadmap h3{font-size:18px; font-weight:800; margin:16px 0 8px;}
+.roadmap ul{list-style:none; padding-left:0; margin:8px 0 14px;}
+.roadmap li{display:flex; gap:10px; align-items:flex-start; margin:6px 0;}
+.chk{
+  width:18px; height:18px; border:2px solid var(--border); border-radius:4px;
+  display:inline-grid; place-items:center; font-size:14px; font-weight:800; line-height:1;
+  flex:0 0 18px;
+}
+.chk--on{background:#000; color:#fff; border-color:#000}
+
+/* Language visibility (default EN) */
+[data-lang="en"] .lang-ja{display:none;}
+[data-lang="ja"] .lang-en{display:none;}
+
+/* Stack the toggle under the title on mobile */
+@media (max-width:900px){
+  .about-hero{ display:block; text-align:center; }
+  .lang-switch{ position:static; transform:none; margin:8px 0 0; justify-content:center; }
+}
+
+
 @supports (height: 1svh) {
   @media (max-width:900px){
     .hero{
