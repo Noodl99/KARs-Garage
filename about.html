@@ -1,0 +1,279 @@
+
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>KARs Garage — About</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <link rel="icon" href="icons/favicon.png" />
+  <link rel="stylesheet" href="style.css?v=0.1.2" />
+  <style>
+    /* === About page typography (small, local helper) === */
+    .about-wrap{max-width:900px; margin:0 auto; padding:8px 0 28px;}
+    .h-xxl-i{font-size:clamp(28px,4vw,48px); font-weight:800; font-style:italic; margin:12px 0;}
+    .h-lg-b{font-size:clamp(18px,2.2vw,24px); font-weight:800; margin:8px 0 12px;}
+    .h-md-i{font-size:clamp(20px,2.6vw,28px); font-weight:800; font-style:italic; margin:18px 0 6px;}
+    .p-base{font-size:16px; line-height:1.65; margin:6px 0 16px;}
+    .about-links a{color:var(--link); text-decoration:none;}
+    .about-links a:hover{color:var(--link-hover); text-decoration:underline;}
+
+    /* Toggle: “JP | EN” just below navbar */
+    .lang-switch{margin:10px 0 12px; display:inline-flex; gap:8px; align-items:center;}
+    .lang-switch button{
+      border:1px solid var(--border); background:#fff; color:#000;
+      padding:6px 10px; border-radius:999px; cursor:pointer; font-weight:700;
+    }
+    .lang-switch .sep{opacity:.6}
+    .lang-switch .is-active{background:#000; color:#fff; border-color:#000}
+
+    /* Roadmap lists */
+    .roadmap{margin:4px 0 24px;}
+    .roadmap h3{font-size:18px; font-weight:800; margin:16px 0 8px;}
+    .roadmap ul{list-style:none; padding-left:0; margin:8px 0 14px;}
+    .roadmap li{display:flex; gap:10px; align-items:flex-start; margin:6px 0;}
+    .chk{
+      width:18px; height:18px; border:2px solid var(--border); border-radius:4px;
+      display:inline-grid; place-items:center; font-size:14px; font-weight:800; line-height:1;
+      flex:0 0 18px;
+    }
+    .chk--on{background:#000; color:#fff; border-color:#000}
+    .section-rule{height:2px; background:#eee; border:none; margin:18px 0;}
+
+    /* Hide language blocks by data flag */
+    [data-lang="en"] .lang-ja{display:none;}
+    [data-lang="ja"] .lang-en{display:none;}
+  </style>
+</head>
+<body class="page-about" data-lang="en">
+  <!-- ===== Fixed top bar (match your other pages) ===== -->
+  <div class="topbar fixed">
+    <div class="container bar-inner">
+      <img class="brand-logo-img" src="icons/kars-logo-24.png" alt="KARs logo">
+      <strong class="brand-name">KARs Garage</strong>
+      <nav class="site-nav" aria-label="Site">
+        <a href="index.html">Home</a>
+        <a href="air-ride.html">Air Ride</a>
+        <a href="about.html" class="active">About</a>
+      </nav>
+    </div>
+  </div>
+
+  <main class="container">
+    <header class="site-header">
+      <h1 class="brand">About</h1>
+      <p class="tagline">Learn what this project is, how it works, and what’s coming next.</p>
+    </header>
+    <hr class="accent--fullbleed"/>
+
+    <!-- Language toggle -->
+    <div class="lang-switch" role="group" aria-label="Language toggle">
+      <button type="button" class="btn-lang" data-setlang="ja" aria-pressed="false">JP</button>
+      <span class="sep">|</span>
+      <button type="button" class="btn-lang is-active" data-setlang="en" aria-pressed="true">EN</button>
+    </div>
+
+    <section class="about-wrap about-links">
+      <!-- ===================== ENGLISH ===================== -->
+      <div class="lang-en" lang="en">
+        <h2 class="h-xxl-i">What is Kirby Air Riders Garage?</h2>
+        <p class="h-lg-b">
+          <strong>Kirby Air Riders Garage</strong> is a central hub for Kirby Air Riders Speedrunning
+          run by <a href="https://discordapp.com/users/334893807130640394" target="_blank" rel="noopener">@noodl999</a>.
+        </p>
+        <p class="p-base">
+          It consolidates records from
+          <a href="https://www.speedrun.com/kars/" target="_blank" rel="noopener">Speedrun.com</a>
+          and
+          <a href="https://speedrider.coresv.net" target="_blank" rel="noopener">Speedrider</a>
+          to display them all in one convenient location.
+        </p>
+
+        <h3 class="h-md-i">How does it work?</h3>
+        <p class="p-base">
+          Using Google Sheets Apps Script, it pulls data from Speedrun.com’s API and scrapes Speedrider’s HTML tables,
+          then transposes the data into readable tables that you can sort by column.
+        </p>
+
+        <h3 class="h-md-i">What’s Next?</h3>
+        <p class="p-base">
+          KARs Garage is still under active development! You can influence its progress, make feature requests, or just say hi by
+          pinging me, <strong>@noodl999</strong>, in the Kirby Air Riders Speedrunning Discord:
+          <a href="https://discord.gg/XRBvC4u4Tr" target="_blank" rel="noopener">https://discord.gg/XRBvC4u4Tr</a>.
+          For now, here’s the current roadmap:
+        </p>
+
+        <hr class="section-rule" />
+
+        <!-- Roadmap -->
+        <section class="roadmap">
+          <h3><strong>Air Ride</strong></h3>
+          <ul>
+            <li><span class="chk chk--on">✓</span><span>View Top 3 Time Attack (Restricted &amp; Unrestricted), Free Run (Restricted &amp; Unrestricted), and Speedrider records for each Air Ride individual level all in one place.</span></li>
+            <li><span class="chk chk--on">✓</span><span>View Top 3 records for each Full Mode run.</span></li>
+            <li><span class="chk chk--on">✓</span><span>Add links to each run’s entry and completion video.</span></li>
+          </ul>
+
+          <h3><strong>About</strong></h3>
+          <ul>
+            <li><span class="chk chk--on">✓</span><span>An About page that explains features, links, and shows this roadmap in both English and Japanese.</span></li>
+          </ul>
+
+          <h3><strong>Top Ride</strong></h3>
+          <ul>
+            <li><span class="chk"> </span><span>View Top 3 Time Attack (Restricted &amp; Unrestricted), Free Run (Restricted &amp; Unrestricted), and Speedrider records for each individual level all in one place.</span></li>
+            <li><span class="chk"> </span><span>View Top 3 records for each Full Mode run.</span></li>
+            <li><span class="chk"> </span><span>Add links to each run’s entry and completion video.</span></li>
+          </ul>
+
+          <h3><strong>City Trial</strong></h3>
+          <ul>
+            <li><span class="chk"> </span><span>Consolidate the Top 3 records for Score‑Based Stadiums, Time‑Based Stadium, and other City Trial categories on one page.</span></li>
+          </ul>
+
+          <h3><strong>Road Trip</strong></h3>
+          <ul>
+            <li><span class="chk"> </span><span>Consolidate the Top 3 records for Any%, True Ending, and 100%.</span></li>
+          </ul>
+
+          <h3><strong>Other / Misc</strong></h3>
+          <ul>
+            <li><span class="chk"> </span><span>A section for other official categories like 100%, All Lessons, and 5 hot dogs%.</span></li>
+          </ul>
+
+          <h3><strong>Guides &amp; Resources</strong></h3>
+          <ul>
+            <li><span class="chk"> </span><span>A central hub for guides—videos, tutorials, strategies, etc.</span></li>
+          </ul>
+
+          <h3><strong>Cat‑Ex</strong></h3>
+          <ul>
+            <li><span class="chk"> </span><span>A Category Extensions section for meme/unofficial categories like Amiibo or 99 Laps that aren’t on Speedrun.com.</span></li>
+          </ul>
+
+          <h3><strong>Stats!</strong></h3>
+          <ul>
+            <li><span class="chk"> </span><span>A stats dashboard (most popular machine, most records by player, total time of all IL WRs, etc.).</span></li>
+          </ul>
+        </section>
+      </div>
+
+      <!-- ===================== JAPANESE ===================== -->
+      <div class="lang-ja" lang="ja">
+        <h2 class="h-xxl-i">Kirby Air Riders Garage とは？</h2>
+        <p class="h-lg-b">
+          <strong>Kirby Air Riders Garage</strong> は、
+          <a href="https://discordapp.com/users/334893807130640394" target="_blank" rel="noopener">@noodl999</a>
+          が運営する、Kirby Air Riders のスピードラン記録を集約するハブサイトです。
+        </p>
+        <p class="p-base">
+          記録は
+          <a href="https://www.speedrun.com/kars/" target="_blank" rel="noopener">Speedrun.com</a>
+          と
+          <a href="https://speedrider.coresv.net" target="_blank" rel="noopener">Speedrider</a>
+          から収集し、1 つの場所に見やすくまとめて表示します。
+        </p>
+
+        <h3 class="h-md-i">仕組み</h3>
+        <p class="p-base">
+          Google Sheets の Apps Script を使用し、Speedrun.com の API からデータを取得、さらに Speedrider の
+          HTML テーブルをスクレイピングします。取得したデータを整形して、列ごとの並べ替えができる読みやすい表に変換しています。
+        </p>
+
+        <h3 class="h-md-i">今後の予定</h3>
+        <p class="p-base">
+          KARs Garage は現在も開発中です！  
+          Kirby Air Riders Speedrunning の Discord（
+          <a href="https://discord.gg/XRBvC4u4Tr" target="_blank" rel="noopener">https://discord.gg/XRBvC4u4Tr</a>）で
+          <strong>@noodl999</strong> にメンションすれば、機能要望や改善提案、挨拶など気軽にどうぞ。  
+          現在のロードマップは次のとおりです。
+        </p>
+
+        <hr class="section-rule" />
+
+        <!-- ロードマップ -->
+        <section class="roadmap">
+          <h3><strong>Air Ride</strong></h3>
+          <ul>
+            <li><span class="chk chk--on">✓</span><span>各個別コースについて、Time Attack（Restricted/Unrestricted）、Free Run（Restricted/Unrestricted）、Speedrider のトップ3記録を 1 ページに集約表示。</span></li>
+            <li><span class="chk chk--on">✓</span><span>各フルモードのトップ3記録を表示。</span></li>
+            <li><span class="chk chk--on">✓</span><span>各走のエントリページとクリア動画へのリンクを追加。</span></li>
+          </ul>
+
+          <h3><strong>About</strong></h3>
+          <ul>
+            <li><span class="chk chk--on">✓</span><span>サイトの機能・重要リンク・このロードマップを、英語と日本語で説明する About ページ。</span></li>
+          </ul>
+
+          <h3><strong>Top Ride</strong></h3>
+          <ul>
+            <li><span class="chk"> </span><span>各個別コースの Time Attack（Restricted/Unrestricted）、Free Run（Restricted/Unrestricted）、Speedrider のトップ3記録を 1 ページに集約表示。</span></li>
+            <li><span class="chk"> </span><span>各フルモードのトップ3記録を表示。</span></li>
+            <li><span class="chk"> </span><span>各走のエントリページとクリア動画へのリンクを追加。</span></li>
+          </ul>
+
+          <h3><strong>City Trial</strong></h3>
+          <ul>
+            <li><span class="chk"> </span><span>スコア系スタジアム、タイム系スタジアム、その他 City Trial カテゴリのトップ3記録を 1 ページに集約表示。</span></li>
+          </ul>
+
+          <h3><strong>Road Trip</strong></h3>
+          <ul>
+            <li><span class="chk"> </span><span>Any%、True Ending、100% のトップ3記録を集約表示。</span></li>
+          </ul>
+
+          <h3><strong>その他 / 雑多</strong></h3>
+          <ul>
+            <li><span class="chk"> </span><span>100%、All Lessons、5 hot dogs% などの公式カテゴリ用セクション。</span></li>
+          </ul>
+
+          <h3><strong>ガイド / リソース</strong></h3>
+          <ul>
+            <li><span class="chk"> </span><span>動画、チュートリアル、重要な立ち回りなどをまとめたガイド集。</span></li>
+          </ul>
+
+          <h3><strong>カテゴリ拡張（Cat-Ex）</strong></h3>
+          <ul>
+            <li><span class="chk"> </span><span>Amiibo、99 Laps など Speedrun.com に載っていない非公式カテゴリのコーナー。</span></li>
+          </ul>
+
+          <h3><strong>統計！</strong></h3>
+          <ul>
+            <li><span class="chk"> </span><span>統計ダッシュボード（最も人気のマシン、最多記録保持プレイヤー、IL WR 合計タイムなど）。</span></li>
+          </ul>
+        </section>
+      </div>
+    </section>
+  </main>
+
+  <footer class="container site-footer">
+    <span>© <span id="year"></span> KARs Garage</span>
+  </footer>
+
+  <script>
+    // Footer year
+    document.getElementById('year').textContent = new Date().getFullYear();
+
+    // Language toggle
+    (function(){
+      const root = document.body;
+      const saved = localStorage.getItem('about_lang') || 'en';
+      setLang(saved);
+
+      document.querySelectorAll('.btn-lang').forEach(btn => {
+        btn.addEventListener('click', () => setLang(btn.dataset.setlang));
+      });
+
+      function setLang(code){
+        const lang = (code === 'ja' ? 'ja' : 'en');
+        root.setAttribute('data-lang', lang);
+        localStorage.setItem('about_lang', lang);
+        document.querySelectorAll('.btn-lang').forEach(b => {
+          const isActive = b.dataset.setlang === lang;
+          b.classList.toggle('is-active', isActive);
+          b.setAttribute('aria-pressed', String(isActive));
+        });
+      }
+    })();
+  </script>
+</body>
+</html>
