@@ -812,51 +812,6 @@ orderedCourses.forEach(course => {
   navHtml += `<a href="#${id}" class="toc-item indent">${course}</a>`;
 });
 
-// --- FULL MODE (Air Ride) section ---
-const fgSec = document.createElement('section');
-fgSec.className = 'course';
-fgSec.innerHTML = `
-  <span id="${FG_ANCHORS["All Tracks"]}" class="anchor"></span>
-  <figure class="banner-wrap">
-    <img class="course-banner" src="images/misc_banner.webp" alt="Full Mode banner" />
-    <figcaption class="banner-title">Full Mode</figcaption>
-  </figure>
-
-  <div class="tables-grid">
-    <!-- Row 1 -->
-    <article class="table-card"><h3>All Tracks (Glitchless)</h3><div id="${FG_IDS["All Tracks (Glitchless)"]}"></div></article>
-    <article class="table-card"><h3>All Tracks (Glitched)</h3><div id="${FG_IDS["All Tracks (Glitched)"]}"></div></article>
-
-    <!-- Row 2 -->
-    <article class="table-card"><h3>All Tracks (Legendaries)</h3><div id="${FG_IDS["All Tracks (Legendaries)"]}"></div></article>
-    <article class="table-card"><h3>All Tracks (No Dupes)</h3><div id="${FG_IDS["All Tracks (No Dupes)"]}"></div></article>
-
-    <!-- Row 3 -->
-    <span id="${FG_ANCHORS["100 Checkboxes"]}" class="anchor"></span>
-    <article class="table-card"><h3>100 Checkboxes</h3><div id="${FG_IDS["100 Checkboxes"]}"></div></article>
-    <span id="${FG_ANCHORS["100%"]}" class="anchor"></span>
-    <article class="table-card"><h3>100%</h3><div id="${FG_IDS["100%"]}"></div></article>
-
-    <!-- Row 4 -->
-    <span id="${FG_ANCHORS["KARARARAT"]}" class="anchor"></span>
-    <article class="table-card"><h3>KARARARAT</h3><div id="${FG_IDS["KARARARAT"]}"></div></article>
-    <span id="${FG_ANCHORS["KARARARARAT"]}" class="anchor"></span>
-    <article class="table-card"><h3>KARARARARAT</h3><div id="${FG_IDS["KARARARARAT"]}"></div></article>
-  </div>
-
-  <hr class="section-divider" />
-`;
-content.appendChild(fgSec);
-
-// Paint the FG tables (hide Machine/Rider columns; custom empty link)
-AT_SUBROUTES.forEach(route => {
-  const rows = fgAllTracks.get(route) ?? [];
-  renderSrcTable(FG_IDS[route], rows, { mode:'FG', hideMR:true, course:route, rules:route });
-});
-["100 Checkboxes","100%","KARARARAT","KARARARARAT"].forEach(route => {
-  renderSrcTable(FG_IDS[route], fgSingles.get(route) ?? [], { mode:'FG', hideMR:true, course:route, rules:route });
-});
-
 
 // Divider + Full Mode header + anchors
 navHtml += '<div class="toc-title">Full Mode</div>';
@@ -925,6 +880,79 @@ sectionIds.push(
     renderSpeedriderStrip(`${id}-sr-ta`, srTaCourse);
     renderSpeedriderStrip(`${id}-sr-fr`, srFrCourse);
   });
+// --- FULL MODE (Air Ride) section ---
+const fgSec = document.createElement('section');
+fgSec.className = 'course';
+fgSec.innerHTML = `
+  <span id="${FG_ANCHORS["All Tracks"]}" class="anchor"></span>
+  <figure class="banner-wrap">
+    <img class="course-banner" src="images/misc_banner.webp" alt="Full Mode banner" />
+    <figcaption class="banner-title">Full Mode</figcaption>
+  </figure>
+
+
+<div class="tables-grid">
+  <!-- Row 1 -->
+  <article class="table-card">
+    <h3>All Tracks (Glitchless)</h3>
+    <div id="${FG_IDS["All Tracks (Glitchless)"]}"></div>
+  </article>
+
+  <article class="table-card">
+    <h3>All Tracks (Glitched)</h3>
+    <div id="${FG_IDS["All Tracks (Glitched)"]}"></div>
+  </article>
+
+  <!-- Row 2 -->
+  <article class="table-card">
+    <h3>All Tracks (Legendaries)</h3>
+    <div id="${FG_IDS["All Tracks (Legendaries)"]}"></div>
+  </article>
+
+  <article class="table-card">
+    <h3>All Tracks (No Dupes)</h3>
+    <div id="${FG_IDS["All Tracks (No Dupes)"]}"></div>
+  </article>
+
+  <!-- Row 3 -->
+  <article class="table-card">
+    <span id="${FG_ANCHORS["100 Checkboxes"]}" class="anchor"></span>
+    <h3>100 Checkboxes</h3>
+    <div id="${FG_IDS["100 Checkboxes"]}"></div>
+  </article>
+
+  <article class="table-card">
+    <span id="${FG_ANCHORS["100%"]}" class="anchor"></span>
+    <h3>100%</h3>
+    <div id="${FG_IDS["100%"]}"></div>
+  </article>
+
+  <!-- Row 4 -->
+  <article class="table-card">
+    <span id="${FG_ANCHORS["KARARARAT"]}" class="anchor"></span>
+    <h3>KARARARAT</h3>
+    <div id="${FG_IDS["KARARARAT"]}"></div>
+  </article>
+
+  <article class="table-card">
+    <span id="${FG_ANCHORS["KARARARARAT"]}" class="anchor"></span>
+    <h3>KARARARARAT</h3>
+    <div id="${FG_IDS["KARARARARAT"]}"></div>
+  </article>
+</div>
+  <hr class="section-divider" />
+`;
+content.appendChild(fgSec);
+
+// Paint the FG tables (hide Machine/Rider columns; custom empty link)
+AT_SUBROUTES.forEach(route => {
+  const rows = fgAllTracks.get(route) ?? [];
+  renderSrcTable(FG_IDS[route], rows, { mode:'FG', hideMR:true, course:route, rules:route });
+});
+["100 Checkboxes","100%","KARARARAT","KARARARARAT"].forEach(route => {
+  renderSrcTable(FG_IDS[route], fgSingles.get(route) ?? [], { mode:'FG', hideMR:true, course:route, rules:route });
+});
+
 
   setupScrollSpy(sectionIds);
 

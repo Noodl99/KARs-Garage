@@ -501,6 +501,26 @@ body.page-airride .site-nav a.active{ border-bottom-color:var(--accent); } /* re
     text-overflow: ellipsis;
   }
 
+/* === MOBILE: Full Mode (table--fg) use cols 3–4 for SRC/Video with ellipsis === */
+.table--fg th:nth-child(3), .table--fg td:nth-child(3),
+.table--fg th:nth-child(4), .table--fg td:nth-child(4){
+  width: 6ch;
+  max-width: 15ch;
+  white-space: nowrap !important;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* Force anchors to ellipsis inside those cells */
+.table--fg td:nth-child(3) a,
+.table--fg td:nth-child(4) a{
+  display: block;
+  width: 100%;
+  white-space: nowrap !important;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
   /* Optional: adjust for very small phones */
   @media (max-width:480px){
     .table td:nth-child(5) a,
