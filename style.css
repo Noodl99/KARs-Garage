@@ -634,6 +634,45 @@ body.page-airride .site-nav a.active{ border-bottom-color:var(--accent); } /* re
   .lang-switch{ position:static; transform:none; margin:8px 0 0; justify-content:center; }
 }
 
+/* === About page: mobile spacing / readable margins === */
+@media (max-width: 900px){
+  /* Give the general container a little extra side padding on mobile */
+  .page-about .container{
+    padding-left: calc(var(--container-pad) + 8px);
+    padding-right: calc(var(--container-pad) + 8px);
+  }
+
+  /* Title + toggle region: small breathing space */
+  .page-about .about-hero{
+    padding-left: 8px;
+    padding-right: 8px;
+  }
+
+  /* Main content block: keep text away from edges */
+  .page-about .about-wrap{
+    padding-left: 4px;
+    padding-right: 4px;
+  }
+
+  /* Roadmap lists: add a touch of left inset so checkboxes don’t touch the bezel */
+  .page-about .roadmap ul{
+    padding-left: 4px;
+  }
+
+  /* Make the title/toggle stack cleanly (you already have this,
+     but it’s safe to keep here to ensure it applies on About too) */
+  .page-about .about-hero{
+    display: block;
+    text-align: center;
+  }
+  .page-about .lang-switch{
+    position: static;
+    transform: none;
+    margin: 8px 0 0;
+    justify-content: center;
+  }
+}
+
 
 @supports (height: 1svh) {
   @media (max-width:900px){
