@@ -812,16 +812,6 @@ orderedCourses.forEach(course => {
   navHtml += `<a href="#${id}" class="toc-item indent">${course}</a>`;
 });
 
-// Divider + Full Mode header + anchors
-navHtml += '<div class="legacy-sep" aria-hidden="true"></div>';
-navHtml += '<div class="toc-title">Full Mode</div>';
-navHtml += `<a href="#${FG_ANCHORS["All Tracks"]}" class="toc-item indent">All Tracks</a>`;
-navHtml += `<a href="#${FG_ANCHORS["100 Checkboxes"]}" class="toc-item indent">100 Checkboxes</a>`;
-navHtml += `<a href="#${FG_ANCHORS["100%"]}" class="toc-item indent">100%</a>`;
-navHtml += `<a href="#${FG_ANCHORS["KARARARAT"]}" class="toc-item indent">KARARARAT</a>`;
-navHtml += `<a href="#${FG_ANCHORS["KARARARARAT"]}" class="toc-item indent">KARARARARAT</a>`;
-nav.innerHTML = navHtml;
-
 // --- FULL MODE (Air Ride) section ---
 const fgSec = document.createElement('section');
 fgSec.className = 'course';
@@ -829,7 +819,7 @@ fgSec.innerHTML = `
   <span id="${FG_ANCHORS["All Tracks"]}" class="anchor"></span>
   <figure class="banner-wrap">
     <img class="course-banner" src="images/misc_banner.webp" alt="Full Mode banner" />
-    <figcaption class="banner-title">FULL MODE</figcaption>
+    <figcaption class="banner-title">Full Mode</figcaption>
   </figure>
 
   <div class="tables-grid">
@@ -866,6 +856,16 @@ AT_SUBROUTES.forEach(route => {
 ["100 Checkboxes","100%","KARARARAT","KARARARARAT"].forEach(route => {
   renderSrcTable(FG_IDS[route], fgSingles.get(route) ?? [], { mode:'FG', hideMR:true, course:route, rules:route });
 });
+
+
+// Divider + Full Mode header + anchors
+navHtml += '<div class="toc-title">Full Mode</div>';
+navHtml += `<a href="#${FG_ANCHORS["All Tracks"]}" class="toc-item indent">All Tracks</a>`;
+navHtml += `<a href="#${FG_ANCHORS["100 Checkboxes"]}" class="toc-item indent">100 Checkboxes</a>`;
+navHtml += `<a href="#${FG_ANCHORS["100%"]}" class="toc-item indent">100%</a>`;
+navHtml += `<a href="#${FG_ANCHORS["KARARARAT"]}" class="toc-item indent">KARARARAT</a>`;
+navHtml += `<a href="#${FG_ANCHORS["KARARARARAT"]}" class="toc-item indent">KARARARARAT</a>`;
+nav.innerHTML = navHtml;
 
 // Register FG anchors for scroll spy
 sectionIds.push(
@@ -955,7 +955,7 @@ function setupScrollSpy(sectionIds) {
     });
   }, { root:null, rootMargin:'0px 0px -60% 0px', threshold:0.25 });
 
-  sectionIds.forEach(id => {
+  uniqueIds.forEach(id => {
     const anchor = document.getElementById(id);
     if (anchor) observer.observe(anchor);
   });
