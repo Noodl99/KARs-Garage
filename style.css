@@ -50,6 +50,15 @@ body{
 .site-nav a.active{border-bottom-color:var(--accent)}
 body.page-home .site-nav a.active{ border-bottom-color:#fff; }          /* white on Home */
 body.page-airride .site-nav a.active{ border-bottom-color:var(--accent); } /* red on Air Ride */
+/* Top Ride page accent + active underline */
+body.page-topride{
+  --accent:#fdba2b;
+  --link:#fdba2b;
+  --link-hover:#c88700; /* slightly darker hover */
+}
+body.page-topride .site-nav a.active{
+  border-bottom-color: var(--accent);
+}
 body.page-about .site-nav a.active {
   border-bottom-color: #fff;
 }
