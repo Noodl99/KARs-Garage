@@ -677,6 +677,43 @@ body.page-about .site-nav a.active {
   }
 }
 
+/* === Mobile: horizontally scrollable top nav === */
+@media (max-width:900px){
+  /* Let the brand + nav share the row */
+  .bar-inner{
+    gap: 8px;                 /* slightly tighter */
+  }
+
+  /* Brand should not grow; keep its size stable */
+  .brand-logo-img,
+  .brand-name{
+    flex: 0 0 auto;           /* do not stretch, do not shrink */
+  }
+
+  /* Make the nav a horizontal scroller with no wrapping */
+  .site-nav{
+    display: flex;
+    flex-wrap: nowrap;        /* all links on one visual row */
+    gap: 8px;                 /* small space between links */
+    overflow-x: auto;         /* swipe horizontally */
+    overflow-y: hidden;
+    -webkit-overflow-scrolling: touch;  /* smooth iOS/Android scrolling */
+    scrollbar-width: none;               /* hide scrollbar (Firefox) */
+    min-width: 0;             /* allow flexbox to shrink the nav area */
+    white-space: nowrap;      /* belt + suspenders */
+  }
+  .site-nav::-webkit-scrollbar{ display: none; } /* hide scrollbar (WebKit/Chromium) */
+
+  /* Prevent link text from wrapping or shrinking */
+  .site-nav a{
+    flex: 0 0 auto;           /* do not shrink */
+    display: inline-block;
+    padding: 8px 6px;         /* a little tighter on mobile */
+    margin-left: 0;           /* your desktop rule adds margin-left; drop it here */
+    white-space: nowrap;      /* ensure no wrap per anchor */
+  }
+}
+
 
 @supports (height: 1svh) {
   @media (max-width:900px){
