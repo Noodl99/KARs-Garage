@@ -18,6 +18,40 @@ const FR_LABEL = /free\s*run/i;
 const RESTRICTED   = /\brestricted\b/i;
 const UNRESTRICTED = /\bunrestricted\b/i;
 
+/* === Full Mode (Category === "Air Ride") === */
+// Category label matcher for the full-game mode
+const FG_LABEL = /^air\s*ride$/i;
+
+// Subroutes under "All Tracks"
+const AT_SUBROUTES = [
+  "All Tracks (Glitchless)",
+  "All Tracks (Glitched)",
+  "All Tracks (Legendaries)",
+  "All Tracks (No Dupes)"
+];
+
+// Stable mount IDs used to paint FG tables
+const FG_IDS = {
+  "All Tracks (Glitchless)":  "fg-at-glitchless",
+  "All Tracks (Glitched)":    "fg-at-glitched",
+  "All Tracks (Legendaries)": "fg-at-legendaries",
+  "All Tracks (No Dupes)":    "fg-at-nodupes",
+  "100 Checkboxes":           "fg-100-checkboxes",
+  "100%":                     "fg-100",
+  "KARARARAT":                "fg-karararat",
+  "KARARARARAT":              "fg-kararararat"
+};
+
+// TOC anchor IDs for the five FG categories
+const FG_ANCHORS = {
+  "All Tracks":       "full-all-tracks",
+  "100 Checkboxes":   "full-100-checkboxes",
+  "100%":             "full-100",
+  "KARARARAT":        "full-karararat",
+  "KARARARARAT":      "full-kararararat"
+};
+
+
 /* Course order for TOC */
 const COURSE_ORDER = [
   "Floria Fields","Waveflow Waters","Airtopia Ruins","Crystalline Fissure","Steamgust Forge",
@@ -435,25 +469,40 @@ function toMillis(t) {
 }
 
 /* --- SRC tables --- */
+
 function renderSrcTable(mountId, rows, ctx) {
   const mount = document.getElementById(mountId);
   if (!mount) return;
 
+  const HIDE_MR = !!(ctx && ctx.hideMR);
 
-  const COLS = ["Player","Time","Machine","Rider","SRC Link","Video"];
-  const colgroup = `
-    <colgroup>
-      <col style="width:18%">
-      <col style="width:16%">
-      <col style="width:18%">
-      <col style="width:18%">
-      <col style="width:15%">
-      <col style="width:15%">
-    </colgroup>
-  `;
+  const COLS = HIDE_MR
+    ? ["Player","Time","SRC Link","Video"]
+    : ["Player","Time","Machine","Rider","SRC Link","Video"];
 
+  const colgroup = HIDE_MR
+    ? `
+      <colgroup>
+        <col style="width:28%">
+        <col style="width:20%">
+        <col style="width:26%">
+        <col style="width:26%">
+      </colgroup>
+    `
+    : `
+      <colgroup>
+        <col style="width:18%">
+        <col style="width:16%">
+        <col style="width:18%">
+        <col style="width:18%">
+        <col style="width:15%">
+        <col style="width:15%">
+      </colgroup>
+    `;
 
-  let html = `<div class="table-scroll"><table class="table">${colgroup}<thead><tr>`;
+   const tableClass = HIDE_MR ? 'table table--fg' : 'table table--il';
+   let html = `<div class="table-scroll"><table class="${tableClass}">${colgroup}<thead><tr>`;
+
   COLS.forEach(c => { html += `<th data-col="${c}">${c}<span class="sort-ind"></span></th>`; });
   html += '</tr></thead><tbody>';
 
@@ -463,17 +512,22 @@ function renderSrcTable(mountId, rows, ctx) {
       html += '<tr>';
       html += `<td>${r.Player ?? ''}</td>`;
       html += `<td class="td--time">${r.Time ?? ''}</td>`;
-      const mCell = buildIconCell('machine', r.Machine);
-      const rCell = buildIconCell('rider',   r.Rider);
-      html += `<td class="${mCell.cls}">${mCell.html}</td>`;
-      html += `<td class="${rCell.cls}">${rCell.html}</td>`;
+      if (!HIDE_MR) {
+        const mCell = buildIconCell('machine', r.Machine);
+        const rCell = buildIconCell('rider',   r.Rider);
+        html += `<td class="${mCell.cls}">${mCell.html}</td>`;
+        html += `<td class="${rCell.cls}">${rCell.html}</td>`;
+      }
       html += `<td>${linkCell(r.Link)}</td>`;
       html += `<td>${linkCell(r.Video)}</td>`;
       html += '</tr>';
     });
   } else {
-    const url = buildSrcCategoryUrl(ctx.course, ctx.mode, ctx.rules);
-    const linkHtml = url ? `<a href="${url}" target="_blank" rel="noopener">Be the first!</a>` : '';
+    const emptyUrl = (ctx && ctx.mode === 'FG')
+      ? 'https://www.speedrun.com/kars/runs/new'
+      : buildSrcCategoryUrl(ctx.course, ctx.mode, ctx.rules);
+
+    const linkHtml = emptyUrl ? `<a href="${emptyUrl}" target="_blank" rel="noopener">Be the first!</a>` : '';
     html += `<tr><td class="empty" colspan="${COLS.length}">
       <span class="empty-msg">
         <span>No runs submitted for this category.</span>
@@ -481,10 +535,11 @@ function renderSrcTable(mountId, rows, ctx) {
       </span>
     </td></tr>`;
   }
+
   html += '</tbody></table></div>';
   mount.innerHTML = html;
 
-  // Click-sort logic
+  // Click-sort logic (unchanged)
   const ths = mount.querySelectorAll('th'); let sortState = {};
   ths.forEach(th => {
     th.addEventListener('click', () => {
@@ -663,40 +718,76 @@ async function loadAll() {
     Video:      idxOf(srcHeader,"Video")
   };
 
+// Full Mode collections
+const fgAllTracks = new Map(AT_SUBROUTES.map(r => [r, []]));     // each subroute -> []
+const fgSingles = new Map([                                      // stand-alone routes -> []
+  ["100 Checkboxes", []],
+  ["100%", []],
+  ["KARARARAT", []],
+  ["KARARARARAT", []]
+]);
   // Build SRC by Course -> { TA: {Restricted,Unrestricted}, FR: {Restricted,Unrestricted} }
   const srcByCourse = new Map();
   srcRows.slice(1).forEach(r => {
-    const category = r[SRC_IDX.Category] ?? '';
-    const subcat   = r[SRC_IDX.Subcategory] ?? '';
-    if (!category || !subcat) return;
 
-    const mode = TA_LABEL.test(category) ? 'TA' : (FR_LABEL.test(category) ? 'FR' : 'OTHER');
-    if (mode === 'OTHER') return;
+const category = r[SRC_IDX.Category] ?? '';
+const subcat   = r[SRC_IDX.Subcategory] ?? '';
+if (!category || !subcat) return;
 
-    // "Course + Rules" or artifacts; split on " + "
-    const parts = String(subcat).trim().replace(/\s*\+$/, '').split(/\s*\+\s*/);
-    const course = (parts[0] ?? '').trim();
-    const rulesText = (parts[1] ?? '').trim() || subcat;
+const mode =
+  TA_LABEL.test(category) ? 'TA' :
+  FR_LABEL.test(category) ? 'FR' :
+  (FG_LABEL.test(category) ? 'FG' : 'OTHER');
 
-    let rules = '';
-    if (UNRESTRICTED.test(rulesText)) rules = 'Unrestricted';
-    else if (RESTRICTED.test(rulesText)) rules = 'Restricted';
-    if (!course || !rules) return;
+if (mode === 'OTHER') return;
 
-    const rowObj = {
-      Player:  r[SRC_IDX.Player],
-      Time:    r[SRC_IDX.Time],
-      Machine: r[SRC_IDX.Machine],
-      Rider:   r[SRC_IDX.Rider],
-      Link:    normalizeUrl(r[SRC_IDX.Link]),
-      Video:   normalizeUrl(r[SRC_IDX.Video]),
-      _ms:     toMillis(r[SRC_IDX.Time])
-    };
+// === NEW: Full Mode (category is exactly "Air Ride") ===
+if (mode === 'FG') {
+  const route = String(subcat).trim(); // e.g., "All Tracks (Glitchless)", "100%", "KARARARARAT"
+  if (!route) return;
 
-    if (!srcByCourse.has(course)) {
-      srcByCourse.set(course, { TA:{Restricted:[],Unrestricted:[]}, FR:{Restricted:[],Unrestricted:[]} });
-    }
-    srcByCourse.get(course)[mode][rules].push(rowObj);
+  const rowObj = {
+    Player:  r[SRC_IDX.Player],
+    Time:    r[SRC_IDX.Time],
+    Machine: r[SRC_IDX.Machine],   // kept in data (even though we won't display)
+    Rider:   r[SRC_IDX.Rider],
+    Link:    normalizeUrl(r[SRC_IDX.Link]),
+    Video:   normalizeUrl(r[SRC_IDX.Video]),
+    _ms:     toMillis(r[SRC_IDX.Time])
+  };
+
+  if (AT_SUBROUTES.includes(route)) {
+    fgAllTracks.get(route).push(rowObj);
+  } else if (fgSingles.has(route)) {
+    fgSingles.get(route).push(rowObj);
+  }
+  return; // IMPORTANT: do not fall-through to TA/FR logic
+}
+
+// === Existing TA/FR handling (unchanged) ===
+const parts = String(subcat).trim().replace(/\s*\+$/, '').split(/\s*\+\s*/);
+const course = (parts[0] ?? '').trim();
+const rulesText = (parts[1] ?? '').trim() || subcat;
+
+let rules = '';
+if (UNRESTRICTED.test(rulesText)) rules = 'Unrestricted';
+else if (RESTRICTED.test(rulesText)) rules = 'Restricted';
+if (!course || !rules) return;
+
+const rowObj = {
+  Player:  r[SRC_IDX.Player],
+  Time:    r[SRC_IDX.Time],
+  Machine: r[SRC_IDX.Machine],
+  Rider:   r[SRC_IDX.Rider],
+  Link:    normalizeUrl(r[SRC_IDX.Link]),
+  Video:   normalizeUrl(r[SRC_IDX.Video]),
+  _ms:     toMillis(r[SRC_IDX.Time])
+};
+
+if (!srcByCourse.has(course)) {
+  srcByCourse.set(course, { TA:{Restricted:[],Unrestricted:[]}, FR:{Restricted:[],Unrestricted:[]} });
+}
+srcByCourse.get(course)[mode][rules].push(rowObj);
   });
 
   const srTaByCourse = buildSrIndex(srTaRows);
@@ -708,19 +799,84 @@ async function loadAll() {
   const courseSet = new Set([...srcByCourse.keys(), ...srTaByCourse.keys(), ...srFrByCourse.keys()]);
   const orderedCourses = COURSE_ORDER.filter(c => courseSet.has(c));
 
-  // Build TOC
-  let navHtml = '';
-  orderedCourses.forEach(course => {
-    const id = makeAnchorId(course);
-    if (course === 'Fantasy Meadows') {
-      navHtml += '<div class="legacy-sep" aria-hidden="true"></div>';
-    }
-    navHtml += `<a href="#${id}">${course}</a>`;
-  });
-  nav.innerHTML = navHtml;
+
+// Build TOC with section headers
+const sectionIds = [];
+
+let navHtml = '<div class="toc-title">Individual Levels</div>';
+orderedCourses.forEach(course => {
+  const id = makeAnchorId(course);
+  if (course === 'Fantasy Meadows') {
+    navHtml += '<div class="legacy-sep" aria-hidden="true"></div>';
+  }
+  navHtml += `<a href="#${id}" class="toc-item indent">${course}</a>`;
+});
+
+// Divider + Full Mode header + anchors
+navHtml += '<div class="legacy-sep" aria-hidden="true"></div>';
+navHtml += '<div class="toc-title">Full Mode</div>';
+navHtml += `<a href="#${FG_ANCHORS["All Tracks"]}" class="toc-item indent">All Tracks</a>`;
+navHtml += `<a href="#${FG_ANCHORS["100 Checkboxes"]}" class="toc-item indent">100 Checkboxes</a>`;
+navHtml += `<a href="#${FG_ANCHORS["100%"]}" class="toc-item indent">100%</a>`;
+navHtml += `<a href="#${FG_ANCHORS["KARARARAT"]}" class="toc-item indent">KARARARAT</a>`;
+navHtml += `<a href="#${FG_ANCHORS["KARARARARAT"]}" class="toc-item indent">KARARARARAT</a>`;
+nav.innerHTML = navHtml;
+
+// --- FULL MODE (Air Ride) section ---
+const fgSec = document.createElement('section');
+fgSec.className = 'course';
+fgSec.innerHTML = `
+  <span id="${FG_ANCHORS["All Tracks"]}" class="anchor"></span>
+  <figure class="banner-wrap">
+    <img class="course-banner" src="images/misc_banner.webp" alt="Full Mode banner" />
+    <figcaption class="banner-title">FULL MODE</figcaption>
+  </figure>
+
+  <div class="tables-grid">
+    <!-- Row 1 -->
+    <article class="table-card"><h3>All Tracks (Glitchless)</h3><div id="${FG_IDS["All Tracks (Glitchless)"]}"></div></article>
+    <article class="table-card"><h3>All Tracks (Glitched)</h3><div id="${FG_IDS["All Tracks (Glitched)"]}"></div></article>
+
+    <!-- Row 2 -->
+    <article class="table-card"><h3>All Tracks (Legendaries)</h3><div id="${FG_IDS["All Tracks (Legendaries)"]}"></div></article>
+    <article class="table-card"><h3>All Tracks (No Dupes)</h3><div id="${FG_IDS["All Tracks (No Dupes)"]}"></div></article>
+
+    <!-- Row 3 -->
+    <span id="${FG_ANCHORS["100 Checkboxes"]}" class="anchor"></span>
+    <article class="table-card"><h3>100 Checkboxes</h3><div id="${FG_IDS["100 Checkboxes"]}"></div></article>
+    <span id="${FG_ANCHORS["100%"]}" class="anchor"></span>
+    <article class="table-card"><h3>100%</h3><div id="${FG_IDS["100%"]}"></div></article>
+
+    <!-- Row 4 -->
+    <span id="${FG_ANCHORS["KARARARAT"]}" class="anchor"></span>
+    <article class="table-card"><h3>KARARARAT</h3><div id="${FG_IDS["KARARARAT"]}"></div></article>
+    <span id="${FG_ANCHORS["KARARARARAT"]}" class="anchor"></span>
+    <article class="table-card"><h3>KARARARARAT</h3><div id="${FG_IDS["KARARARARAT"]}"></div></article>
+  </div>
+
+  <hr class="section-divider" />
+`;
+content.appendChild(fgSec);
+
+// Paint the FG tables (hide Machine/Rider columns; custom empty link)
+AT_SUBROUTES.forEach(route => {
+  const rows = fgAllTracks.get(route) ?? [];
+  renderSrcTable(FG_IDS[route], rows, { mode:'FG', hideMR:true, course:route, rules:route });
+});
+["100 Checkboxes","100%","KARARARAT","KARARARARAT"].forEach(route => {
+  renderSrcTable(FG_IDS[route], fgSingles.get(route) ?? [], { mode:'FG', hideMR:true, course:route, rules:route });
+});
+
+// Register FG anchors for scroll spy
+sectionIds.push(
+  FG_ANCHORS["All Tracks"],
+  FG_ANCHORS["100 Checkboxes"],
+  FG_ANCHORS["100%"],
+  FG_ANCHORS["KARARARAT"],
+  FG_ANCHORS["KARARARARAT"]
+);
 
   // Build sections
-  const sectionIds = [];
   orderedCourses.forEach(courseName => {
     const id = makeAnchorId(courseName);
     sectionIds.push(id);
@@ -783,7 +939,8 @@ async function loadAll() {
 }
 
 function setupScrollSpy(sectionIds) {
-  const links = sectionIds
+   const uniqueIds = [...new Set(sectionIds)];
+   const links = uniqueIds
     .map(id => ({ id, el: document.querySelector(`#course-nav a[href="#${id}"]`) }))
     .filter(x => x.el);
 

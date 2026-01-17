@@ -96,6 +96,32 @@ body.page-airride .site-nav a.active{ border-bottom-color:var(--accent); } /* re
 /* Legacy divider (1px #c7c7c7) */
 #course-nav .legacy-sep{height:1px; background:#c7c7c7; margin:6px 0}
 
+/* === TOC section titles + indentation (desktop) === */
+#course-nav .toc-title{
+  font-weight: 800;
+  color: var(--text);
+  padding: 6px 2px;
+  cursor: default;         /* not clickable */
+  border-bottom: none;
+}
+#course-nav .toc-item{
+  display: block;
+  padding: 6px 2px;
+}
+#course-nav .toc-item.indent{ padding-left: 10px; }
+
+/* === TOC section titles + indentation (mobile drawer) === */
+.toc-drawer #course-nav-mobile .toc-title{
+  font-weight: 800;
+  color: var(--text);
+  padding: 6px 2px;
+}
+.toc-drawer #course-nav-mobile .toc-item{
+  display: block;
+  padding: 6px 2px;
+}
+.toc-drawer #course-nav-mobile .toc-item.indent{ padding-left: 10px; }
+
 /* Course sections */
 .course{margin:12px 0 32px}
 .anchor{position:relative; top:-80px}
@@ -512,29 +538,27 @@ body.page-airride .site-nav a.active{ border-bottom-color:var(--accent); } /* re
 
 /* Below 1440px: show icons; visually hide text but keep it accessible */
 @media (max-width:1440px){
-  .table td.cell--machine.has-icon .cell-icon,
-  .table td.cell--rider.has-icon  .cell-icon{
+  .table--il td.cell--machine.has-icon .cell-icon,
+  .table--il td.cell--rider.has-icon  .cell-icon{
     display: inline-flex;
   }
 
-  .table td.cell--machine.has-icon .cell-text,
-  .table td.cell--rider.has-icon  .cell-text{
-    /* "sr-only" pattern — text stays for screen readers */
+  .table--il td.cell--machine.has-icon .cell-text,
+  .table--il td.cell--rider.has-icon  .cell-text{
     position: absolute;
     width: 1px; height: 1px; padding: 0; margin: -1px;
     overflow: hidden; clip: rect(0,0,0,0); clip-path: inset(50%);
     white-space: nowrap; border: 0;
   }
 
-  /* Make Machine (3) and Rider (4) columns compact for icons */
-  .table th:nth-child(3), .table td:nth-child(3),
-  .table th:nth-child(4), .table td:nth-child(4){
-    width: 44px !important;       /* tune to 40–56px if you like */
+  /* Compact the Machine/Rider columns ONLY for IL tables */
+  .table--il th:nth-child(3), .table--il td:nth-child(3),
+  .table--il th:nth-child(4), .table--il td:nth-child(4){
+    width: 44px !important;
     max-width: 56px !important;
     text-align: center;
   }
 }
-
 
 @supports (height: 1svh) {
   @media (max-width:900px){
