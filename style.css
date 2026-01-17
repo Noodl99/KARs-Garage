@@ -31,6 +31,10 @@ body{
 }
 .container{max-width:var(--maxw); margin:0 auto; padding:0 var(--container-pad)}
 
+.site-nav a{
+  line-height: 1.0;         /* keeps underline alignment consistent */
+}
+
 /* ===== Fixed top bar ===== */
 .topbar.fixed{position:fixed; top:0; left:0; right:0; z-index:1000; background:#000; color:#fff; height:var(--topbar-h)}
 .bar-inner{display:flex; align-items:center; gap:12px; height:var(--topbar-h)}
