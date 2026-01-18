@@ -437,48 +437,85 @@ function renderSrcTable(mountId, rows, opts){
   html += `</tbody></table></div>`;
   mount.innerHTML = html;
 
-  // Click-sort (now respects numeric data-num on score cells)
-  const ths = mount.querySelectorAll('th'); let sortState = {};
-  ths.forEach(th => {
-    th.addEventListener('click', () => {
-      const col = th.getAttribute('data-col');
-      const dir = (sortState.col === col && sortState.dir === 'asc') ? 'desc' : 'asc';
-      sortState = { col, dir };
 
-      const tbody = mount.querySelector('tbody');
-      const rowsEl = Array.from(tbody.querySelectorAll('tr')).filter(tr => !tr.querySelector('.empty'));
-      const idx = COLS.indexOf(col) + 1;
+  // Click-sort (robust for Time and Score columns)
+  {
+    const ths = mount.querySelectorAll('th');
+    let sortState = {};
+  
+    // Helper: numeric value to sort for a cell/column
+    function cellSortNum(colLabel, cellEl) {
+      if (!cellEl) return Number.NaN;
+  
+      // Score tables put a numeric key on the measurement cell
+      // e.g., <td class="td--score" data-num="2121.89">2,121.89</td>
+      const numAttr = cellEl.getAttribute('data-num');
+      if (numAttr != null) {
+        const v = Number(numAttr);
+        return Number.isFinite(v) ? v : Number.NaN;
+      }
+  
+      // Time column (string like 00:02:12.189)
+      if (/^time$/i.test(colLabel)) {
+        const raw = cellEl.textContent.trim();
+        const ms  = toMillis(raw);
+        return Number.isFinite(ms) ? ms : Number.NaN;
+      }
+  
+      // For text columns, we sort lexicographically in a second pass
+      return Number.NaN;
+    }
+  
+    // Helper: text value for lexicographic fallback
+    function cellSortText(cellEl) {
+      return (cellEl ? cellEl.textContent.trim() : '');
+    }
+  
+    ths.forEach(th => {
+      th.addEventListener('click', () => {
+        const col = th.getAttribute('data-col');              // "Time", "KOs", "Feet", "Points", "Player", etc.
+        const dir = (sortState.col === col && sortState.dir === 'asc') ? 'desc' : 'asc';
+        sortState = { col, dir };
 
-      rowsEl.sort((rA, rB) => {
-        const aCell = rA.querySelector(`td:nth-child(${idx})`);
-        const bCell = rB.querySelector(`td:nth-child(${idx})`);
+        const tbody = mount.querySelector('tbody');
+        const rowsEl = Array.from(tbody.querySelectorAll('tr')).filter(tr => !tr.querySelector('.empty'));
+        if (rowsEl.length <= 1) return; // nothing to do
 
-        // Prefer numeric if data-num is present (score tables)
-        const aNum = aCell ? +aCell.getAttribute('data-num') : NaN;
-        const bNum = bCell ? +bCell.getAttribute('data-num') : NaN;
+        // Column index (1-based) by current header set
+        const headers = Array.from(mount.querySelectorAll('thead th')).map(h => h.getAttribute('data-col'));
+        const idx = headers.indexOf(col) + 1;
+        if (idx <= 0) return;
 
-        let cmp;
-        if (!isNaN(aNum) && !isNaN(bNum)) {
-          cmp = aNum - bNum;               // numeric compare
-        } else if (col === 'Time') {
-          const a = aCell?.textContent.trim() || '';
-          const b = bCell?.textContent.trim() || '';
-          cmp = toMillis(a) - toMillis(b); // time compare
-        } else {
-          const a = aCell?.textContent.trim() || '';
-          const b = bCell?.textContent.trim() || '';
-          cmp = a.localeCompare(b, undefined, { numeric:true, sensitivity:'base' });
-        }
-        return dir === 'asc' ? cmp : -cmp;
+        rowsEl.sort((rA, rB) => {
+          const aCell = rA.querySelector(`td:nth-child(${idx})`);
+          const bCell = rB.querySelector(`td:nth-child(${idx})`);
+
+          // 1) Try numeric compare (data-num for score or millis for Time)
+          const aNum = cellSortNum(col, aCell);
+          const bNum = cellSortNum(col, bCell);
+          let cmp;
+
+          if (Number.isFinite(aNum) && Number.isFinite(bNum)) {
+            cmp = aNum - bNum;
+          } else {
+            // 2) Fallback to text compare (Player/Machine/Rider/links)
+            const aTxt = cellSortText(aCell);
+            const bTxt = cellSortText(bCell);
+            cmp = aTxt.localeCompare(bTxt, undefined, { numeric: true, sensitivity: 'base' });
+          }
+          return dir === 'asc' ? cmp : -cmp;
+        });
+
+        // Re-append in the new order
+        rowsEl.forEach(el => tbody.appendChild(el));
+
+        // Update carets
+        mount.querySelectorAll('.sort-ind').forEach(i => i.textContent = '');
+        th.querySelector('.sort-ind').textContent = dir === 'asc' ? '▲' : '▼';
       });
-
-      rowsEl.forEach(el => tbody.appendChild(el));
-      mount.querySelectorAll('.sort-ind').forEach(i => i.textContent = '');
-      th.querySelector('.sort-ind').textContent = dir === 'asc' ? '▲' : '▼';
     });
-  });
+  }
 }
-
 /* Build a section (banner + a grid of per-level tables) for one family */
 
 function renderFamilySection(anchorId, title, groups){
