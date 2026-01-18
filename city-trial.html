@@ -3,13 +3,21 @@
 <html lang="en">
 <head>
   <meta charset="utf-8" />
-  <title>KARs Garage — Top Ride</title>
+  <title>KARs Garage — City Trial</title>
   <link rel="icon" type="image/png" href="icons/garage-icon-white.png" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="stylesheet" href="style.css" />
 </head>
-<body class="page-topride">
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-FJM6HX5VMZ"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-FJM6HX5VMZ');
+</script>
+<body class="page-citytrial">
   <!-- Top bar -->
   <header class="topbar fixed">
     <div class="container bar-inner">
@@ -23,55 +31,46 @@
       </nav>
     </div>
   </header>
-<!-- Google tag (gtag.js) -->
-<script async src="https://www.googletagmanager.com/gtag/js?id=G-FJM6HX5VMZ"></script>
-<script>
-  window.dataLayer = window.dataLayer || [];
-  function gtag(){dataLayer.push(arguments);}
-  gtag('js', new Date());
 
-  gtag('config', 'G-FJM6HX5VMZ');
-</script>
   <!-- Site header + cadence -->
   <div class="container site-header">
-    <h1 class="brand">TOP RIDE</h1>
+    <h1 class="brand">CITY TRIAL</h1>
     <p class="tagline">
       Updates daily at 12:00am, 6:00am, 12:00pm, and 6:00pm Eastern.
       Data pulled from
-      <a href="https://www.speedrun.com/kars" target="_blank" rel="noopener">speedrun.com/kars</a>
-      and
-      <a href="https://speedrider.coresv.net/?lang=en" target="_blank" rel="noopener">speedrider.coresv.net</a>.
+      <a href="https://www.speedrun.com/kars" target="_blank" rel="noopener">speedrun.com/kars</a>.
     </p>
   </div>
   <hr class="accent--fullbleed" />
 
+  <!-- Mobile TOC -->
   <div class="container">
     <div class="toc-wrap">
       <button class="toc-toggle" type="button" aria-expanded="false" aria-controls="toc-drawer">
-        Courses <span aria-hidden="true">▾</span>
+        Table of Contents <span aria-hidden="true">▾</span>
       </button>
       <div id="toc-drawer" class="toc-drawer">
-        <nav id="course-nav-mobile" aria-label="Course navigation (mobile)"></nav>
+        <nav id="course-nav-mobile" aria-label="Contents (mobile)"></nav>
       </div>
     </div>
   </div>
 
   <div class="container layout">
-    <aside class="sidebar" aria-label="Course navigation">
+    <aside class="sidebar" aria-label="Contents">
       <nav id="course-nav"></nav>
     </aside>
 
-    <main id="content" aria-label="Course sections"></main>
+    <main id="content" aria-label="Sections"></main>
   </div>
 
   <!-- Footer -->
   <footer class="site-footer">
     <div class="container">
-      <span>© <span id="year">2026</span> KARs Garage • Top Ride</span>
+      <span>© <span id="year">2026</span> KARs Garage • City Trial</span>
     </div>
   </footer>
 
   <script src="script.js"></script>
-  <script src="topride.js"></script>
+  <script src="citytrial.js"></script>
 </body>
 </html>

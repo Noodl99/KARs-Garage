@@ -80,6 +80,15 @@ body.page-topride{
 body.page-topride .site-nav a.active{
   border-bottom-color: var(--accent);
 }
+/* City Trial page accent + active underline */
+body.page-citytrial{
+  --accent:#22b26c;
+  --link:#22b26c;
+  --link-hover:#158a52; /* slightly darker hover */
+}
+body.page-citytrial .site-nav a.active{
+  border-bottom-color: var(--accent);
+}
 body.page-about .site-nav a.active {
   border-bottom-color: #fff;
 }
