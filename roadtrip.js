@@ -266,7 +266,7 @@ async function loadRT(){
     <span id="rt-banner" class="anchor"></span>
     <figure class="banner-wrap">
       <img class="course-banner" src="${RT_BANNER}" alt="Road Trip banner" />
-      <figcaption class="banner-title">Road Trip</figcaption>
+      <figcaption class="banner-title">Full Mode</figcaption>
     </figure>
     <div class="tables-grid">${cards}</div>
     <hr class="section-divider" />
