@@ -3,7 +3,7 @@
 <html lang="en">
 <head>
   <meta charset="utf-8" />
-  <title>KARs Garage — Air Ride</title>
+  <title>KARs Garage — Road Trip</title>
   <link rel="icon" type="image/png" href="icons/garage-icon-white.png" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -15,10 +15,9 @@
   window.dataLayer = window.dataLayer || [];
   function gtag(){dataLayer.push(arguments);}
   gtag('js', new Date());
-
   gtag('config', 'G-FJM6HX5VMZ');
 </script>
-<body class="page-airride">
+<body class="page-roadtrip">
   <!-- Top bar -->
   <header class="topbar fixed">
     <div class="container bar-inner">
@@ -34,48 +33,45 @@
     </div>
   </header>
 
-  <!-- Site header + cadence -->
+  <!-- Header + cadence -->
   <div class="container site-header">
-    <h1 class="brand">AIR RIDE</h1>
+    <h1 class="brand">ROAD TRIP</h1>
     <p class="tagline">
       Updates daily at 12:00am, 6:00am, 12:00pm, and 6:00pm Eastern.
       Data pulled from
-      <a href="https://www.speedrun.com/kars" target="_blank" rel="noopener">speedrun.com/kars</a>
-      and
-      <a href="https://speedrider.coresv.net/?lang=en" target="_blank" rel="noopener">speedrider.coresv.net</a>.
+      <a href="https://www.speedrun.com/kars" target="_blank" rel="noopener">speedrun.com/kars</a>.
     </p>
   </div>
   <hr class="accent--fullbleed" />
 
-
+  <!-- Mobile TOC -->
   <div class="container">
     <div class="toc-wrap">
       <button class="toc-toggle" type="button" aria-expanded="false" aria-controls="toc-drawer">
-        Courses <span aria-hidden="true">▾</span>
+        Categories <span aria-hidden="true">▾</span>
       </button>
       <div id="toc-drawer" class="toc-drawer">
-        <nav id="course-nav-mobile" aria-label="Course navigation (mobile)"></nav>
+        <nav id="course-nav-mobile" aria-label="Categories (mobile)"></nav>
       </div>
     </div>
   </div>
 
-
   <div class="container layout">
-    <aside class="sidebar" aria-label="Course navigation">
+    <aside class="sidebar" aria-label="Categories">
       <nav id="course-nav"></nav>
     </aside>
 
-    <main id="content" aria-label="Course sections"></main>
+    <main id="content" aria-label="Category sections"></main>
   </div>
 
   <!-- Footer -->
   <footer class="site-footer">
     <div class="container">
-      <span>© <span id="year">2026</span> KARs Garage • Air Ride</span>
+      <span>© <span id="year">2026</span> KARs Garage • Road Trip</span>
     </div>
   </footer>
 
   <script src="script.js"></script>
-  <script src="airride.js"></script>
+  <script src="roadtrip.js"></script>
 </body>
 </html>

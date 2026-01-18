@@ -28,6 +28,7 @@
         <a href="air-ride.html">Air Ride</a>
         <a href="top-ride.html">Top Ride</a>
         <a href="city-trial.html">City Trial</a>
+        <a href="road-trip.html">Road Trip</a>
         <a href="about.html" class="active">About</a>
       </nav>
     </div>
@@ -68,7 +69,7 @@
       <h2 class="h-md-i">How does it work?</h2>
       <p class="p-base">
         Using Google Sheets Apps Script, it pulls data from Speedrun.com’s API and scrapes Speedrider’s HTML tables,
-        then transposes the data into readable tables that you can sort by column.
+        then transposes the data into readable tables that you can sort by column. This is done automatically every 6 hours, starting at 12am EST. Please note that while the data is refreshing, some tables may appear empty.
       </p>
 
       <h2 class="h-md-i">What’s next?</h2>
@@ -108,7 +109,7 @@
           <li><span class="chk chk--on">✓</span><span>Convert time units into KOs, distance, and points in Score-Based Stadiums.</span></li>
         <h3><strong>Road Trip</strong></h3>
         <ul>
-          <li><span class="chk"> </span><span>Consolidate the Top 3 records for Any%, True Ending, and 100%.</span></li>
+          <li><span class="chk chk--on">✓</span><span>Consolidate the Top 3 records for Any% (Casual/Normal/Hard/Super Hard), True Ending, and 100%.</span></li>
         </ul>
 
         <h3><strong>Other / Misc</strong></h3>
@@ -152,8 +153,8 @@
       <h2 class="h-md-i">仕組み</h2>
       <p class="p-base">
         <strong>Google スプレッドシート</strong> と <strong>Apps Script</strong> を用いて
-        <strong>Speedrun.com の API</strong> からデータを取得し、<strong>Speedrider の HTML</strong> テーブルをスクレイピングしてします。
-        そのデータを整形して、列ごとの並べ替えができる読みやすい表に変換しています。
+        <strong>Speedrun.com の API</strong> からデータを取得し、<strong>Speedrider の HTML</strong> テーブルをスクレイピングします。
+        取得したデータを整形し、列ごとの並べ替えが可能な読みやすい表に変換しています。この処理は、米国東部時間（EST）で毎日午前0時を起点に、6時間ごとに自動実行されます。データ更新中は、一時的に一部の表が空に表示される場合がありますのでご了承ください。
       </p>
 
       <h2 class="h-md-i">今後の予定</h2>

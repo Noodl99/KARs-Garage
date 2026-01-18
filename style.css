@@ -89,6 +89,17 @@ body.page-citytrial{
 body.page-citytrial .site-nav a.active{
   border-bottom-color: var(--accent);
 }
+
+/* Road Trip page accent + active underline */
+body.page-roadtrip{
+  --accent:#3d5d83;
+  --link:#3d5d83;
+  --link-hover:#28486a; /* slightly darker */
+}
+body.page-roadtrip .site-nav a.active{
+  border-bottom-color: var(--accent);
+}
+
 body.page-about .site-nav a.active {
   border-bottom-color: #fff;
 }
@@ -568,6 +579,45 @@ body.page-about .site-nav a.active {
   text-overflow: ellipsis;
 }
 
+/* === MOBILE: Road Trip (.table--rt) link columns should ellipsis === */
+@media (max-width:900px){
+
+  /* Column 4 = SRC Link (Player, Time, Rider, SRC Link, Video) */
+  .table--rt th:nth-child(4),
+  .table--rt td:nth-child(4){
+    width: 6ch;
+    max-width: 15ch;
+    white-space: nowrap !important;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  /* Force anchors to be single-line, block-level for reliable ellipsis */
+  .table--rt td:nth-child(4) a{
+    display: block;
+    width: 100%;
+    white-space: nowrap !important;
+    overflow: hidden !important;
+    text-overflow: ellipsis !important;
+  }
+
+  /* (Optional) Do the same for Video (column 5) to keep parity */
+  .table--rt th:nth-child(5),
+  .table--rt td:nth-child(5){
+    width: 6ch;
+    max-width: 15ch;
+    white-space: nowrap !important;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .table--rt td:nth-child(5) a{
+    display: block;
+    width: 100%;
+    white-space: nowrap !important;
+    overflow: hidden !important;
+    text-overflow: ellipsis !important;
+  }
+}
+
   /* Optional: adjust for very small phones */
   @media (max-width:480px){
     .table td:nth-child(5) a,
@@ -621,6 +671,27 @@ body.page-about .site-nav a.active {
   /* Compact the Machine/Rider columns ONLY for IL tables */
   .table--il th:nth-child(3), .table--il td:nth-child(3),
   .table--il th:nth-child(4), .table--il td:nth-child(4){
+    width: 44px !important;
+    max-width: 56px !important;
+    text-align: center;
+  }
+}
+
+/* Road Trip tables: show Rider icon below 1440px (no Machine column on Road Trip) */
+@media (max-width:1440px){
+  .table--rt td.cell--rider.has-icon .cell-icon{
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .table--rt td.cell--rider.has-icon .cell-text{
+    position: absolute;
+    width: 1px; height: 1px; padding: 0; margin: -1px;
+    overflow: hidden; clip: rect(0,0,0,0); clip-path: inset(50%);
+    white-space: nowrap; border: 0;
+  }
+  /* Compact the Rider column (3rd col) for Road Trip */
+  .table--rt th:nth-child(3), .table--rt td:nth-child(3){
     width: 44px !important;
     max-width: 56px !important;
     text-align: center;
