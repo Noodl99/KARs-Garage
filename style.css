@@ -39,7 +39,28 @@ body{
 .topbar.fixed{position:fixed; top:0; left:0; right:0; z-index:1000; background:#000; color:#fff; height:var(--topbar-h)}
 .bar-inner{display:flex; align-items:center; gap:12px; height:var(--topbar-h)}
 .brand-logo-img{width:24px; height:24px}
-.brand-name{font-weight:700}
+
+/* Brand acts as "Home" link */
+.brand-name{
+  font-weight:700;
+  color:#fff;
+  text-decoration:none;
+  padding:8px 4px;
+  border-bottom:3px solid transparent;
+  display:inline-block;
+}
+.brand-name:hover{ color:#ddd; }
+
+/* Active underline for brand on Home */
+body.page-home .brand-name.active{
+  border-bottom-color:#fff; /* same as Home underline was */
+}
+
+/* Always underline brand on the Home page */
+body.page-home .brand-name{
+  border-bottom-color:#fff; /* white underline, like the old "Home" link */
+}
+
 .site-nav a{
   color:#fff;
   text-decoration:none;

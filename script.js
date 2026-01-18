@@ -22,6 +22,29 @@ document.addEventListener('DOMContentLoaded', () => {
       a.classList.add('active');
     }
   });
+
+// Make brand-name act as "Home" underline on the Home page
+
+// Make brand-name act as "Home" underline on the Home page (handles subfolders)
+(function(){
+  const here = location.pathname
+    .replace(/index\.html$/i, '')
+    .replace(/\/+$/, '/') || '/';
+
+  const brand = document.querySelector('.brand-name');
+  if (!brand) return;
+
+  // Resolve the brand's href just like we do for .site-nav links
+  const href = brand.getAttribute('href') || './';
+  const url  = new URL(href, location.href);
+  const target = url.pathname
+    .replace(/index\.html$/i, '')
+    .replace(/\/+$/, '/') || '/';
+
+  if (target === here) {
+    brand.classList.add('active');   // CSS shows the white underline for .brand-name.active on page-home
+  }
+})();
 });
 
 

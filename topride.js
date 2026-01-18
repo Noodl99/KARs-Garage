@@ -68,24 +68,158 @@ const BANNERS = {
 };
 
 /* === ICONS (reuse; safe even if rows omit Machine/Rider) === */
-const ICONS_BY_LABEL = (window.ICONS_BY_LABEL) || { rider: {}, machine: {} };
-const ICONS_BY_KEY   = (window.ICONS_BY_KEY)   || { rider: {}, machine: {} };
+
+/* === Machine / Rider icons for SRC tables ===
+ * Files live under:
+ *   icons/machines/*.png
+ *   icons/riders/*.png
+ * We match by exact label first, then fall back to normalized keys.
+ */
+
+/* 1) Exact label → file path */
+const ICONS_BY_LABEL = {
+  rider: {
+    'Pink Kirby':           'icons/riders/KARs_Kirby_icon.png',
+    'Yellow/Green Kirby':   'icons/riders/KARs_Kirby_Yellow_icon.png',
+    'Blue/Gray Kirby':      'icons/riders/KARs_Kirby_Blue_icon.png',
+    'Red/Purple Kirby':     'icons/riders/KARs_Kirby_Red_icon.png',
+    'King Dedede':          'icons/riders/KARs_King_Dedede_icon.png',
+    'Meta Knight':          'icons/riders/KARs_Meta_Knight_icon.png',
+    'Waddle Dee':           'icons/riders/KARs_Waddle_Dee_icon.png',
+    'Bandana Dee':          'icons/riders/KARs_Bandana_Waddle_Dee_icon.png',
+    'Waddle Doo':           'icons/riders/KARs_Waddle_Doo_icon.png',
+    'Chef Kawasaki':        'icons/riders/KARs_Chef_Kawasaki_icon.png',
+    'Knuckle Joe':          'icons/riders/KARs_Knuckle_Joe_icon.png',
+    'Rick':                 'icons/riders/KARs_Rick_icon.png',
+    'Gooey':                'icons/riders/KARs_Gooey_icon.png',
+    'Cappy':                'icons/riders/KARs_Cappy_icon.png',
+    'Rocky':                'icons/riders/KARs_Rocky_icon.png',
+    'Scarfy':               'icons/riders/KARs_Scarfy_icon.png',
+    'Starman':              'icons/riders/KARs_Starman_icon.png',
+    'Lololo & Lalala':      'icons/riders/KARs_Lololo_%26_Lalala_icon.png',
+    'Marx':                 'icons/riders/KARs_Marx_icon.png',
+    'Daroach':              'icons/riders/KARs_Daroach_icon.png',
+    'Magolor':              'icons/riders/KARs_Magolor_icon.png',
+    'Taranza':              'icons/riders/KARs_Taranza_icon.png',
+    'Susie':                'icons/riders/KARs_Susie_icon.png',
+    'Noir Dedede':          'icons/riders/KARs_Noir_Dedede_icon.png',
+  },
+  machine: {
+    'Warp':             'icons/machines/KARs_Warp_Star_Icon.png',
+    'Compact':          'icons/machines/KARs_Compact_Star_Icon.png',
+    'Winged':           'icons/machines/KARs_Winged_Star_Icon.png',
+    'Shadow':           'icons/machines/KARs_Shadow_Star_Icon.png',
+    'Wagon':            'icons/machines/KARs_Wagon_Star_Icon.png',
+    'Slick':            'icons/machines/KARs_Slick_Star_Icon.png',
+    'Formula':          'icons/machines/KARs_Formula_Star_Icon.png',
+    'Bulk':             'icons/machines/KARs_Bulk_Star_Icon.png',
+    'Rocket':           'icons/machines/KARs_Rocket_Star_Icon.png',
+    'Swerve':           'icons/machines/KARs_Swerve_Star_Icon.png',
+    'Turbo':            'icons/machines/KARs_Turbo_Star_Icon.png',
+    'Jet':              'icons/machines/KARs_Jet_Star_Icon.png',
+    'Wheelie Bike':     'icons/machines/KARs_Wheelie_Bike_Icon.png',
+    'Rex Wheelie':      'icons/machines/KARs_Rex_Wheeler_Icon.png',
+    'Wheelie Scooter':  'icons/machines/KARs_Wheelie_Scooter_Icon.png',
+    'Hop':              'icons/machines/KARs_Hop_Star_Icon.png',
+    'Vampire':          'icons/machines/KARs_Vampire_Star_Icon.png',
+    'Paper':            'icons/machines/KARs_Paper_Star_Icon.png',
+    'Chariot':          'icons/machines/KARs_Chariot_Icon.png',
+    'Battle Chariot':   'icons/machines/KARs_Battle_Chariot_Icon.png',
+    'Tank':             'icons/machines/KARs_Tank_Star_Icon.png',
+    'Bull Tank':        'icons/machines/KARs_Bull_Tank_Icon.png',
+    'Transform':        'icons/machines/KARs_Transform_Star_Icon.png',
+    'Dragoon':          'icons/machines/KARs_Dragoon_Icon.png',
+    'Hydra':            'icons/machines/KARs_Hydra_Icon.png',
+    'Leo':              'icons/machines/KARs_Leo_Icon.png',
+    'Gigantes':         'icons/machines/KARs_Gigantes_Icon.png',
+  }
+};
+
+/* 2) Normalized key → fallback path */
+const ICONS_BY_KEY = {
+  rider: {
+    'pink-kirby':            'icons/riders/KARs_Kirby_icon.png',
+    'yellow-green-kirby':    'icons/riders/KARs_Kirby_Yellow_icon.png',
+    'blue-gray-kirby':       'icons/riders/KARs_Kirby_Blue_icon.png',
+    'red-purple-kirby':      'icons/riders/KARs_Kirby_Red_icon.png',
+    'king-dedede':           'icons/riders/KARs_King_Dedede_icon.png',
+    'meta-knight':           'icons/riders/KARs_Meta_Knight_icon.png',
+    'waddle-dee':            'icons/riders/KARs_Waddle_Dee_icon.png',
+    'bandana-dee':           'icons/riders/KARs_Bandana_Waddle_Dee_icon.png',
+    'waddle-doo':            'icons/riders/KARs_Waddle_Doo_icon.png',
+    'chef-kawasaki':         'icons/riders/KARs_Chef_Kawasaki_icon.png',
+    'knuckle-joe':           'icons/riders/KARs_Knuckle_Joe_icon.png',
+    'rick':                  'icons/riders/KARs_Rick_icon.png',
+    'gooey':                 'icons/riders/KARs_Gooey_icon.png',
+    'cappy':                 'icons/riders/KARs_Cappy_icon.png',
+    'rocky':                 'icons/riders/KARs_Rocky_icon.png',
+    'scarfy':                'icons/riders/KARs_Scarfy_icon.png',
+    'starman':               'icons/riders/KARs_Starman_icon.png',
+    'lololo-lalala':         'icons/riders/KARs_Lololo_%26_Lalala_icon.png',
+    'marx':                  'icons/riders/KARs_Marx_icon.png',
+    'daroach':               'icons/riders/KARs_Daroach_icon.png',
+    'magolor':               'icons/riders/KARs_Magolor_icon.png',
+    'taranza':               'icons/riders/KARs_Taranza_icon.png',
+    'susie':                 'icons/riders/KARs_Susie_icon.png',
+    'noir-dedede':           'icons/riders/KARs_Noir_Dedede_icon.png',
+  },
+  machine: {
+    'warp':              'icons/machines/KARs_Warp_Star_Icon.png',
+    'compact':           'icons/machines/KARs_Compact_Star_Icon.png',
+    'winged':            'icons/machines/KARs_Winged_Star_Icon.png',
+    'shadow':            'icons/machines/KARs_Shadow_Star_Icon.png',
+    'wagon':             'icons/machines/KARs_Wagon_Star_Icon.png',
+    'slick':             'icons/machines/KARs_Slick_Star_Icon.png',
+    'formula':           'icons/machines/KARs_Formula_Star_Icon.png',
+    'bulk':              'icons/machines/KARs_Bulk_Star_Icon.png',
+    'rocket':            'icons/machines/KARs_Rocket_Star_Icon.png',
+    'swerve':            'icons/machines/KARs_Swerve_Star_Icon.png',
+    'turbo':             'icons/machines/KARs_Turbo_Star_Icon.png',
+    'jet':               'icons/machines/KARs_Jet_Star_Icon.png',
+    'wheelie-bike':      'icons/machines/KARs_Wheelie_Bike_Icon.png',
+    'rex-wheelie':       'icons/machines/KARs_Rex_Wheeler_Icon.png',
+    'wheelie-scooter':   'icons/machines/KARs_Wheelie_Scooter_Icon.png',
+    'hop':               'icons/machines/KARs_Hop_Star_Icon.png',
+    'vampire':           'icons/machines/KARs_Vampire_Star_Icon.png',
+    'paper':             'icons/machines/KARs_Paper_Star_Icon.png',
+    'chariot':           'icons/machines/KARs_Chariot_Icon.png',
+    'battle-chariot':    'icons/machines/KARs_Battle_Chariot_Icon.png',
+    'tank':              'icons/machines/KARs_Tank_Star_Icon.png',
+    'bull-tank':         'icons/machines/KARs_Bull_Tank_Icon.png',
+    'transform':         'icons/machines/KARs_Transform_Star_Icon.png',
+    'dragoon':           'icons/machines/KARs_Dragoon_Icon.png',
+    'hydra':             'icons/machines/KARs_Hydra_Icon.png',
+    'leo':               'icons/machines/KARs_Leo_Icon.png',
+    'gigantes':          'icons/machines/KARs_Gigantes_Icon.png',
+  }
+};
 
 /* === Helpers (same as Air Ride) === */
 function normKey(s){return String(s??'').normalize('NFKD').replace(/[\u0300-\u036f]/g,'').toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-+|-+$/g,'');}
 function esc(s){return String(s??'').replace(/[&<>\"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}
 function iconSrc(kind,label){const byLabel=ICONS_BY_LABEL[kind]?.[label]; if(byLabel) return byLabel; const key=normKey(label); return ICONS_BY_KEY[kind]?.[key]??null;}
-function buildIconCell(kind,value){
-  const label=String(value??'');
-  const src=iconSrc(kind,label);
-  if(src){
-    return { cls:`cell--${kind} has-icon`, html: `
-      <span class="cell-icon" aria-hidden="true"><img src="${src}" alt="" /></span>
-      <span class="cell-text">${esc(label)}</span>
-    ` };
+
+function buildIconCell(kind, value) {
+  const label = String(value ?? '');
+  const src   = iconSrc(kind, label);
+
+  if (src) {
+    return {
+      cls: `cell--${kind} has-icon`,
+      html: `
+        <span class="cell-icon" aria-hidden="true">
+          <img src="${src}" alt="" />
+        </span>
+        <span class="cell-text">${esc(label)}</span>
+      `
+    };
   }
-  return { cls:`cell--${kind}`, html:`<span class="cell-text">${esc(label)}</span>` };
+  return {
+    cls: `cell--${kind}`,
+    html: `<span class="cell-text">${esc(label)}</span>`
+  };
 }
+
 function parseCSV(text){const rows=[];let row=[],cur='',inQ=false;for(let i=0;i<text.length;i++){const ch=text[i],nx=text[i+1];if(inQ){if(ch==='"'&&nx==='"'){cur+='"';i++;}else if(ch==='"'){inQ=false;}else{cur+=ch;}}else{if(ch==='"')inQ=true;else if(ch===','){row.push(cur);cur='';}else if(ch==='\r'){}else if(ch==='\n'){row.push(cur);rows.push(row);row=[];cur='';}else{cur+=ch;}}}if(cur.length||row.length){row.push(cur);rows.push(row);}return rows.filter(r=>r.length&&r.some(v=>String(v).trim().length));}
 function idxOf(header,col){const i=header.findIndex(h=>String(h).trim().toLowerCase()===String(col).toLowerCase()); return i<0?null:i;}
 function makeAnchorId(name){return String(name).toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-+|-+$/g,'');}
