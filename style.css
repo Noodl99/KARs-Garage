@@ -100,6 +100,25 @@ body.page-roadtrip .site-nav a.active{
   border-bottom-color: var(--accent);
 }
 
+/* Extras page accent + active underline */
+body.page-extras{
+  --accent:#BA5F9D;
+  --link:#BA5F9D;
+  --link-hover:#8c3f73; /* darker */
+}
+body.page-extras .site-nav a.active{
+  border-bottom-color: var(--accent);
+}
+
+/* On Extras page, default content links follow accent color */
+.page-extras main a{
+  color: var(--link);
+  text-decoration: underline;
+}
+.page-extras main a:hover{
+  color: var(--link-hover);
+}
+
 body.page-about .site-nav a.active {
   border-bottom-color: #fff;
 }
@@ -127,6 +146,8 @@ body.page-about .site-nav a.active {
 .tile-topride{background:url('images/top-ride.png') center/cover no-repeat; aspect-ratio:17/9}
 .tile-citytrial{background:url('images/city-trial.png') center/cover no-repeat; aspect-ratio:17/9}
 .tile-roadtrip{background:url('images/road-trip.png') center/cover no-repeat; aspect-ratio:2.3948/1}
+.tile-extras{  background:url('images/extras.png') center/cover no-repeat; aspect-ratio:17/9 }
+.tile-guides{  background:url('images/guides.png') center/cover no-repeat; aspect-ratio:17/9 }
 @media (max-width:900px){.tile-grid{grid-template-columns:1fr}}
 
 /* ===== Air Ride page header ===== */
@@ -192,6 +213,13 @@ body.page-about .site-nav a.active {
   position:absolute; left:16px; top:50%; transform:translateY(-50%);
   color:#fff; font-weight:800; font-size:60px; letter-spacing:.02em;
   text-shadow:0 2px 6px rgba(0,0,0,.55);
+}
+
+.mini-divider{
+  border: none;
+  height: 1px;
+  background: #e5e5e5;
+  margin: 10px 0 6px;
 }
 
 /* ===== SRC tables ===== */
@@ -263,6 +291,15 @@ body.page-about .site-nav a.active {
   width: 20px; height: 20px; display: block; object-fit: contain;
 }
 
+
+/* Desktop: 4-col Full Game tables (Player | Time | SRC | Video) */
+.table--fg4 th:nth-child(3), .table--fg4 td:nth-child(3),
+.table--fg4 th:nth-child(4), .table--fg4 td:nth-child(4){
+  width: 240px;         /* match the look you use elsewhere for link columns */
+  max-width: 240px;
+}
+
+/* Mobile behavior already covered by your .table--fg mobile rules (cols 3–4). */
 
 /* ===== Speedrider strips (aligned grid, compact, sortable) ===== */
 .table-card.wide{
@@ -697,6 +734,117 @@ body.page-about .site-nav a.active {
     text-align: center;
   }
 }
+
+/* Accent divider that spans only the main content column */
+.accent--from-content{
+  border: none;
+  height: 4px;
+  background: var(--accent);
+  margin: 12px 0;
+  grid-column: 2 / -1; /* in the .layout grid: start at column 2 (content) */
+}
+
+.banner-wrap--textonly{
+  height: 72px; /* same feel as image banner region */
+  display:flex; align-items:center;
+}
+.banner-title--text{
+  position: static;
+  color:#000;
+  text-shadow:none;
+  font-weight:800;
+  font-size:60px;
+  letter-spacing:.02em;
+}
+@media (max-width:900px){
+  .banner-wrap--textonly{ height: clamp(44px, 7vw, 56px); }
+  .banner-title--text{ font-size: clamp(24px, 5.5vw, 32px); }
+}
+
+/* Category Extension block */
+.catex-section{ margin: 18px 0 28px; }
+.catex-header{
+  display:flex; align-items:baseline; justify-content:space-between;
+  gap:12px; margin: 0 0 6px;
+}
+.catex-title{ margin:0; font-size:22px; font-weight:800; }
+.catex-rules-title{ font-weight:800; color:#000; }
+.catex-body{
+  display:grid; gap:12px;
+  grid-template-columns: 2fr 1fr;  /* table left, rules right */
+}
+
+.catex-title .byline{
+  font-weight:800;
+  font-size:.65em;
+  color:#555;
+  margin-left:8px;
+}
+
+.catex-table{}
+.catex-rules{ font-size:14px; line-height:1.5; }
+.catex-rules ul{ margin:6px 0 0 18px; }
+@media (max-width:900px){
+  .catex-body{ grid-template-columns: 1fr; }
+
+  /* Mobile: show the Rules panel above the table when expanded */
+  .catex-rules{ order: -1; }   /* render before the table */
+  .catex-table{ order: 0; }    /* default; keep table after rules */
+
+  /* Mobile: hide the desktop "Rules" header label to avoid duplication */
+  .catex-rules-title{ display: none; }
+
+  /* Mobile: keep Rank column compact for Amiibo + Online Checklist */
+  #ce-amiibo .table th:nth-child(1),
+  #ce-amiibo .table td:nth-child(1),
+  #ce-online-85 .table th:nth-child(1),
+  #ce-online-85 .table td:nth-child(1),
+  #ce-99-air-ride .table th:nth-child(1),
+  #ce-99-air-ride .table td:nth-child(1),
+  #ce-99-top-ride .table th:nth-child(1),
+  #ce-99-top-ride .table td:nth-child(1){
+    width: 46px !important;
+    max-width: 50px !important;
+    text-align: center;
+    white-space: nowrap !important;
+  }
+
+}
+.extras-error{
+  padding:.75rem 1rem; background:#fff4f4; color:#7a1c1c; border-radius:8px;
+}
+
+/* Cat-Ex: compact Rank column for Amiibo + Online Checklist */
+#ce-amiibo .table th:nth-child(1),
+#ce-amiibo .table td:nth-child(1),
+#ce-online-85 .table th:nth-child(1),
+#ce-online-85 .table td:nth-child(1),
+#ce-99-air-ride .table th:nth-child(1),
+#ce-99-air-ride .table td:nth-child(1),
+#ce-99-top-ride .table th:nth-child(1),
+#ce-99-top-ride .table td:nth-child(1){
+  width: 46px;
+  max-width: 50px;
+  text-align: center;
+}
+/* Mobile: collapsible Rules */
+@media (max-width:900px){
+  .rules-toggle{
+    appearance: none;
+    border: 1px solid var(--border);
+    background:#fff; color:#000;
+    border-radius: 999px;
+    padding: 6px 10px;
+    font-weight:700; cursor:pointer;
+    display:inline-flex; align-items:center; gap:6px;
+    margin: 6px 0;
+  }
+  .rules-toggle[aria-expanded="true"]::after{ content:"▴"; }
+  .rules-toggle[aria-expanded="false"]::after{ content:"▾"; }
+
+  .catex-rules.is-collapsed{ display:none; }
+}
+
 
 /* === About page layout/typography helpers === */
 .about-wrap{max-width:900px; margin:0 auto 28px; padding:8px 0;}

@@ -639,6 +639,9 @@ const timeFamilies  = new Map(TIME_FAMILIES.map(f => [f, new Map()]));
 const scoreFamilies = new Map(SCORE_FAMILIES.map(f => [f, new Map()]));
 const fullMode      = new Map(); // route (subcat) -> rows[]
 
+// Seed all four so they render even with no data
+FULL_MODE_ORDER.forEach(name => { if (!fullMode.has(name)) fullMode.set(name, []); });
+
 // Seed Time-Based families with their known Level names
 TIME_FAMILIES.forEach(f => {
   const levels = timeFamilies.get(f);
@@ -721,6 +724,8 @@ rows.slice(1).forEach(r => {
   if (CAT_CITY.test(cat) && !level) {
     const route = subcat.trim();
     if (!route) return;
+    // Normalize CSV coercion: '1' (percent) -> '100%'
+    if (route === '1') route = '100%';
     if (!fullMode.has(route)) fullMode.set(route, []);
     fullMode.get(route).push(rowObj);
     return;
@@ -754,24 +759,17 @@ rows.slice(1).forEach(r => {
 
 
 
-// Full Mode
-if (fullMode.size > 0) {
-  const id = `full-mode`;
-  sectionIds.push(id);
-  navHtml += `<div class="toc-title">Full Mode</div>`;
 
-  // Add anchors for the four primary routes (only if they exist in data)
-  FULL_MODE_ORDER.forEach(name => {
-    if (fullMode.has(name)) {
-      const rid = `${id}-${normKey(name)}`;
-      sectionIds.push(rid);
-      navHtml += `<a href="#${rid}" class="toc-item indent">${name}</a>`;
-    }
-  });
+// Full Mode (always listed)
+const id = `full-mode`;
+sectionIds.push(id);
+navHtml += `<div class="toc-title">Full Mode</div>`;
+FULL_MODE_ORDER.forEach(name => {
+  const rid = `${id}-${normKey(name)}`;
+  sectionIds.push(rid);
+  navHtml += `<a href="#${rid}" class="toc-item indent">${name}</a>`;
+});
 
-  // (Optional) Keep an umbrella link if you still want it:
-  // navHtml += `<a href="#${id}" class="toc-item indent">All Routes</a>`;
-}
 
 
   nav.innerHTML = navHtml;
@@ -791,9 +789,7 @@ if (fullMode.size > 0) {
   });
 
 
-  if (fullMode.size > 0) {
-    renderFullModeSection('full-mode', fullMode);
-  }
+  renderFullModeSection('full-mode', fullMode);
 
   setupScrollSpy(sectionIds);
 

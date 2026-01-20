@@ -1,0 +1,339 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>KARs Garage - Extras</title>
+  <link rel="icon" type="image/png" href="icons/garage-icon-white.png" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="stylesheet" href="style.css" />
+</head>
+
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-FJM6HX5VMZ"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date()); gtag('config', 'G-FJM6HX5VMZ');
+</script>
+
+<body class="page-extras">
+  <!-- Top bar -->
+  <header class="topbar fixed">
+    <div class="container bar-inner">
+      <img class="brand-logo-img" src="icons/garage-icon-white.png" alt="KARs logo" />
+      <a class="brand-name" href="./" aria-label="Home">KARs Garage</a>
+      <nav class="site-nav" aria-label="Site">
+        <a href="air-ride.html">Air Ride</a>
+        <a href="top-ride.html">Top Ride</a>
+        <a href="city-trial.html">City Trial</a>
+        <a href="road-trip.html">Road Trip</a>
+        <a href="extras.html">Extras</a>
+        <a href="about.html">About</a>
+      </nav>
+    </div>
+  </header>
+
+  <!-- Page title -->
+  <div class="container site-header">
+    <h1 class="brand">EXTRAS</h1>
+  </div>
+
+  <!-- Thin accent line under page title -->
+  <hr class="accent--fullbleed" />
+
+  <!-- Mobile TOC button (matches other pages) -->
+  <div class="container">
+    <div class="toc-wrap">
+      <button class="toc-toggle" type="button" aria-expanded="false" aria-controls="toc-drawer">
+        Categories <span aria-hidden="true">▾</span>
+      </button>
+      <div id="toc-drawer" class="toc-drawer">
+        <nav id="course-nav-mobile" aria-label="Contents (mobile)"></nav>
+      </div>
+    </div>
+  </div>
+
+  <div class="container layout">
+    <!-- Left sidebar TOC -->
+    <aside class="sidebar" aria-label="Contents">
+     
+      <nav id="course-nav">
+        <div class="toc-title">Full Game</div>
+        <a href="#ex-arm-noleg"   class="toc-item indent">All Riders &amp; Machines - No Legendaries</a>
+        <a href="#ex-arm-all"     class="toc-item indent">All Riders &amp; Machines - All Unlocks</a>
+        <a href="#ex-lessons"     class="toc-item indent">All Lessons</a>
+        <a href="#ex-100"         class="toc-item indent">100%</a>
+        <a href="#ex-ngc-air"     class="toc-item indent">New Game Categories - Air Ride 100%</a>
+        <a href="#ex-ngc-top"     class="toc-item indent">New Game Categories - Top Ride 100%</a>
+        <a href="#ex-ngc-city"    class="toc-item indent">New Game Categories - City Trial 100%</a>
+        <a href="#ex-tetrathlon"  class="toc-item indent">Tetrathlon</a>
+        <div class="legacy-sep" aria-hidden="true"></div>
+        <div class="toc-title">Category Extension</div>
+        <a href="#ce-amiibo-anchor"    class="toc-item indent">Amiibo – Air Ride All Tracks</a>
+        <a href="#ce-online-85-anchor" class="toc-item indent">Online Checklist – 85 Checkboxes</a>
+        <a href="#ce-99-air-anchor"    class="toc-item indent">99 Laps – Air Ride</a>
+        <a href="#ce-99-top-anchor"    class="toc-item indent">99 Laps – Top Ride</a>
+      </nav>
+    </aside>
+
+    <!-- Main content -->
+    <main id="content">
+      <!-- ===== FULL GAME block ===== -->
+      <section class="course">
+        <span id="full-game" class="anchor"></span>
+
+        <figure class="banner-wrap">
+          <img class="course-banner" src="images/misc_banner.webp" alt="Extras banner" />
+          <figcaption class="banner-title">Full Game</figcaption>
+        </figure>
+
+        <!-- cadence under the Full Game banner -->
+
+        <p class="tagline" style="margin-top:6px;">
+          Updates daily at 12:00am, 6:00am, 12:00pm, and 6:00pm Eastern. Data pulled from
+          <a href="https://www.speedrun.com/kars" target="_blank" rel="noopener">speedrun.com/kars</a>.
+        </p>
+        <hr class="mini-divider" />
+
+        <!-- 2 × 3 grid -->
+        <div class="tables-grid">
+          <!-- ARM - No Legendaries -->
+          <article class="table-card">
+            <span id="ex-arm-noleg" class="anchor"></span>
+            <h3>All Riders &amp; Machines - No Legendaries</h3>
+            <div id="fg-arm-noleg"></div>
+          </article>
+
+          <!-- ARM - All Unlocks -->
+          <article class="table-card">
+            <span id="ex-arm-all" class="anchor"></span>
+            <h3>All Riders &amp; Machines - All Unlocks</h3>
+            <div id="fg-arm-allunlocks"></div>
+          </article>
+
+          <!-- All Lessons -->
+          <article class="table-card">
+            <span id="ex-lessons" class="anchor"></span>
+            <h3>All Lessons</h3>
+            <div id="fg-all-lessons"></div>
+          </article>
+
+          <!-- 100% -->
+          <article class="table-card">
+            <span id="ex-100" class="anchor"></span>
+            <h3>100%</h3>
+            <div id="fg-100"></div>
+          </article>
+
+          <!-- NGC – Air Ride 100% -->
+          <article class="table-card">
+            <span id="ex-ngc-air" class="anchor"></span>
+            <h3>New Game Categories - Air Ride 100%</h3>
+            <div id="fg-ngc-air-ride"></div>
+          </article>
+
+          <!-- NGC – Top Ride 100% -->
+          <article class="table-card">
+            <span id="ex-ngc-top" class="anchor"></span>
+            <h3>New Game Categories - Top Ride 100%</h3>
+            <div id="fg-ngc-top-ride"></div>
+          </article>
+
+          <!-- NGC – City Trial 100% -->
+          <article class="table-card">
+            <span id="ex-ngc-city" class="anchor"></span>
+            <h3>New Game Categories - City Trial 100%</h3>
+            <div id="fg-ngc-city-trial"></div>
+          </article>
+
+          <!-- Tetrathlon -->
+          <article class="table-card">
+            <span id="ex-tetrathlon" class="anchor"></span>
+            <h3>Tetrathlon</h3>
+            <div id="fg-tetrathlon"></div>
+          </article>
+        </div>
+      </section>
+
+      <!-- Accent divider that starts at the right edge of the TOC column -->
+      <hr class="accent--from-content" />
+
+      <!-- ===== CATEGORY EXTENSION header + intro ===== -->
+      <section class="course">
+        <span id="cat-ex" class="anchor"></span>
+
+        <!-- Banner-sized text, -->
+        <figure class="banner-wrap">
+          <img class="course-banner" src="images/extras_banner.webp" alt="Category Extension banner" />
+          <figcaption class="banner-title">Category Extension</figcaption>
+        </figure>
+
+        <p class="tagline" style="margin-top:6px;">
+          Category Extensions (Cat‑Ex) are unofficial categories not recorded on
+          <a href="https://www.speedrun.com/kars" target="_blank" rel="noopener">speedrun.com/kars</a>.
+          To submit a run to an existing Cat‑Ex, use
+          <a href="https://forms.gle/PsSRSGpU8V2gfcUt6" target="_blank" rel="noopener">this Google Form</a>.
+          To request a new category extension, email
+          <a href="mailto:airridersgarage@gmail.com?subject=New%20Category%20Extension%20Request&body=Hi!%20I'd%20like%20to%20request%20a%20new%20category%20extension%20for%20Kirby%20Air%20Riders.%20My%20category%20and%20its%20detailed%20rules%20are%3A">airridersgarage@gmail.com</a>
+          or contact <a href="https://discordapp.com/users/334893807130640394" target="_blank" rel="noopener">noodl999</a> on Discord.
+          To view the status of your submission, check
+          <a href="https://docs.google.com/spreadsheets/d/e/2PACX-1vT0uA_nBcv9NgkN_WWIw4XHVavTYjupn_85g9QdtGztjX9UiAaH0TUBvSqi8_XSDRT0Gmo0C6vHnSpE/pubhtml?gid=2071322081&single=true"
+             target="_blank" rel="noopener">this Google Sheet</a>.
+        </p>
+        <hr class="mini-divider" />
+      </section>
+      <!-- ===== CAT-EX: four sections with “Rules” to the right ===== -->
+      <!-- Amiibo -->
+      <section class="catex-section">
+        <span id="ce-amiibo-anchor" class="anchor"></span>
+        <div class="catex-header">
+          <h2 class="catex-title">
+            Amiibo – Air Ride All Tracks
+            <span class="byline">created by noodl999</span>
+          </h2>
+          <div class="catex-rules-title">Rules</div>
+        </div>
+        <div class="catex-body">
+          <div id="ce-amiibo" class="catex-table"></div>
+          <div class="catex-rules">
+            <ul>
+              <li>This run is done in the <strong>Race</strong> mode in the Air Ride menu.</li>
+              <li><strong>Your amiibo must be the only rider in this run</strong> including other amiibo, CPUs, and human players. You can do this by selecting "P1" on the bottom right of the character/machine select screen and setting your amiibo to P1.</li>
+              <li>You must use the same amiibo throughout the entire run, but <strong>your amiibo can switch machines</strong> during the run.</li>
+              <li>In-game rules must be set to the below settings. Rules that aren't mentioned are up to user discretion. Your video recording <strong>must show your rules</strong> in order for your run to qualify.
+                <ul>
+                  <li>Game Tempo: Normal</li>
+                  <li>No. of Riders: 2</li>
+                  <li>Rules: Laps</li>
+                  <li>No. of Laps: Default</li>
+                  <li>Enemies: On</li>
+                </ul>
+              </li>
+              <li>This is an IGT category, meaning you must<strong>sum up your amiibo’s times for each course</strong> at the end of your run.</li>
+              <li>Courses can be played in any order, but <strong>your amiibo may not play any course more than once</strong> in a single run. Try not to stall during course selection.</li>
+              <li><strong>No glitches/clips</strong> are allowed on any courses. If your amiibo performs one accidentally, your run is forfeit and you must start it over.</li>
+              <li><strong>Partial video recordings will not be accepted.</strong> In game audio must be audible. Capture card recordings are preferred, but camera recordings of a screen may be accepted on a case by case basis.</li>
+            </ul>
+          </div>
+        </div>
+      </section>
+
+      <!-- Online Checklist -->
+      <section class="catex-section">
+        <span id="ce-online-85-anchor" class="anchor"></span>
+        <div class="catex-header">
+          <h2 class="catex-title">
+            Online Checklist – 85 Checkboxes
+            <span class="byline">created by Kobazco</span>
+          </h2>
+          <div class="catex-rules-title">Rules</div>
+        </div>
+        <div class="catex-body">
+          <div id="ce-online-85" class="catex-table"></div>
+          <div class="catex-rules">
+            <ul>
+              <li>Prior to starting starting, delete <strong>only</strong> your Online checklist. You can have all riders and machines unlocked.</li>
+              <li>Paddocks only.</li>
+              <li>Other players can <strong>not</strong> join your paddock, and you can <strong>not</strong> join someone else's paddock (everything must be done solo, vs CPUs)
+              <li><strong>Time starts</strong> on selecting <em>Create Paddock</em> option in t he connect submenu.</li>
+              <li><strong>Time stops</strong> when your 85th checkbox is unlocked on the checklist screen.</li>
+              <li><strong>Partial video recordings will not be accepted.</strong> In game audio must be audible. Capture card recordings are preferred, but camera recordings of a screen may be accepted on a case by case basis.</li>
+            </ul>
+          </div>
+        </div>
+      </section>
+
+      <!-- 99 Laps – Air Ride -->
+      <section class="catex-section">
+        <span id="ce-99-air-anchor" class="anchor"></span>
+        <div class="catex-header">
+          <h2 class="catex-title">
+            99 Laps – Air Ride
+            <span class="byline">created by COOKIE</span>
+          </h2>
+          <div class="catex-rules-title">Rules</div>
+        </div>
+        <div class="catex-body">
+          <div id="ce-99-air-ride" class="catex-table"></div>
+          <div class="catex-rules">
+            <ul>
+              <li>This run is done in the <strong>Race</strong> mode in the Air Ride menu.</li>
+              <li>In game rules must be set to the below settings. Rules that aren't mentioned are up to user discretion. Your video recording <strong>must show your rules</strong> in order for your run to qualify.
+                <ul>
+                  <li>Game Tempo: Normal</li>
+                  <li>No. of Riders: 2</li>
+                  <li>Rules: Laps</li>
+                  <li>No. of Laps: 99</li>
+                  <li>Enemies: On</li>
+                </ul>
+              </li>
+              <li><strong>You must have 1 Level 5 Kirby CPU enabled</strong>, using the same machine as you.</li>
+              <li>This is an IGT category. Please submit the time displayed at the end of your race on the in game results screen.</li>
+              <li>Any course may be selected, but the category will not be divided between courses. Pick the course you think is fastest!</li>
+              <li><strong>No glitches/clips</strong> are allowed on any courses. <strong>Legendary Machines are also not allowed.</strong></li>
+              <li><strong>Partial video recordings will not be accepted.</strong> In game audio must be audible. Capture card recordings are preferred, but camera recordings of a screen may be accepted on a case by case basis.</li>
+            </ul>
+          </div>
+        </div>
+      </section>
+
+      <!-- 99 Laps – Top Ride -->
+      <section class="catex-section">
+        <span id="ce-99-top-anchor" class="anchor"></span>
+        <div class="catex-header">
+          <h2 class="catex-title">
+            99 Laps – Top Ride
+            <span class="byline">created by kirbyodyssey314</span>
+          </h2>
+          <div class="catex-rules-title">Rules</div>
+        </div>
+        <div class="catex-body">
+          <div id="ce-99-top-ride" class="catex-table"></div>
+          <div class="catex-rules">
+            <ul>
+              <li>This run is done in the <strong>Race</strong> mode in the Top Ride menu.</li>
+              <li>In game rules must be set to the below settings. Rules that aren't mentioned are up to user discretion. Your video recording <strong>must show your rules</strong> in order for your run to qualify.
+                <ul>
+                  <li>Game Tempo: Normal</li>
+                  <li>No. of Riders: 2</li>
+                  <li>Rules: Laps</li>
+                  <li>No. of Laps: 99</li>
+                  <li>Items: Off</li>
+                  <li>Features: All</li>
+                </ul>
+              </li>
+              <li><strong>You must have 1 Level 5 Kirby CPU enabled</strong>, using the same machine as you.</li>
+              <li>This is an IGT category. Please submit the time displayed at the end of your race on the in game results screen.</li>
+              <li>Any course may be selected, but the category will not be divided between courses. Pick the course you think is fastest!</li>
+              <li><strong>No glitches/clips</strong> are allowed on any courses. <strong>Legendary Machines are also not allowed.</strong></li>
+              <li><strong>Partial video recordings will not be accepted.</strong> In game audio must be audible. Capture card recordings are preferred, but camera recordings of a screen may be accepted on a case by case basis.</li>
+            </ul>
+          </div>
+        </div>
+      </section>
+
+    </main>
+  </div>
+
+  <footer class="site-footer">
+    <div class="container"><span>© <span id="year">2026</span> KARs Garage • Extras</span></div>
+  </footer>
+
+  <script src="script.js"></script>
+  <script>
+    // Front-end config
+    const CE_API_BASE = 'https://script.google.com/macros/s/AKfycbwFOHu7-yoVDVYZ22_ankIxrq-Xk4ktp2Dm9fpUnuxUh5ATkLJcOy3_72HdrPK_5KVh/exec'; // <-- paste your Web App URL here
+
+    // (Optional placeholders for SRC Extras; set these later when your SRC worker serves them)
+    const SRC_FG = {
+      ARM_NOLEG:  null, // e.g., 'https://.../api/src/extras?name=ARM_NO_LEGENDARIES'
+      ARM_ALL:    null, // ...
+      LESSONS:    null,
+      HUNDRED:    null
+    };
+  </script>
+  <script src="extras.js"></script>
+</body>
+</html>
