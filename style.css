@@ -142,12 +142,182 @@ body.page-about .site-nav a.active {
 .tile-grid{display:grid; gap:18px; margin:24px auto; grid-template-columns:repeat(2,minmax(0,1fr)); max-width:var(--maxw); padding:0 var(--container-pad)}
 .tile-grid--shrink{transform:scale(.75); transform-origin:top center}
 .tile{display:block; border:none; border-radius:16px; text-decoration:none; position:relative; overflow:hidden; box-shadow:none}
-.tile-airride{background:url('images/air-ride.png') center/cover no-repeat; aspect-ratio:17/9}
-.tile-topride{background:url('images/top-ride.png') center/cover no-repeat; aspect-ratio:17/9}
-.tile-citytrial{background:url('images/city-trial.png') center/cover no-repeat; aspect-ratio:17/9}
-.tile-roadtrip{background:url('images/road-trip.png') center/cover no-repeat; aspect-ratio:2.3948/1}
-.tile-extras{  background:url('images/extras.png') center/cover no-repeat; aspect-ratio:17/9 }
-.tile-guides{  background:url('images/guides.png') center/cover no-repeat; aspect-ratio:17/9 }
+
+.tile-airride{
+  background:
+    image-set(
+      url('images/air-ride.webp') type('image/webp'),
+      url('images/air-ride.png')  type('image/png')
+    )
+    center / cover no-repeat;
+ aspect-ratio:17/9}
+.tile-topride{
+  background:
+    image-set(
+      url('images/top-ride.webp') type('image/webp'),
+      url('images/top-ride.png')  type('image/png')
+    )
+    center / cover no-repeat;
+ aspect-ratio:17/9}
+.tile-citytrial{
+  background:
+    image-set(
+      url('images/city-trial.webp') type('image/webp'),
+      url('images/city-trial.png')  type('image/png')
+    )
+    center / cover no-repeat;
+ aspect-ratio:17/9}
+.tile-roadtrip{
+  background:
+    image-set(
+      url('images/road-trip.webp') type('image/webp'),
+      url('images/road-trip.png')  type('image/png')
+    )
+    center / cover no-repeat;
+ aspect-ratio:17/9}
+.tile-extras{
+  background:
+    image-set(
+      url('images/extras.webp') type('image/webp'),
+      url('images/extras.png')  type('image/png')
+    )
+    center / cover no-repeat;
+ aspect-ratio:17/9}
+
+/* ===== Home tiles: horizontal carousel under hero ===== */
+.tile-strip{
+  margin: 8px auto 20px;
+  max-width: var(--maxw);
+  padding: 0 var(--container-pad);
+  overflow: hidden;                 /* hide overscroll edges */
+}
+
+.tile-carousel{
+  display: flex;
+  gap: 18px;
+  overflow-x: auto;
+  scroll-snap-type: x proximity;    /* snap to each tile when user scrolls */
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;            /* Firefox: hide scrollbar */
+}
+.tile-carousel::-webkit-scrollbar{ display: none; } /* WebKit: hide scrollbar */
+
+/* Each tile is a fixed-width card in the belt */
+.tile-carousel .tile{
+  flex: 0 0 clamp(220px, 30vw, 360px);  /* responsive card width */
+  scroll-snap-align: start;
+}
+
+/* === Home tiles: overlay arrow controls === */
+.tile-strip{
+  position: relative; /* allows overlaying absolute-positioned arrows */
+}
+
+/* Hide text selection flicker on the arrows */
+.tile-nav{
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 10;
+  width: 40px;
+  height: 40px;
+  border: 1px solid rgba(0,0,0,.15);
+  border-radius: 999px;
+  background: rgba(255,255,255,.9);
+  color: #000;
+  font-weight: 800;
+  font-size: 22px;
+  line-height: 1;
+  display: inline-grid;
+  place-items: center;
+  cursor: pointer;
+  user-select: none;
+  box-shadow: 0 2px 10px rgba(0,0,0,.08);
+}
+
+.tile-nav--left { left: 8px; }
+.tile-nav--right { right: 8px; }
+
+.tile-nav:hover{
+  background: #000;
+  color: #fff;
+  border-color: #000;
+}
+
+/* Optional: on very small phones, slightly larger tap target */
+@media (max-width:480px){
+  .tile-nav{ width: 44px; height: 44px; font-size: 24px; }
+}
+
+/* On very wide screens, center the belt area a bit nicer */
+@media (min-width: 1441px){
+  .tile-strip{ padding-left: 0; padding-right: 0; }
+}
+
+/* Optional: on narrow phones, slightly smaller gap */
+@media (max-width: 480px){
+  .tile-carousel{ gap: 12px; }
+}
+
+/* ===== Home tiles: CSS marquee (seamless loop) ===== */
+
+/* Wrapper we animate on arrow clicks (belt keeps auto-marquee inside) */
+.tile-shift{
+  display: block;
+  will-change: transform;
+}
+
+/* clip the belt */
+.tile-carousel{
+  overflow: hidden;                 /* change from 'auto' to 'hidden' here */
+  display: block;
+  position: relative;
+}
+
+/* belt that moves */
+.tile-belt{
+  display: flex;
+  gap: 18px;
+  width: max-content;               /* fit to content, will be duplicated by JS */
+  will-change: transform;
+  animation: tiles-marquee var(--tiles-duration, 40s) linear infinite;
+}
+
+/* Pause ONLY when an actual tile is hovered */
+.tile-carousel:has(.tile:hover) .tile-belt{
+  animation-play-state: paused;
+}
+
+/* Pause ONLY when a tile is keyboard-focused */
+.tile-carousel:has(.tile:focus-visible) .tile-belt{
+  animation-play-state: paused;
+}
+
+
+/* Make the motion distance be exactly 50% of the belt (because we duplicate once) */
+@keyframes tiles-marquee{
+  from{ transform: translateX(0); }
+  to  { transform: translateX(-50%); }
+}
+
+/* Tile cards keep your existing fixed-ish width */
+.tile-carousel .tile{
+  flex: 0 0 clamp(220px, 30vw, 360px);
+  scroll-snap-align: unset;         /* not relevant anymore; disable snap here */
+}
+
+/* Optional: tighter gap on very small phones (keeps your earlier tweak) */
+@media (max-width: 480px){
+  .tile-belt{ gap: 12px; }
+}
+
+
+/* Optional: tweak the easing of the click animation */
+:root{
+  --tiles-step-ms: 420ms;           /* duration of one click step */
+  --tiles-step-ease: cubic-bezier(.22,.61,.36,1);  /* smooth ease-out */
+}
+
 @media (max-width:900px){.tile-grid{grid-template-columns:1fr}}
 
 /* ===== Air Ride page header ===== */
