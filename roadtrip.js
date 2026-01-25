@@ -221,7 +221,10 @@ async function loadRT(){
   rows.slice(1).forEach(r=>{
     const cat = String(r[IDX.Category] ?? '');
     const level = String(r[IDX.Level] ?? '');
-    const sub  = String(r[IDX.Subcat] ?? '').trim();
+    const sub = String(r[IDX.Subcat] ?? '')
+      .trim()
+      .replace(/\uFF05/g, '%')   // full-width percent -> ASCII %
+      .replace(/\s+/g, ' ');     // collapse whitespace
     if(!REG_RT.test(cat)) return;
     if(level) return; // only per-game
     if(!byRoute.has(sub)) return; // only our 6 routes

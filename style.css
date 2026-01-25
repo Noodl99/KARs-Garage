@@ -11,7 +11,10 @@
   --toc-offset:-24px;   /* horizontal nudge to the right */
   --toc-top: calc(var(--topbar-h) + 6px);  /* default docked under the black bar */
 
-
+  /* Hero strip sizing */
+  --hero-left-w: 290px;   /* your chosen card width */
+  --hero-gap: 18px;       /* same as your grid gap */
+  --hero-delta-nudge-y: 6px;  /* try 4–10px to match your mock */
   /* Speedrider tuning (smaller, less crowded) */
   --sr-left-w:85px;
   --sr-col-w:148px;
@@ -136,7 +139,7 @@ body.page-about .site-nav a.active {
 .hero-bg--top{background-position:center top}
 .hero-content{position:relative; z-index:1}
 .hero-content--center{text-align:center}
-.hero-title--76{margin:48px 0; font-size:76px; font-weight:800; color:#fff; text-shadow:0 2px 8px rgba(0,0,0,.4)}
+.hero-title--76{margin:48px 0; font-size:100px; font-weight:800; color:#fff; text-shadow:0 2px 8px rgba(0,0,0,.4)}
 
 /* ===== Home tiles ===== */
 .tile-grid{display:grid; gap:18px; margin:24px auto; grid-template-columns:repeat(2,minmax(0,1fr)); max-width:var(--maxw); padding:0 var(--container-pad)}
@@ -186,6 +189,7 @@ body.page-about .site-nav a.active {
 
 /* ===== Home tiles: horizontal carousel under hero ===== */
 .tile-strip{
+  position: relative;
   margin: 8px auto 20px;
   max-width: var(--maxw);
   padding: 0 var(--container-pad);
@@ -195,23 +199,10 @@ body.page-about .site-nav a.active {
 .tile-carousel{
   display: flex;
   gap: 18px;
-  overflow-x: auto;
-  scroll-snap-type: x proximity;    /* snap to each tile when user scrolls */
   -webkit-overflow-scrolling: touch;
   scrollbar-width: none;            /* Firefox: hide scrollbar */
 }
 .tile-carousel::-webkit-scrollbar{ display: none; } /* WebKit: hide scrollbar */
-
-/* Each tile is a fixed-width card in the belt */
-.tile-carousel .tile{
-  flex: 0 0 clamp(220px, 30vw, 360px);  /* responsive card width */
-  scroll-snap-align: start;
-}
-
-/* === Home tiles: overlay arrow controls === */
-.tile-strip{
-  position: relative; /* allows overlaying absolute-positioned arrows */
-}
 
 /* Hide text selection flicker on the arrows */
 .tile-nav{
@@ -303,7 +294,6 @@ body.page-about .site-nav a.active {
 /* Tile cards keep your existing fixed-ish width */
 .tile-carousel .tile{
   flex: 0 0 clamp(220px, 30vw, 360px);
-  scroll-snap-align: unset;         /* not relevant anymore; disable snap here */
 }
 
 /* Optional: tighter gap on very small phones (keeps your earlier tweak) */
@@ -316,6 +306,576 @@ body.page-about .site-nav a.active {
 :root{
   --tiles-step-ms: 420ms;           /* duration of one click step */
   --tiles-step-ease: cubic-bezier(.22,.61,.36,1);  /* smooth ease-out */
+}
+
+
+/* ===== Home Dashboard ===== */
+.dashboard { margin: 18px auto 28px; }
+.dash-title { margin: 0 0 10px; font-size: 24px; font-weight: 800; }
+
+.dash-row {
+  display: grid;
+  gap: 16px;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  margin: 10px 0;
+}
+.dash-card {
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 12px;
+}
+.dash-card h3 { margin: 0 0 8px; font-size: 18px; font-weight: 800; }
+.dash-card.wide { grid-column: 1 / -1; }
+
+.dash-embed { aspect-ratio: 16/9; background: #000; border-radius: 8px; overflow: hidden; }
+.dash-meta, .dash-stat { padding: 8px 0 0; font-size: 14px; line-height: 1.45; }
+.dash-chart, .dash-table { min-height: 220px; }
+
+/* Optional: accent links anywhere inside dashboard cards */
+.dash-card a { color: var(--link); text-decoration: underline; }
+.dash-card a:hover { color: var(--link-hover); }
+
+/* ===== Dashboard Headline Strip (Spotlight/Latest + Big Deltas) ===== */
+
+#dash-hero { margin: 16px 0 18px; }
+.hero-grid {
+  display: grid;
+  grid-template-columns: var(--hero-left-w) 1fr;  /* left fixed, right flexible */
+  gap: var(--hero-gap);
+  align-items: start;
+}
+
+.hero-right {
+  display: grid;
+  gap: 24px;
+  /* stays in column 2 (default), no grid-column span */
+}
+
+.hero-left  { position: relative; z-index: 2; }  /* videos above any backgrounds */
+.hero-right { position: relative; z-index: 1; }  /* deltas below videos */
+
+@media (max-width: 900px){
+  .hero-grid { grid-template-columns: 1fr; }
+  .hero-right {
+    grid-column: auto;
+    padding-left: 0;
+  }
+}
+
+/* Make hero embeds compact (like your mockup) */
+.hero-left .dash-card{
+  max-width: 320px;          /* keeps the left column visually narrow */
+}
+
+.dash-embed--sm{
+  height: 120px;             /* small fixed height */
+  aspect-ratio: auto;        /* ignore the default 16:9 rule */
+}
+
+/* Tighten the meta text under the small embeds */
+.hero-left .dash-meta{
+  font-size: 12px;
+  line-height: 1.35;
+}
+
+.delta-big::before {
+  display: none;
+}
+
+/* Big delta panel container (no gray box; fill the column width) */
+.delta-big{
+  background: transparent;
+  border: none;
+  padding: 16px;
+  position: relative;
+  z-index: 1;
+  width: 100%;  /* ensures centering works predictably */
+}
+
+/* Top row is your two big black times + captions (you already have this) */
+
+/* Inline '=' + green number row: must be full width and centered */
+.delta-big .row-eq{
+  display: flex;
+  width: 100%;                 /* <— ensures centering uses the whole card width */
+  justify-content: center;     /* center the pair horizontally */
+  align-items: baseline;       /* align baselines for '=' and digits */
+  gap: 14px;
+  margin-top: 8px;             /* space under the top row */
+}
+
+/* Make '=' visually match the green time */
+.delta-big .row-eq .eq{
+  font-weight: 900;
+  font-size: clamp(38px, 8vw, 76px);
+  color: #000;
+  line-height: 1.05;
+}
+
+/* Green delta number (optionally nudged slightly lower) */
+.delta-big .num.num--highlight{
+  color: var(--delta-accent, #22b26c);
+  font-size: clamp(38px, 8vw, 82px);  /* you currently have 82px max; keep if you like it large */
+  line-height: 1.05;
+  position: relative;
+  top: 6px;                            /* increase to 8–10px if you want it lower */
+}
+
+/* Black times (keep or adjust the max if you want bigger) */
+.delta-big .num{
+  font-weight: 900;
+  font-size: clamp(34px, 7vw, 54px);
+  color: #000;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: .02em;
+  line-height: 1.05;
+}
+
+/* Captions under each time */
+.delta-big .label{
+  font-weight: 800;
+  font-size: 18px;          /* <-- bumped from 14px; increase to 18px if you want */
+  color: #000;
+  opacity: .9;
+  margin-top: 4px;
+  text-align: center;       /* ensure they center beneath their time */
+}
+
+/* === Vertical nudge for the two big delta panels (push them down slightly) === */
+/* Adjust 6px → 4–10px by eye to match the red centerline in your mock */
+
+#delta-ar-big{ margin-top: 70px; }
+#delta-tr-big{ margin-top: 60px; }
+
+/* On mobile (stacked), remove the extra gap to keep things tight */
+@media (max-width: 900px){
+  #delta-ar-big,
+  #delta-tr-big{
+    margin-top: 0;
+  }
+}
+
+/* ===== Mobile tuning for big delta panels (fit within viewport) ===== */
+@media (max-width: 900px){
+  /* Keep the top row (two black times + minus) in one horizontal line */
+  .delta-big .row-top{
+    /* The inline style sets display/grid/columns already; we only need to trim spacing */
+    gap: 8px !important;
+  }
+
+  /* Inline '=' + green number: keep on one line and tighten spacing */
+  .delta-big .row-eq{
+    gap: 10px;
+    white-space: nowrap;   /* do not wrap across lines */
+  }
+
+  /* Scale down typography on mobile so everything fits */
+  .delta-big .num{
+    font-size: clamp(22px, 7.5vw, 34px);
+    line-height: 1.05;
+  }
+  .delta-big .num.num--highlight{
+    font-size: clamp(26px, 8.5vw, 40px);
+    top: 4px;              /* small baseline nudge */
+  }
+  .delta-big .row-eq .eq{
+    font-size: clamp(26px, 8.5vw, 40px);
+  }
+  .delta-big .label{
+    font-size: clamp(13px, 3.5vw, 16px);
+    margin-top: 2px;
+  }
+
+  /* Slightly tighter padding so the card breathes on small screens */
+  .delta-big{
+    padding: 10px;
+  }
+}
+
+/* ===== Mobile re-ordering of hero strip ===== */
+@media (max-width: 900px){
+  /* Stack as: (1) deltas full-width, then (2) Spotlight + Latest side-by-side */
+  .hero-grid{
+    grid-template-columns: 1fr;  /* single column grid */
+    gap: 12px;                   /* modest vertical spacing */
+  }
+
+  /* Move the right column (deltas) above the videos */
+  .hero-right{
+    order: -1;  /* render before .hero-left */
+    transform: none !important;  /* drop any desktop centering transforms on mobile */
+  }
+
+  /* Lay out the two video cards side-by-side (Spotlight left, Latest right) */
+  .hero-left{
+    order: 2;
+    display: grid;
+    grid-template-columns: 1fr 1fr;  /* two equal columns */
+    gap: 12px;
+  }
+  /* Let each small card be fluid inside the 2-col grid */
+  .hero-left .dash-card{
+    max-width: none; /* override the desktop 'max-width: 320px' */
+  }
+
+  /* Optional: slightly reduce the small embed height for very narrow phones */
+  .dash-embed--sm{
+    height: 110px;  /* you can tweak to 100–120px by eye */
+  }
+}
+
+/* Keep it readable on phones (stack columns) */
+@media (max-width: 900px){
+  .hero-grid { grid-template-columns: 1fr; }
+}
+
+/* 3-up charts row on wide screens */
+@media (min-width: 1100px) {
+  .dash-row:nth-of-type(3) { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+}
+
+/* Stack everything on mobile */
+@media (max-width: 900px) {
+  .dash-row { grid-template-columns: 1fr; }
+}
+
+/* ===== Dashboard filters + charts + table ===== */
+.dash-filters {
+  display: grid;
+  gap: 10px;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  align-items: end;
+  margin: 8px 0 14px;
+}
+@media (max-width: 900px) {
+  .dash-filters { grid-template-columns: 1fr; }
+}
+
+/* ==== Multi-select dropdown (checkbox menu) ==== */
+.ms {
+  position: relative;
+  display: inline-block;
+  width: 100%;
+}
+.ms-btn {
+  width: 100%;
+  text-align: left;
+  background: #fff;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 8px 10px;
+  line-height: 1.25;
+  cursor: pointer;
+  font-weight: 600;
+}
+.ms-btn:after {
+  content: "▾";
+  float: right;
+  opacity: .8;
+}
+.ms.open .ms-btn:after { content: "▴"; }
+
+.ms-menu {
+  position: absolute;
+  z-index: 900;
+  left: 0;
+  right: 0;
+  margin-top: 6px;
+  background: #fff;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  box-shadow: 0 6px 16px rgba(0,0,0,.12);
+  padding: 8px;
+  display: none;
+  max-height: 320px;
+  overflow: auto;
+}
+.ms.open .ms-menu { display: block; }
+
+.ms-header {
+  display: flex; gap: 6px; justify-content: flex-end; margin-bottom: 6px;
+}
+.ms-list {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 4px;
+}
+
+/* Search field inside multi-select menus (used for Player) */
+.ms-search{
+  width: 100%;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 6px 8px;
+  margin: 0 0 6px 0;
+  font-size: 14px;
+}
+
+.ms-item {
+  display: flex; gap: 8px; align-items: center;
+  padding: 6px 8px; border-radius: 8px; cursor: pointer;
+}
+.ms-item:hover { background: var(--panel); }
+.ms-item input { margin: 0; }
+
+.ms-actions {
+  display: flex; gap: 8px; justify-content: space-between; margin-top: 8px;
+}
+.ms-actions .left { display:flex; gap:8px; }
+.ms-actions .right { display:flex; gap:8px; }
+
+@media (max-width: 900px) {
+  .ms-menu {
+    position: fixed;
+    left: var(--container-pad);
+    right: var(--container-pad);
+    top: calc(var(--topbar-h) + 48px);
+    max-height: 60vh;
+  }
+}
+
+/* The charts row that contains the three cards should be a 3-up grid on wide screens */
+@media (min-width: 1100px){
+  .dash-row:has(#dash-char, #dash-machine, #dash-player){
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+
+.filt-block { background: #fff; border: 1px solid var(--border); border-radius: 10px; padding: 8px; }
+.filt-label { font-weight: 800; font-size: 13px; margin: 0 0 6px; }
+.filt-row { display: flex; gap: 6px; flex-wrap: wrap; }
+.filt-chip {
+  display: inline-flex; align-items: center; gap: 6px;
+  padding: 6px 10px; background: var(--panel); border: 1px solid var(--border);
+  border-radius: 999px; cursor: pointer; user-select: none; font-size: 13px;
+}
+.filt-chip input { margin: 0; }
+
+/* Add vertical breathing room between the dropdown and its All/Clear row */
+.filt-actions{
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin-top: 10px;  /* was none; gives clear separation under the dropdown */
+}
+
+/* If you want the dropdown button itself to breathe from the label as well */
+.filt-block .ms{
+  margin-top: 4px;   /* optional: small gap between the label and the dropdown button */
+}
+
+/* Optional: extra room under chips rows in chart filters */
+.cf-row{
+  padding-bottom: 2px;
+}
+
+
+.btn, .btn-secondary {
+  appearance: none; border-radius: 999px; padding: 6px 12px; font-weight: 700; cursor: pointer;
+  border: 1px solid var(--border); background:#fff; color:#000;
+}
+.btn { background: #000; color:#fff; border-color:#000; }
+.btn:disabled { opacity:.6; cursor: default; }
+.btn-secondary:hover, .btn:hover { filter: brightness(0.95); }
+
+.chart { --bar-h: 26px; display:grid; gap:8px; }
+.chart-row { display:grid; grid-template-columns: 1fr auto; gap:10px; align-items:center; }
+.chart-bar-wrap { background:#f1f1f1; border-radius:6px; height: var(--bar-h); overflow:hidden; }
+.chart-bar { height:100%; background: var(--accent); min-width:2px; transition: width .2s ease; }
+.chart-label { font-size:13px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+.chart-count { font-weight:700; font-size:12px; color:#555; }
+
+.table-wrap { overflow:auto; }
+.table-simple { width:100%; border-collapse: collapse; table-layout: auto; }
+.table-simple th, .table-simple td {
+  border:1px solid var(--border); padding:6px 8px; font-size: 12px; background:#fff;
+}
+.table-simple th { background:#000; color:#fff; position:sticky; top:0; cursor:pointer; }
+.table-simple a { color:var(--link); text-decoration:none; }
+.table-simple a:hover { color:var(--link-hover); text-decoration:underline; }
+.sort-ind { margin-left:6px; opacity:.85; }
+.info-muted { color:#777; font-size:12px; }
+
+/* ===== Search table (table--search) — icon cells + mobile behavior ===== */
+
+/* Default (desktop): show text, keep icons hidden */
+.table--search td.cell--machine .cell-icon,
+.table--search td.cell--rider  .cell-icon{
+  display: none;
+}
+
+/* Icon images in table cells */
+.table--search td.cell--machine .cell-icon img,
+.table--search td.cell--rider  .cell-icon img{
+  width: 20px; height: 20px; display: block; object-fit: contain;
+  border-radius: 4px;
+}
+
+/* Mobile + mid widths: switch Rider/Machine to icon view, hide text but keep accessible */
+@media (max-width: 1440px){
+  .table--search td.cell--machine .cell-icon,
+  .table--search td.cell--rider  .cell-icon{
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .table--search td.cell--machine .cell-text,
+  .table--search td.cell--rider  .cell-text{
+    position: absolute;
+    width: 1px; height: 1px; padding: 0; margin: -1px;
+    overflow: hidden; clip: rect(0,0,0,0); clip-path: inset(50%);
+    white-space: nowrap; border: 0;
+  }
+
+  /* Narrower fixed widths for the two icon columns */
+  .table--search th:nth-child(4), .table--search td:nth-child(4), /* Rider col */
+  .table--search th:nth-child(5), .table--search td:nth-child(5){ /* Machine col */
+    width: 44px !important;
+    max-width: 56px !important;
+    text-align: center;
+  }
+}
+
+/* Mobile table-fit rules to avoid horizontal scrolling */
+@media (max-width: 900px){
+  .table--search{
+    table-layout: fixed;    /* let columns wrap as needed */
+    width: 100%;
+    max-width: 100vw;
+  }
+
+  /* Make Player breathe on mobile: allow more width */
+  .table--search th:nth-child(6),
+  .table--search td:nth-child(6){
+    max-width: none;
+    width: auto;              /* expands if space is available */
+    white-space: normal !important;
+  }
+
+  /* MASSIVELY narrow Place (col 8) — 2–3 characters wide */
+  .table--search th:nth-child(8),
+  .table--search td:nth-child(8){
+    width: 3ch !important;    /* try 2ch or 4ch if you prefer */
+    max-width: 3ch !important;
+    text-align: center;
+    white-space: nowrap !important;
+    overflow: hidden;
+    text-overflow: clip;
+  }
+
+  /* Tighten Link (col 9) even more; keep Video as-is or slightly narrow */
+  .table--search th:nth-child(9),
+  .table--search td:nth-child(9){
+    width: 5ch !important;    /* was 6ch–15ch; make it tighter on phones */
+    max-width: 10ch !important;
+  }
+
+  /* Optional: Time column stays single-line, compact */
+  .table--search th:nth-child(7),
+  .table--search td:nth-child(7){
+    white-space: nowrap !important;
+    overflow: hidden;
+    text-overflow: clip;
+    max-width: 12ch;          /* small guard; adjust if needed */
+  }
+  .table--search th, .table--search td{
+    white-space: normal !important;
+    overflow-wrap: anywhere;
+    word-break: normal;
+  }
+
+  /* Time/Score: usually short, keep it on one line */
+  .table--search th:nth-child(7),
+  .table--search td:nth-child(7){
+    white-space: nowrap !important;
+    overflow: hidden;
+    text-overflow: clip;
+  }
+
+  /* Place: single-line, narrow */
+  .table--search th:nth-child(8),
+  .table--search td:nth-child(8){
+    white-space: nowrap !important;
+  }
+
+  /* Link + Video columns: ellipsis */
+  .table--search th:nth-child(9), .table--search td:nth-child(9),
+  .table--search th:nth-child(10), .table--search td:nth-child(10){
+    width: 6ch;
+    max-width: 15ch;
+    white-space: nowrap !important;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .table--search td:nth-child(9) a,
+  .table--search td:nth-child(10) a{
+    display: block;
+    width: 100%;
+    white-space: nowrap !important;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  }
+}
+
+
+/* Mini filters injected above each chart */
+.chart-filters{
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 6px;
+  margin: 6px 0 14px;   /* 10px → 14px: adds more air below the filters */
+}
+
+/* Extra insurance: add a little space before the first chart row */
+#chart-rider .chart > .chart-row:first-child,
+#chart-machine .chart > .chart-row:first-child,
+#chart-player .chart > .chart-row:first-child{
+  margin-top: 6px;      /* lifts the first label a bit */
+}
+
+
+/* Space between a chart's filter box and the first bar/row */
+.chart-filters + .chart{
+  margin-top: 10px;    /* try 10–14px by eye */
+}
+
+/* Optional: add a touch of padding inside each filter group block to lift content away from edges */
+.cf-group{
+  padding-bottom: 8px; /* you already have padding:6px; this adds a bit more bottom cushion */
+}
+
+@media (max-width: 900px) {
+  .chart-filters { grid-template-columns: 1fr; }
+}
+.cf-group { background:#fff; border:1px solid var(--border); border-radius:8px; padding:6px; }
+.cf-label { font-weight:800; font-size:12px; margin:0 0 4px; }
+.cf-row { display:flex; gap:6px; flex-wrap:wrap; }
+.cf-chip { display:inline-flex; align-items:center; gap:6px; padding:5px 9px;
+  background:var(--panel); border:1px solid var(--border); border-radius:999px; font-size:12px; cursor:pointer; }
+.cf-chip input { margin:0; }
+.cf-actions { display:flex; gap:6px; margin-top:6px; }
+
+.chart-label.iconized {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+.chart-label.iconized img.chart-icon {
+  width: 20px;
+  height: 20px;
+  object-fit: contain;
+  border-radius: 4px;
+  flex: 0 0 auto;
+}
+.chart-label.iconized .icon-fallback {
+  width: 20px; height: 20px; border-radius: 50%;
+  background: #ececec; color: #555;
+  display: inline-flex; align-items: center; justify-content: center;
+  font: 600 12px/1 system-ui, -apple-system, Segoe UI, Roboto, sans-serif;
+  text-transform: uppercase;
 }
 
 @media (max-width:900px){.tile-grid{grid-template-columns:1fr}}
@@ -1015,6 +1575,64 @@ body.page-about .site-nav a.active {
   .catex-rules.is-collapsed{ display:none; }
 }
 
+/* ===== Extras (Cat-Ex) — 99 Laps layout tweaks ===== */
+/* Player (col 2) wider */
+#ce-99-air-ride .table th:nth-child(2), #ce-99-air-ride .table td:nth-child(2),
+#ce-99-top-ride .table th:nth-child(2), #ce-99-top-ride .table td:nth-child(2) {
+  width: 22ch;
+  max-width: 28ch;
+}
+
+/* Time (col 3) wider + non-wrapping */
+#ce-99-air-ride .table th:nth-child(3), #ce-99-air-ride .table td:nth-child(3),
+#ce-99-top-ride .table th:nth-child(3), #ce-99-top-ride .table td:nth-child(3) {
+  width: 12ch;
+  max-width: 14ch;
+  white-space: nowrap;
+}
+
+#ce-99-air-ride .table th:nth-child(4), #ce-99-air-ride .table td:nth-child(4),
+#ce-99-top-ride .table th:nth-child(4), #ce-99-top-ride .table td:nth-child(4) {
+  /* Rider — shorter to free space for Machine */
+  width: 16ch; max-width: 20ch; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+
+/* Machine (col 5) narrower */
+#ce-99-air-ride .table th:nth-child(5), #ce-99-air-ride .table td:nth-child(5),
+#ce-99-top-ride .table th:nth-child(5), #ce-99-top-ride .table td:nth-child(5) {
+  width: 16ch;
+  max-width: 20ch;
+}
+
+/* Video (col 6) narrower + ellipsis */
+#ce-99-air-ride .table th:nth-child(6), #ce-99-air-ride .table td:nth-child(6),
+#ce-99-top-ride .table th:nth-child(6), #ce-99-top-ride .table td:nth-child(6) {
+  width: 18ch;
+  max-width: 20ch;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+#ce-99-air-ride .table td:nth-child(6) a,
+#ce-99-top-ride .table td:nth-child(6) a {
+  display: block;
+  width: 100%;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+@media (max-width: 900px) {
+  #ce-99-air-ride .table th:nth-child(6), #ce-99-air-ride .table td:nth-child(6),
+  #ce-99-top-ride .table th:nth-child(6), #ce-99-top-ride .table td:nth-child(6) {
+    max-width: 14ch;
+  }
+  #ce-99-air-ride .table th:nth-child(5), #ce-99-air-ride .table td:nth-child(5),
+  #ce-99-top-ride .table th:nth-child(5), #ce-99-top-ride .table td:nth-child(5) {
+    max-width: 10ch;
+  }
+}
+
 
 /* === About page layout/typography helpers === */
 .about-wrap{max-width:900px; margin:0 auto 28px; padding:8px 0;}
@@ -1048,11 +1666,27 @@ body.page-about .site-nav a.active {
 }
 .lang-switch .is-active{ background:#000; color:#fff; border-color:#000; }
 
+/* Glossary */
+.glossary { margin-top: 2rem; }
+.glossary-list { margin: 0; }
+.glossary-list dt { font-weight: 700; margin-top: 1rem; }
+.glossary-list dd { margin: 0.25rem 0 0.5rem 0; }
+
+/* Glossary rows */
+.glossary-item {
+  margin: 0.35rem 0;
+  line-height: 1.45;
+}
+
+.glossary-term {
+  font-weight: 700;
+}
+
 /* Roadmap checkboxes */
 .roadmap{margin:4px 0 24px;}
 .roadmap h3{font-size:18px; font-weight:800; margin:16px 0 8px;}
-.roadmap ul{list-style:none; padding-left:0; margin:8px 0 14px;}
-.roadmap li{display:flex; gap:10px; align-items:flex-start; margin:6px 0;}
+.roadmap ul{list-style:disc; padding-left:2rem; margin:8px 0 14px;}
+.roadmap li{display:list-item; gap:10px; align-items:flex-start; margin:6px 0;}
 .chk{
   width:18px; height:18px; border:2px solid var(--border); border-radius:4px;
   display:inline-grid; place-items:center; font-size:14px; font-weight:800; line-height:1;
@@ -1146,6 +1780,510 @@ body.page-about .site-nav a.active {
   }
 }
 
+/* ===== SEARCH TABLE HEADER LABEL SWAP (FULL vs MOBILE) ===== */
+
+/* Desktop (default): show full labels, hide mobile labels */
+.table--search th .th-label--full {
+  display: inline !important;
+}
+.table--search th .th-label--mobile {
+  display: none !important;
+}
+
+/* Mobile: hide full labels, show mobile labels */
+@media (max-width: 900px){
+  .table--search th .th-label--full {
+    display: none !important;
+  }
+  .table--search th .th-label--mobile {
+    display: inline !important;
+  }
+}
+
+/* ---- Search table: keep Time fully visible on mobile ---- */
+.table-wrap {
+  overflow-x: auto;                 /* allow horizontal scroll on narrow screens */
+  -webkit-overflow-scrolling: touch;
+}
+
+@media (max-width: 900px) {
+  /* If your base table uses table-layout: fixed; switch to auto for the search table on mobile */
+  .table--search {
+    table-layout: auto !important;
+  }
+
+  /* Time/Score column: never wrap or ellipsize; keep full precision visible */
+  .table--search th.col--time,
+  .table--search td.col--time {
+    white-space: nowrap !important;    /* no wrapping */
+    overflow: visible !important;      /* no clipping */
+    text-overflow: clip !important;    /* no ellipsis */
+    max-width: none !important;
+    word-break: normal !important;
+
+    /* align digits nicely for speedrun times */
+    font-variant-numeric: tabular-nums;
+    font-feature-settings: "tnum" 1, "lnum" 1;
+  }
+}
+
+
+/* ===========================================================
+   Search Table (Mobile ≤900px): column width priorities
+   Priority: Time, Player, Track, Category, Subcategory,
+             Machine, Rider, Link, Video, Place
+   =========================================================== */
+
+@media (max-width: 900px) {
+  /* Allow the table to pack tighter and shrink low-priority cols */
+  .table--search {
+    table-layout: fixed;          /* lets width rules apply predictably */
+    border-collapse: separate;    /* keep cell borders intact */
+    border-spacing: 0;            /* no extra gaps */
+  }
+
+  .table-wrap {
+    overflow-x: auto;             /* still allow horizontal scroll as a safety valve */
+    -webkit-overflow-scrolling: touch;
+  }
+
+  /* General tightening */
+  .table--search th,
+  .table--search td {
+    padding-left: 8px;
+    padding-right: 8px;
+  }
+
+  /* ---- Highest priority: Time ----
+     - never wrap
+     - no ellipsis
+     - tabular digits
+     - very tight horizontal padding so the border can hug the milliseconds
+  */
+  .table--search th.col--time,
+  .table--search td.col--time {
+    white-space: nowrap !important;
+    overflow: visible !important;
+    text-overflow: clip !important;
+    padding-left: 6px;
+    padding-right: 6px;
+    width: 1%;               /* content-sized in fixed layout */
+    min-width: 0;            /* allow tight packing */
+    font-variant-numeric: tabular-nums;
+    font-feature-settings: "tnum" 1, "lnum" 1;
+    letter-spacing: -0.2px;  /* a hair tighter to fit thousandths */
+  }
+
+  /* ---- Next: Player (no wrap; show full names where possible) ---- */
+  .table--search th.col--player,
+  .table--search td.col--player {
+    white-space: nowrap;
+    text-overflow: ellipsis;   /* if we absolutely must, clip end */
+    overflow: hidden;
+    width: 12ch;               /* ~12 characters typical on mobile */
+    min-width: 9ch;            /* never collapse below this */
+  }
+
+  /* ---- Track (allow wrap to two lines, then clip) ---- */
+  .table--search th.col--track,
+  .table--search td.col--track {
+    width: 16ch;
+    min-width: 12ch;
+    display: -webkit-box;            /* 2-line clamp */
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    word-break: break-word;
+  }
+
+  /* ---- Category (can wrap a bit) ---- */
+  .table--search th.col--cat,
+  .table--search td.col--cat {
+    width: 14ch;
+    min-width: 10ch;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    word-break: break-word;
+  }
+
+  /* ---- Subcategory (wrap/clip) ---- */
+  .table--search th.col--subcat,
+  .table--search td.col--subcat {
+    width: 12ch;
+    min-width: 9ch;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    word-break: break-word;
+  }
+
+  /* ---- Machine, Rider (small; icons + short labels) ---- */
+  .table--search th.col--machine,
+  .table--search td.col--machine,
+  .table--search th.col--rider,
+  .table--search td.col--rider {
+    width: 8ch;
+    min-width: 6ch;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  /* ---- Link / Video (very small; no wrap) ---- */
+  .table--search th.col--link,
+  .table--search td.col--link,
+  .table--search th.col--video,
+  .table--search td.col--video {
+    width: 6ch;
+    min-width: 5ch;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: clip;
+    padding-left: 6px;
+    padding-right: 6px;
+  }
+
+  /* ---- Place (the least space) ---- */
+  .table--search th.col--place,
+  .table--search td.col--place {
+    width: 4ch;     /* "1st" or a single digit */
+    min-width: 3ch;
+    white-space: nowrap;
+    text-align: center;
+    padding-left: 4px;
+    padding-right: 4px;
+  }
+
+  /* Optional: tighten header cell padding further */
+  .table--search thead th {
+    padding-top: 6px;
+    padding-bottom: 6px;
+  }
+}
+
+/* ===========================================================
+   Mobile table tweaks (≤900px)
+   - Cat/Subcat: edge-to-edge content (no inner "pill" look)
+   - Player wider; Link/Video narrower
+   =========================================================== */
+@media (max-width: 900px) {
+
+  /* --- Cat & Subcat: remove inner paddings/margins; let text reach edges --- */
+  .table--search th.col--cat,
+  .table--search td.col--cat,
+  .table--search th.col--subcat,
+  .table--search td.col--subcat {
+    padding-left: 6px;     /* tight edge */
+    padding-right: 6px;    /* tight edge */
+  }
+
+  /* If any inner blocks/pills are styled globally, neutralize them here */
+  .table--search td.col--cat > *,
+  .table--search td.col--subcat > * {
+    background: transparent !important;
+    border: 0 !important;
+    box-shadow: none !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    display: block;       /* ensure it spans cell width */
+  }
+
+  /* Header labels: make sure the label spans the header width, no gap */
+  .table--search thead th.col--cat .th-label,
+  .table--search thead th.col--subcat .th-label {
+    display: block;
+    width: 100%;
+    margin: 0;
+    padding: 0;           /* header already has its own padding */
+  }
+
+  /* --- Column width reprioritization --- */
+  /* Time stays content-sized and non-wrapping from earlier rules */
+
+  /* Make Player wider (steal from Link/Video) */
+  .table--search th.col--player,
+  .table--search td.col--player {
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    overflow: hidden;
+    width: 16ch;     /* was ~12ch; give Player more room */
+    min-width: 12ch; /* still allow shrink, but not too far */
+  }
+
+  /* Narrow Link and Video even more */
+  .table--search th.col--link,
+  .table--search td.col--link,
+  .table--search th.col--video,
+  .table--search td.col--video {
+    width: 5ch;        /* tighter than before */
+    min-width: 4ch;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: clip;
+    padding-left: 6px;
+    padding-right: 6px;
+  }
+
+  /* Optional: tighten Place a touch more to free an extra pixel or two */
+  .table--search th.col--place,
+  .table--search td.col--place {
+    width: 3.5ch;
+    min-width: 3ch;
+    padding-left: 4px;
+    padding-right: 4px;
+    text-align: center;
+  }
+}
+
+/* ===========================================================
+   Mobile (≤900px) – Table polish:
+   - Cat/Subcat text + headers edge-to-edge
+   - Narrow Link/Video further; widen Player
+   =========================================================== */
+@media (max-width: 900px) {
+
+  /* --- Cat & Subcat: tight to cell edges (remove inner "pill" look) --- */
+  .table--search th.col--cat,
+  .table--search td.col--cat,
+  .table--search th.col--subcat,
+  .table--search td.col--subcat {
+    padding-left: 6px;    /* minimal safe padding against border */
+    padding-right: 6px;
+  }
+
+  /* If inner wrappers/pills exist, neutralize them so text reaches the edge */
+  .table--search td.col--cat > *,
+  .table--search td.col--subcat > * {
+    background: transparent !important;
+    border: 0 !important;
+    box-shadow: none !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    display: block;                    /* span full width of cell */
+  }
+
+  /* Header labels: ensure they span to the borders (no inner gaps) */
+  .table--search thead th.col--cat .th-label,
+  .table--search thead th.col--subcat .th-label {
+    display: block;
+    width: 100%;
+    margin: 0;
+    padding: 0;
+  }
+
+  /* --- Player gets more space (steal from Link/Video) --- */
+  .table--search th.col--player,
+  .table--search td.col--player {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    width: 18ch;          /* wider than before */
+    min-width: 13ch;      /* still shrinkable if extremely tight */
+  }
+
+  /* --- Link & Video narrower (Video at least as narrow as Link) --- */
+  .table--search th.col--link,
+  .table--search td.col--link,
+  .table--search th.col--video,
+  .table--search td.col--video {
+    width: 4.5ch;         /* tighter */
+    min-width: 4ch;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: clip;
+    padding-left: 6px;
+    padding-right: 6px;
+  }
+
+  /* If you want Video even tighter than Link, uncomment:
+  .table--search th.col--video,
+  .table--search td.col--video { width: 4ch; min-width: 3.5ch; }
+  */
+
+  /* Optional: Place can give up a hair more */
+  .table--search th.col--place,
+  .table--search td.col--place {
+    width: 3.3ch;
+    min-width: 3ch;
+    padding-left: 4px;
+    padding-right: 4px;
+    text-align: center;
+  }
+
+  /* Keep Time pristine (from earlier rules) – reiterate tight padding */
+  .table--search th.col--time,
+  .table--search td.col--time {
+    white-space: nowrap !important;
+    overflow: visible !important;
+    text-overflow: clip !important;
+    padding-left: 6px;
+    padding-right: 6px;
+    width: 1%;                 /* content-sized in fixed layout */
+    min-width: 0;
+    font-variant-numeric: tabular-nums;
+    font-feature-settings: "tnum" 1, "lnum" 1;
+    letter-spacing: -0.2px;
+  }
+}
+
+/* === FINAL OVERRIDES FOR SEARCH TABLE (mobile ≤900px) === */
+@media (max-width: 900px) {
+
+  /* Time: never wrap, never clip, tight padding */
+  .table--search th.col--time,
+  .table--search td.col--time {
+    white-space: nowrap !important;
+    overflow: visible !important;
+    text-overflow: clip !important;
+    padding-left: 6px !important;
+    padding-right: 6px !important;
+    width: 1% !important;         /* content-sized in fixed layout */
+    min-width: 0 !important;
+    font-variant-numeric: tabular-nums;
+    font-feature-settings: "tnum" 1, "lnum" 1;
+    letter-spacing: -0.2px;
+  }
+
+  /* Cat + Subcat: edge-to-edge, no forced width, no clamp */
+  .table--search th.col--cat,
+  .table--search td.col--cat,
+  .table--search th.col--subcat,
+  .table--search td.col--subcat {
+    width: auto !important;
+    min-width: 0 !important;
+    padding-left: 6px !important;
+    padding-right: 6px !important;
+    display: block;              /* allow the label to span full cell */
+    -webkit-line-clamp: unset !important;
+    -webkit-box-orient: initial !important;
+  }
+  /* If inner wrappers exist, strip their padding/border/background */
+  .table--search td.col--cat > *,
+  .table--search td.col--subcat > * {
+    background: transparent !important;
+    border: 0 !important;
+    box-shadow: none !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    display: block !important;
+  }
+
+  /* Player: widen a bit */
+  .table--search th.col--player,
+  .table--search td.col--player {
+    white-space: nowrap !important;
+    overflow: hidden !important;
+    text-overflow: ellipsis !important;
+    width: 18ch !important;
+    min-width: 13ch !important;
+  }
+
+  /* Link + Video: tighter; Video at least as narrow as Link */
+  .table--search th.col--link,
+  .table--search td.col--link,
+  .table--search th.col--video,
+  .table--search td.col--video {
+    width: 4.2ch !important;
+    min-width: 3.8ch !important;
+    white-space: nowrap !important;
+    overflow: hidden !important;
+    text-overflow: clip !important;
+    padding-left: 6px !important;
+    padding-right: 6px !important;
+  }
+  /* If you want VIDEO even tighter than LINK, uncomment this:
+  .table--search th.col--video, .table--search td.col--video {
+    width: 4ch !important; min-width: 3.5ch !important;
+  }
+  */
+
+  /* Place: keep tiny */
+  .table--search th.col--place,
+  .table--search td.col--place {
+    width: 3.3ch !important;
+    min-width: 3ch !important;
+    text-align: center !important;
+    white-space: nowrap !important;
+    padding-left: 4px !important;
+    padding-right: 4px !important;
+  }
+
+  /* Track: let it use available width (no clamp); you liked stacking already */
+  .table--search th.col--track,
+  .table--search td.col--track {
+    width: auto !important;
+    min-width: 0 !important;
+    -webkit-line-clamp: unset !important;
+    -webkit-box-orient: initial !important;
+  }
+}
+
+/* === Fine-tune mobile widths: give Cat more room by borrowing from Rider/Machine/Player === */
+@media (max-width: 900px) {
+
+  /* Cat: allow a bit more intrinsic width */
+  .table--search th.col--cat,
+  .table--search td.col--cat {
+    /* still edge-to-edge from earlier; now encourage a slightly wider min */
+    min-width: 14ch !important;   /* was effectively auto; this lets Cat breathe */
+  }
+
+  /* Rider & Machine: tighten a bit to donate space to Cat */
+  .table--search th.col--rider,
+  .table--search td.col--rider,
+  .table--search th.col--machine,
+  .table--search td.col--machine {
+    width: 40px !important;       /* was ~44px; trim a few px */
+    max-width: 50px !important;
+    text-align: center !important;
+    white-space: nowrap !important;
+    overflow: hidden !important;
+    text-overflow: clip !important;
+    padding-left: 4px !important;
+    padding-right: 4px !important;
+  }
+
+  /* Player: give back a little of the earlier expansion */
+  .table--search th.col--player,
+  .table--search td.col--player {
+    width: 16ch !important;       /* was 18ch in the last pass */
+    min-width: 12ch !important;   /* keep decent visibility for most names */
+  }
+
+  /* Keep Time/Link/Video/Place as already tuned in the last block */
+}
+
+/* Center just the "Track" column header label */
+@media (max-width: 900px){
+  .table--search thead th.col--track {
+    text-align: center !important;
+  }
+  /* Ensure the mobile short label also centers */
+  .table--search thead th.col--track .th-label--mobile,
+  .table--search thead th.col--track .th-label--full {
+    display: inline-block;
+    text-align: center;
+    width: 100%;
+  }
+}
+
+/* Center just the "Track" column HEADER on mobile */
+@media (max-width: 900px){
+  /* center the th itself */
+  .table--search thead th.col--track {
+    text-align: center !important;
+  }
+  /* force the header label span(s) to fill the cell and center */
+  .table--search thead th.col--track .th-label--mobile,
+  .table--search thead th.col--track .th-label--full {
+    display: block !important;    /* beats earlier 'inline !important' */
+    width: 100% !important;
+    text-align: center !important;
+  }
+}
 
 @supports (height: 1svh) {
   @media (max-width:900px){

@@ -62,6 +62,61 @@
 </div> <!-- end .tile-strip -->
 
 
+
+<!-- ===== Dashboard (Home) ===== -->
+<section id="dashboard" class="dashboard container" aria-label="Site Stats">
+
+
+<!-- ===== Pre-rendered Hero Strip (no flash) ===== -->
+<div id="dash-hero">
+  <div class="hero-grid">
+    <div class="hero-left">
+      <div class="dash-card">
+        <h3>Record Spotlight</h3>
+        <div id="hero-spotlight-embed" class="dash-embed dash-embed--sm"></div>
+        <div id="hero-spotlight-meta" class="dash-meta"></div>
+      </div>
+
+      <div class="dash-card">
+        <h3>Latest Record</h3>
+        <div id="hero-latest-embed" class="dash-embed dash-embed--sm"></div>
+        <div id="hero-latest-meta" class="dash-meta"></div>
+      </div>
+    </div>
+
+    <div class="hero-right">
+      <div id="delta-ar-big" class="delta-big"></div>
+      <div id="delta-tr-big" class="delta-big"></div>
+    </div>
+  </div>
+</div>
+
+  <!-- Charts row -->
+  <div class="dash-row">
+    <div class="dash-card" id="dash-char">
+      <h3>Most Popular Riders</h3>
+      <div class="dash-chart" id="chart-rider"></div>
+    </div>
+    <div class="dash-card" id="dash-machine">
+      <h3>Most Popular Machines</h3>
+      <div class="dash-chart" id="chart-machine"></div>
+    </div>
+    <div class="dash-card" id="dash-player">
+      <h3>Player with Most Records</h3>
+      <div class="dash-chart" id="chart-player"></div>
+    </div>
+  </div>
+
+  <!-- Search -->
+  <div class="dash-row">
+    <div class="dash-card wide" id="dash-search">
+      <h3>Filter Records</h3>
+      <div class="dash-filters" id="search-filters"></div>
+      <div class="dash-table" id="search-table"></div>
+    </div>
+  </div>
+</section>
+
   <!-- Footer -->
   <footer class="site-footer">
     <div class="container">
@@ -70,5 +125,6 @@
   </footer>
 
   <script src="script.js"></script>
+  <script src="dashboard.js" defer></script>
 </body>
 </html>

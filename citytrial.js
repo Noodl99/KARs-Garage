@@ -135,6 +135,17 @@ const FULL_MODE_ORDER = [
   "Stadium Blitz",
   "5 Hot Dogs"
 ];
+
+// Canonicalize CT Full Mode route labels (collapse spaces; "100 %" -> "100%")
+function canonCTRoute(name) {
+  const s = String(name || '')
+    .trim()
+    .replace(/\uFF05/g, '%')   // full-width percent (％) -> ASCII %
+    .replace(/\s+/g, ' ');
+  // Keep the space-before-% fix too
+  return s.replace(/\s+%$/, '%');
+}
+
 // For quick membership checks
 const FULL_MODE_HIDE_MR = new Set(FULL_MODE_ORDER); // these do not show Machine/Rider
 
@@ -722,10 +733,8 @@ rows.slice(1).forEach(r => {
   // --- FULL MODE (per-game) ---
   // These have Category like "City Trial" and the route name in Subcategory; Level is empty.
   if (CAT_CITY.test(cat) && !level) {
-    const route = subcat.trim();
+    const route = canonCTRoute(subcat.trim() || level.trim());
     if (!route) return;
-    // Normalize CSV coercion: '1' (percent) -> '100%'
-    if (route === '1') route = '100%';
     if (!fullMode.has(route)) fullMode.set(route, []);
     fullMode.get(route).push(rowObj);
     return;

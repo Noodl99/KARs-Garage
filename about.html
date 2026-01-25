@@ -53,169 +53,282 @@
     </div>
   </div>
 
-  <main class="container about-wrap about-links">
-    <!-- ===================== ENGLISH ===================== -->
-    <section class="lang-en" lang="en">
-      <!-- (Smaller, non-italic, non-bold paragraphs) -->
-      <p class="p-base">
-        Kirby Air Riders Garage is a central hub for Kirby Air Riders Speedrunning run by
-        <a href="https://discordapp.com/users/334893807130640394" target="_blank" rel="noopener">@noodl999</a>.
-        It consolidates records from
-        <a href="https://www.speedrun.com/kars/" target="_blank" rel="noopener">Speedrun.com</a>
-        and
-        <a class="link-speedrider" href="https://speedrider.coresv.net/?lang=en" target="_blank" rel="noopener">Speedrider</a>
-        to display them all in one convenient location.
-      </p>
 
-      <h2 class="h-md-i">How does it work?</h2>
-      <p class="p-base">
-        Using Google Sheets Apps Script, it pulls data from Speedrun.com’s API and scrapes Speedrider’s HTML tables,
-        then transposes the data into readable tables that you can sort by column. This is done automatically every 6 hours, starting at 12am EST. Please note that while the data is refreshing, some tables may appear empty.
-      </p>
+<main class="container about-wrap about-links">
+  <!-- ===================== ENGLISH ===================== -->
 
-      <h2 class="h-md-i">What’s next?</h2>
-      <p class="p-base">
-        KARs Garage is still under active development! You can influence its progress, make feature requests,
-        or just say hi in the
-        <a href="https://discord.gg/XRBvC4u4Tr" target="_blank" rel="noopener">Kirby Air Riders Speedrunning Discord</a>
-        by pinging me, <strong>@noodl999</strong>. For now, here’s the current roadmap:
-      </p>
+<section class="lang-en" lang="en">
+  <!-- (Smaller, non-italic, non-bold paragraphs) -->
+  <p class="p-base">
+    Kirby Air Riders Garage is a central hub for Kirby Air Riders Speedrunning created by
+    <a href="https://discordapp.com/users/334893807130640394" target="_blank" rel="noopener">@noodl999</a>.
+    It consolidates records from
+    <a href="https://www.speedrun.com/kars/" target="_blank" rel="noopener">Speedrun.com</a>
+    and
+    <a class="link-speedrider" href="https://speedrider.coresv.net/?lang=en" target="_blank" rel="noopener">Speedrider</a>
+    to display them all in one convenient location.
+  </p>
 
-      <!-- Roadmap (no gray divider before it) -->
-      <section class="roadmap">
-        <h3><strong>Air Ride</strong></h3>
-        <ul>
-          <li><span class="chk chk--on">✓</span><span>View Top 3 Time Attack (Restricted &amp; Unrestricted), Free Run (Restricted &amp; Unrestricted), and Speedrider records for each Air Ride Individual Level all in one place.</span></li>
-          <li><span class="chk chk--on">✓</span><span>View Top 3 records for each Full Mode run.</span></li>
-          <li><span class="chk chk--on">✓</span><span>Add links to each run’s entry and completion video.</span></li>
-        </ul>
+  <h2 class="h-md-i">How does it work?</h2>
+  <p class="p-base">
+    Using Google Sheets Apps Script, it pulls data from Speedrun.com’s API and scrapes Speedrider’s HTML tables,
+    then transposes the data into tables! This is done automatically every 6 hours, starting at 12am EST. Please note that while the data is refreshing, some tables may appear empty.
+  </p>
 
-        <h3><strong>About</strong></h3>
-        <ul>
-          <li><span class="chk chk--on">✓</span><span>An About page that explains features, links, and shows this roadmap in both English and Japanese.</span></li>
-        </ul>
+  <h2 class="h-md-i">Features!</h2>
 
-        <h3><strong>Top Ride</strong></h3>
+  <section class="roadmap">
+    <h3><strong>General</strong></h3>
+    <ul>
+      <li>Automatic updates at ~ 12am, 6am, 12pm, and 6pm Eastern time.</li>
+      <li>A table of contents on each page for quick navigation to each record.</li>
+      <li>Sortable tables for each subcategory, to view the data whichever way you'd like!</li>
+    </ul>
 
-        <ul>
-          <li><span class="chk chk--on">✓</span><span>View Top 3 Time Attack (Restricted &amp; Legendaries), Free Run (Restricted &amp; Legendaries), and Speedrider records for each Individual Level all in one place.</span></li>
-          <li><span class="chk chk--on">✓</span><span>View Top 3 records for each Full Mode run.</span></li>
-          <li><span class="chk chk--on">✓</span><span>Add links to each run’s entry and completion video.</span></li>
-        </ul>
+    <h3><strong>Homepage Dashboard</strong></h3>
+    <ul>
+      <li>See a random Record Spotlight that changes every 6 hours</li>
+      <li>See the latest Record submitted to SRC or a Category Extension.</li>
+      <li>A delta that shows the potential time save between the Air Ride and Top Ride All Tracks records and the respective sum of their Individual Levels</li>
+      <li>Filterable Charts! See what the most popular rider or machine is in any or all categories from 1st to 3rd place! Shows only 1st place records and omits speedrider records by default.</li>
+      <li>A leaderboard that shows who has the most records in any given category. Shows only 1st place records and omits speedrider records by default.</li>
+      <li>Search for records! You can filter records by Category, Rider, Machine, Player, and/or Placement. Want to know where your favorite Machine excels? Now you can!</li>
+    </ul>
 
+    <h3><strong>Air Ride</strong></h3>
+    <ul>
+      <li>View the Top 3 Time Attack (Restricted &amp; Unrestricted), Free Run (Restricted &amp; Unrestricted), and Speedrider records for each Air Ride Individual Level all in one place.</li>
+      <li>View the Top 3 records for each Full Mode (All Tracks, 100%, etc.) category.</li>
+      <li>Links to each run's Speedrider or SRC main page for a more detailed view, as well as the run's completion video.</li>
+    </ul>
 
-        <h3><strong>City Trial</strong></h3>
-        <ul>
-          <li><span class="chk chk--on">✓</span><span>Consolidate the Top 3 records for Score‑Based Stadiums, Time‑Based Stadiums, and other City Trial categories on one page.</span></li>
-          <li><span class="chk chk--on">✓</span><span>Convert time units into KOs, distance, and points in Score-Based Stadiums.</span></li>
-        <h3><strong>Road Trip</strong></h3>
-        <ul>
-          <li><span class="chk chk--on">✓</span><span>Consolidate the Top 3 records for Any% (Casual/Normal/Hard/Super Hard), True Ending, and 100%.</span></li>
-        </ul>
+    <h3><strong>Top Ride</strong></h3>
+    <ul>
+      <li>View the Top 3 Time Attack (Restricted &amp; Legendaries), Free Run (Restricted &amp; Legendaries), and Speedrider records for each Top Ride Individual Level all in one place.</li>
+      <li>View the Top 3 records for each Full Mode (All Tracks, 100%, etc.) category.</li>
+      <li>Links to each run's Speedrider or SRC main page for a more detailed view, as well as the run's completion video.</li>
+    </ul>
 
-        <h3><strong>Other / Misc</strong></h3>
-        <ul>
-          <li><span class="chk chk--on">✓</span><span>A section for other official categories like 100% and All Lessons.</span></li>
-        </ul>
+    <h3><strong>City Trial</strong></h3>
+    <ul>
+      <li>View the Top 3 records for Score‑Based Stadiums, Time‑Based Stadiums, and other City Trial categories all conveniently grouped together on one page!</li>
+      <li>SRC Score-Based Stadium "times" are converted into KOs, distance, and points.</li>
+      <li>View the Top 3 records for each Full Mode (Stadium Blitz, 5 Hot Dogs, etc.) category.</li>
+    </ul>
 
-        <h3><strong>Cat‑Ex</strong></h3>
-        <ul>
-          <li><span class="chk chk--on">✓</span><span>A Category Extensions section for meme/unofficial categories like Amiibo or 99 Laps that aren’t on speedrun.com.</span></li>
-        </ul>
+    <h3><strong>Road Trip</strong></h3>
+    <ul>
+      <li>View the Top 3 records for Any% (Casual/Normal/Hard/Super Hard), True Ending, and 100% runs.</li>
+    </ul>
 
-        <h3><strong>Stats!</strong></h3>
-        <ul>
-          <li><span class="chk"> </span><span>A stats dashboard (most popular machine, most records by player, total time of all Individual Level World Records, etc.).</span></li>
-        </ul>
-      </section>
-    </section>
+    <h3><strong>Extras!</strong></h3>
+    <ul>
+      <li>View the Top 3 records for Full Game categories like 100% and All Lessons.</li>
+      <li>
+        A Category Extensions section for unofficial categories like Amiibo or 99 Laps that aren’t on speedrun.com.
+        You can request a new Category Extension by emailing
+        <a href="mailto:airridersgarage@gmail.com?subject=New%20Category%20Extension%20Request&amp;body=Hi!%20I'd%20like%20to%20request%20a%20new%20category%20extension%20for%20Kirby%20Air%20Riders.%20My%20category%20and%20its%20detailed%20rules%20are%3A">airridersgarage@gmail.com</a>
+        or contacting <a href="https://discordapp.com/users/334893807130640394" target="_blank" rel="noopener">noodl999</a> on Discord.
+      </li>
+    </ul>
 
-    <!-- ===================== JAPANESE ===================== -->
-    <section class="lang-ja" lang="ja">
-      <!-- 名前表記：カービィ エアライダー ガレージ -->
-      <p class="p-base">
-        <strong>カービィ エアライダー ガレージ</strong> は、
-        <a href="https://discordapp.com/users/334893807130640394" target="_blank" rel="noopener">@noodl999</a>
-        が運営する、カービィ エアライダー（KARs）のスピードラン記録を集約するハブサイトです。
-      </p>
-      <p class="p-base">
-        記録は
-        <a href="https://www.speedrun.com/kars/" target="_blank" rel="noopener">Speedrun.com</a>
-        と
-        <a class="link-speedrider" href="https://speedrider.coresv.net/" target="_blank" rel="noopener">Speedrider</a>
-        から収集し、1 つの場所に見やすくまとめて表示します。
-      </p>
+    <h3><strong>About</strong></h3>
+    <ul>
+      <li>An About page that explains features in both English and Japanese.</li>
+      <li>A Glossary for common terms used in Kirby Air Riders Speedrunning</li>
+    </ul>
+  </section> <!-- /.roadmap -->
 
-      <h2 class="h-md-i">仕組み</h2>
-      <p class="p-base">
-        <strong>Google スプレッドシート</strong> と <strong>Apps Script</strong> を用いて
-        <strong>Speedrun.com の API</strong> からデータを取得し、<strong>Speedrider の HTML</strong> テーブルをスクレイピングします。
-        取得したデータを整形し、列ごとの並べ替えが可能な読みやすい表に変換しています。この処理は、米国東部時間（EST）で毎日午前0時を起点に、6時間ごとに自動実行されます。データ更新中は、一時的に一部の表が空に表示される場合がありますのでご了承ください。
-      </p>
+  <!-- ==== EN Glossary ABOVE What's next ==== -->
+  <section class="glossary lang-en" aria-labelledby="glossary-en-title">
+    <h2 id="glossary-en-title" class="h-md-i">Glossary</h2>
 
-      <h2 class="h-md-i">今後の予定</h2>
-      <p class="p-base">
-        KARs ガレージは現在も開発中です！  
-        進捗へのフィードバックや機能要望、雑談などは
-        <a href="https://discord.gg/XRBvC4u4Tr" target="_blank" rel="noopener">カービィ エアライダーのスピードラン の ディスコード</a>
-        にて <strong>@noodl999</strong> にメンションしてください。  
-        現在のロードマップは次のとおりです。
-      </p>
+    <div class="glossary-item"><span class="glossary-term">KARs</span> – Kirby Air Riders!</div>
+    <div class="glossary-item"><span class="glossary-term">KAR</span> – Kirby Air Ride</div>
+    <div class="glossary-item"><span class="glossary-term">WR</span> – World Record</div>
+    <div class="glossary-item"><span class="glossary-term">PB</span> – Personal Best</div>
+    <div class="glossary-item"><span class="glossary-term">IL</span> – Individual Level. Each course in a specific mode, like Mount Amberfalls for Air Ride or Cyber for Top Ride.</div>
 
-      <section class="roadmap">
-        <h3><strong>エアライド</strong></h3>
-        <ul>
-          <li><span class="chk chk--on">✓</span><span>ILについて、タイムアタック（リミテッド/無制限）、フリーラン（リミテッド/無制限）、Speedrider のトップ3記録を 1 ページに集約表示。</span></li>
-          <li><span class="chk chk--on">✓</span><span>各フルモードのトップ3記録を表示。</span></li>
-          <li><span class="chk chk--on">✓</span><span>各走のエントリーページと完走動画へのリンクを追加。</span></li>
-        </ul>
+    <div class="glossary-item"><span class="glossary-term">SRC</span> – <a href="https://www.speedrun.com" target="_blank" rel="noopener">Speedrun.com</a>. The premier website for speedrunning!</div>
 
-        <h3><strong>概要</strong></h3>
-        <ul>
-          <li><span class="chk chk--on">✓</span><span>サイトの機能・重要リンク・このロードマップを、英語と日本語で説明する 概要 ページ。</span></li>
-        </ul>
+    <div class="glossary-item"><span class="glossary-term"><a class="link-speedrider" href="https://speedrider.coresv.net/?lang=en" target="_blank" rel="noopener">Speedrider</a></span> – A Japanese website dedicated to Kirby Air Ride and Kirby Air Riders speedrunning.</div>
 
+    <div class="glossary-item"><span class="glossary-term">Time Attack</span> – A mode in Air Ride and Top Ride. Race a set number of laps with enemies present and no boost panels.</div>
+    <div class="glossary-item"><span class="glossary-term">Free Run</span> – A mode in Air Ride and Top Ride. Record your best time for a single lap with no enemies present.</div>
 
-        <h3><strong>ウエライド</strong></h3>
-        <ul>
-          <li><span class="chk chk--on">✓</span><span>ILの タイムアタック（リミテッド/レジェンダリー）、フリーラン（リミテッド/レジェンダリー）、Speedrider のトップ3記録を 1 ページに集約表示。</span></li>
-          <li><span class="chk chk--on">✓</span><span>各フルモードのトップ3記録を表示。</span></li>
-          <li><span class="chk chk--on">✓</span><span>各走のエントリーページと完走動画へのリンクを追加。</span></li>
-        </ul>
+    <div class="glossary-item"><span class="glossary-term">Restricted</span> – A KARs community ruleset. No Legendary machines, glitches, or out-of-bounds clips allowed in these runs.</div>
+    <div class="glossary-item"><span class="glossary-term">Unrestricted</span> – A KARs community ruleset. Anything goes! Legendary machines, glitches, and going out of bounds!</div>
 
-        <h3><strong>シティトライアル</strong></h3>
-        <ul>
-          <li><span class="chk chk--on">✓</span><span>スコア系スタジアム、タイム系スタジアム、その他カテゴリのトップ3記録を 1 ページに集約表示。</span></li>
-          <li><span class="chk chk--on">✓</span><span>スコア系スタジアムにおいて、時間単位を KO 数・距離・ポイントに換算します。</span></li>
-        </ul>
+    <div class="glossary-item"><span class="glossary-term"><a href="https://www.speedrun.com/kars?h=air-ride-all-tracks-glitchless&amp;rules=category&amp;x=vdo995vd-onvyo2wn.1gn8428l" target="_blank" rel="noopener">All Tracks</a></span> – An Air Ride and Top Ride category involving running every course in the game and adding up your time.</div>
 
-        <h3><strong>ロードトリップ</strong></h3>
-        <ul>
-          <li><span class="chk chk--on">✓</span><span>Any%、トゥルーエンディング、100% のトップ3記録を集約表示。</span></li>
-        </ul>
+    <div class="glossary-item"><span class="glossary-term"><a href="https://www.speedrun.com/kars?h=air-ride-karararat&amp;rules=category&amp;x=vdo995vd-onvyo2wn.10vzmw2l" target="_blank" rel="noopener">KARARARAT</a></span> – Kirby Air Riders Air Ride All Rides All Tracks. Play with every Air Ride Machine on every course in Air Ride mode in one run.</div>
 
-        <h3><strong>その他</strong></h3>
-        <ul>
-          <li><span class="chk chk--on">✓</span><span>100% や 教習所 全レッスン などの公式カテゴリ用セクション。</span></li>
-        </ul>
+    <div class="glossary-item"><span class="glossary-term"><a href="https://www.speedrun.com/kars?h=air-ride-kararararat&amp;rules=category&amp;x=vdo995vd-onvyo2wn.qj704x3q" target="_blank" rel="noopener">KARARARARAT</a></span> – Kirby Air Riders Air Ride All Riders All Rides All Tracks. Play with every character on every machine on every course in Air Ride mode in one run. Not for the faint of heart!</div>
 
-        <h3><strong>ガイド・リソース</strong></h3>
-        <ul>
-          <li><span class="chk"> </span><span>動画、チュートリアル、重要な立ち回りなどをまとめたガイド集。</span></li>
-        </ul>
+    <div class="glossary-item"><span class="glossary-term">Time-Based Stadiums</span> – City Trial Stadiums where the goal is to get the fastest time. City Trial powerups are not permitted in runs of this category.</div>
 
-        <h3><strong>カテゴリ拡張</strong></h3>
-        <ul>
-          <li><span class="chk chk--on">✓</span><span>Amiibo、99 Laps など speedrun.com に載っていない非公式カテゴリのコーナー。</span></li>
-        </ul>
+    <div class="glossary-item"><span class="glossary-term">Score-Based Stadiums</span> – City Trial Stadiums where the goal is to get the highest score, distance, or KO count. City Trial powerups are not permitted in runs of this category.</div>
 
-        <h3><strong>統計</strong></h3>
-        <ul>
-          <li><span class="chk"> </span><span>統計ダッシュボード（人気マシン、最多記録保持者、全 IL WR の合計タイム等）。</span></li>
-        </ul>
-      </section>
-    </section>
-  </main>
+    <div class="glossary-item"><span class="glossary-term"><a href="https://www.speedrun.com/kars?h=city-trial-stadium-blitz&amp;rules=category&amp;x=7dgoompk-0nwyzk58.14oyv4vq" target="_blank" rel="noopener">Stadium Blitz</a></span> – A speedrun where you complete every City Trial stadium once in any order.</div>
+
+    <div class="glossary-item"><span class="glossary-term"><a href="https://www.speedrun.com/kars?h=city-trial-5-hot-dogs&amp;rules=category&amp;x=7dgoompk-0nwyzk58.192m9d8q" target="_blank" rel="noopener">5 Hot Dogs</a></span> – Eat 5 hot dogs in a City Trial match as fast as possible 🌭.</div>
+
+    <div class="glossary-item"><span class="glossary-term"><a href="https://www.speedrun.com/kars?h=all-unlockables-no-legendaries&amp;rules=category&amp;x=xk944xyd-0nwyzo58.lmok4041" target="_blank" rel="noopener">All Riders &amp; Machines</a></span> – A speedrun category where you unlock every character and vehicle in the game as fast as possible.</div>
+
+    <div class="glossary-item"><span class="glossary-term"><a href="https://www.speedrun.com/kars?h=tetrathlon&amp;rules=category&amp;x=7kjeegxd" target="_blank" rel="noopener">Tetrathlon</a></span> – Complete 50 checkboxes in Air Ride, Top Ride, City Trial, and Road Trip from a new save file.</div>
+
+    <div class="glossary-item"><span class="glossary-term"><a href="extras.html">Category Extension</a></span> – Unofficial community categories not recorded on speedrun.com.</div>
+  </section>
+
+  <!-- ==== EN What's next (comes AFTER Glossary) ==== -->
+  <h2 class="h-md-i">What’s next?</h2>
+  <p class="p-base">
+    <s>KARs Garage is still under active development!</s> KARs Garage is now feature complete! Hooray!
+    But if you still want to make requests, report bugs, or just say hi, join the
+    <a href="https://discord.gg/XRBvC4u4Tr" target="_blank" rel="noopener">Kirby Air Riders Speedrunning Discord</a>
+    and ping me, <strong>@noodl999</strong>.
+  </p>
+</section> <!-- /.lang-en -->
+
+  <!-- ===================== JAPANESE ===================== -->
+
+<section class="lang-ja" lang="ja">
+  <!-- 名前表記：カービィ エアライダー ガレージ -->
+  <p class="p-base">
+    <strong>カービィ エアライダー ガレージ</strong> は、
+    <a href="https://discordapp.com/users/334893807130640394" target="_blank" rel="noopener">@noodl999</a>
+    が運営する、カービィ エアライダー（KARs）のスピードラン記録を集約するハブサイトです。記録は
+    <a href="https://www.speedrun.com/kars/" target="_blank" rel="noopener">Speedrun.com</a>
+    と
+    <a class="link-speedrider" href="https://speedrider.coresv.net/" target="_blank" rel="noopener">Speedrider</a>
+    から収集し、1 つの場所に見やすくまとめて表示します。
+  </p>
+
+  <h2 class="h-md-i">仕組み</h2>
+  <p class="p-base">
+    <strong>Google スプレッドシート</strong> と <strong>Apps Script</strong> を使用して
+    <strong>Speedrun.com の API</strong> からデータを取得し、<strong>Speedrider の HTML</strong> テーブルをスクレイピングします。
+    取得したデータを整形し、列ごとに並べ替え可能な読みやすい表へと変換します。
+    この処理は米国東部時間（EST）で毎日午前 0 時を起点として 6 時間ごとに自動実行されます。
+    データ更新中は一時的に一部の表が空になることがありますのでご了承ください。
+  </p>
+
+  <h2 class="h-md-i">機能</h2>
+  <p class="p-base">
+    KARs ガレージは現在も継続的に改善されています！
+    機能要望・バグ報告・質問・雑談などは
+    <a href="https://discord.gg/XRBvC4u4Tr" target="_blank" rel="noopener">カービィ エアライダー スピードラン Discord</a>
+    にて <strong>@noodl999</strong> にメンションしてください。  
+    現在のロードマップは以下のとおりです。
+  </p>
+
+  <section class="roadmap">
+    <h3><strong>全般</strong></h3>
+    <ul>
+      <li>米国東部時間（ET）の 0 時／6 時／12 時／18 時に自動更新。</li>
+      <li>各ページに記録へ素早く移動できる目次を表示。</li>
+      <li>サブカテゴリごとに列で並べ替え可能な表を掲載。</li>
+    </ul>
+
+    <h3><strong>ホームページ・ダッシュボード</strong></h3>
+    <ul>
+      <li>6 時間ごとに切り替わるランダムな記録スポットライト。</li>
+      <li>SRC またはカテゴリ拡張に投稿された最新記録を表示。</li>
+      <li>エアライド／ウエライドの オール・トラックス 記録と IL 合計との差分（短縮可能時間）を表示。</li>
+      <li>フィルター可能なグラフ。1〜3 位の記録から人気ライダー／マシンを表示（初期設定は 1 位のみ、Speedrider は既定で除外）。</li>
+      <li>カテゴリごとの記録保持数ランキング（初期設定は 1 位のみ、Speedrider は既定で除外）。</li>
+      <li>検索機能。カテゴリ・ライダー・マシン・プレイヤー・順位で絞り込み可能。</li>
+    </ul>
+
+    <h3><strong>エアライド</strong></h3>
+    <ul>
+      <li>各 IL のタイムアタック（リミテッド／無制限）、フリーラン（リミテッド／無制限）、Speedrider のトップ 3 記録を集約表示。</li>
+      <li>各フルモード（オール・トラックス、100% など）のトップ 3 記録を表示。</li>
+      <li>各走の Speedrider または SRC のページ、および完走動画へのリンクを掲載。</li>
+    </ul>
+
+    <h3><strong>ウエライド</strong></h3>
+    <ul>
+      <li>各 IL のタイムアタック（リミテッド／レジェンダリー）、フリーラン（リミテッド／レジェンダリー）、Speedrider のトップ 3 記録を表示。</li>
+      <li>各フルモード（オール・トラックス、100% など）のトップ 3 記録を表示。</li>
+      <li>各走の Speedrider または SRC のページ、および完走動画へのリンクを掲載。</li>
+    </ul>
+
+    <h3><strong>シティトライアル</strong></h3>
+    <ul>
+      <li>スコア系・タイム系スタジアム、その他カテゴリを 1 ページに集約表示。</li>
+      <li>SRC のスコア系スタジアムの “時間” を KO 数・距離・ポイントに換算。</li>
+      <li>スタジアム・ブリッツ、5 ホットドッグス などのフルモードカテゴリのトップ 3 記録を表示。</li>
+    </ul>
+
+    <h3><strong>ロードトリップ</strong></h3>
+    <ul>
+      <li>Any%（カジュアル／ノーマル／ハード／スーパーハード）、トゥルーエンディング、100% のトップ 3 記録を表示。</li>
+    </ul>
+
+    <h3><strong>エクストラ</strong></h3>
+    <ul>
+      <li>100% や 教習所 全レッスン など、通しプレイカテゴリのトップ 3 記録を表示。</li>
+      <li>カテゴリ拡張（Amiibo、99 Laps など）。Speedrun.com に掲載されていない非公式カテゴリ。新規カテゴリ拡張はメールまたは Discord（@noodl999）から申請可能。</li>
+    </ul>
+
+    <h3><strong>概要</strong></h3>
+    <ul>
+      <li>英語・日本語の両方でサイト機能を説明。</li>
+      <li>カービィ エアライダーのスピードランで使われる一般的な用語をまとめた用語集。</li>
+    </ul>
+  </section> <!-- /.roadmap -->
+
+  <!-- ==== JA Glossary ABOVE What's next ==== -->
+  <section class="glossary lang-ja" aria-labelledby="glossary-ja-title">
+    <h2 id="glossary-ja-title" class="h-md-i">用語集</h2>
+
+    <div class="glossary-item"><span class="glossary-term">KARs</span> – カービィのエアライダ!</div>
+    <div class="glossary-item"><span class="glossary-term">KAR</span> – カービィのエアライド</div>
+    <div class="glossary-item"><span class="glossary-term">WR</span> – World Record（世界記録）</div>
+    <div class="glossary-item"><span class="glossary-term">PB</span> – Personal Best（自己ベスト）</div>
+
+    <div class="glossary-item"><span class="glossary-term">IL</span> – Individual Level。各モードのコース単位の記録（例：エアライドの フォーリス、ウエライドの 電）。</div>
+
+    <div class="glossary-item"><span class="glossary-term">SRC</span> – <a href="https://www.speedrun.com" target="_blank" rel="noopener">Speedrun.com</a>。スピードランの代表的な記録サイト！</div>
+
+    <div class="glossary-item"><span class="glossary-term"><a class="link-speedrider" href="https://speedrider.coresv.net/" target="_blank" rel="noopener">Speedrider</a></span> – カービィ エアライド／エアライダーズのスピードランを扱う日本のサイト。</div>
+
+    <div class="glossary-item"><span class="glossary-term">Time Attack</span> – 敵あり・ブーストパネルなしで規定周回の最速を競うモード。</div>
+    <div class="glossary-item"><span class="glossary-term">Free Run</span> – 敵なしで 1 周の最速ラップを狙うモード。</div>
+
+    <div class="glossary-item"><span class="glossary-term">Restricted</span> – レジェンダリー機・グリッチ・マップ外移動は不可。</div>
+    <div class="glossary-item"><span class="glossary-term">Unrestricted</span> – なんでもアリ！ レジェンダリー機・グリッチ・マップ外 OK。</div>
+
+    <div class="glossary-item"><span class="glossary-term"><a href="https://www.speedrun.com/kars?h=air-ride-all-tracks-glitchless&amp;rules=category&amp;x=vdo995vd-onvyo2wn.1gn8428l" target="_blank" rel="noopener">All Tracks</a></span> – オール・トラックス。エアライド／ウエライドの全コースを走り、合計タイムで競うカテゴリ。</div>
+
+    <div class="glossary-item"><span class="glossary-term"><a href="https://www.speedrun.com/kars?h=air-ride-karararat&amp;rules=category&amp;x=vdo995vd-onvyo2wn.10vzmw2l" target="_blank" rel="noopener">KARARARAT</a></span> – 全マシンで全コースを 1 回の通しプレイで走破するカテゴリ。</div>
+
+    <div class="glossary-item"><span class="glossary-term"><a href="https://www.speedrun.com/kars?h=air-ride-kararararat&amp;rules=category&amp;x=vdo995vd-onvyo2wn.qj704x3q" target="_blank" rel="noopener">KARARARARAT</a></span> – 全ライダー×全マシンで全コースを走破する超高難度カテゴリ。心して挑もう！</div>
+
+    <div class="glossary-item"><span class="glossary-term">Time-Based Stadiums</span> – 最速タイムを競うシティトライアルのスタジアム。パワーアップ持ち込み不可。</div>
+    <div class="glossary-item"><span class="glossary-term">Score-Based Stadiums</span> – スコア／距離／KO 数を競うスタジアム。パワーアップ持ち込み不可。</div>
+
+    <div class="glossary-item"><span class="glossary-term"><a href="https://www.speedrun.com/kars?h=city-trial-stadium-blitz&amp;rules=category&amp;x=7dgoompk-0nwyzk58.14oyv4vq" target="_blank" rel="noopener">Stadium Blitz</a></span> – スタジアム・ブリッツ。全スタジアムを任意順で 1 回ずつクリアするスピードラン。</div>
+
+    <div class="glossary-item"><span class="glossary-term"><a href="https://www.speedrun.com/kars?h=city-trial-5-hot-dogs&amp;rules=category&amp;x=7dgoompk-0nwyzk58.192m9d8q" target="_blank" rel="noopener">5 Hot Dogs</a></span> – 5 ホットドッグス。シティトライアルの対戦でホットドッグを 5 本、最速で食べるカテゴリ 🌭。</div>
+
+    <div class="glossary-item"><span class="glossary-term"><a href="https://www.speedrun.com/kars?h=all-unlockables-no-legendaries&amp;rules=category&amp;x=xk944xyd-0nwyzo58.lmok4041" target="_blank" rel="noopener">All Riders &amp; Machines</a></span> – 全ライダーと全マシンのアンロックを最速で達成するカテゴリ。</div>
+
+    <div class="glossary-item"><span class="glossary-term"><a href="https://www.speedrun.com/kars?h=tetrathlon&amp;rules=category&amp;x=7kjeegxd" target="_blank" rel="noopener">Tetrathlon</a></span> – 新規セーブから、エアライド／ウエライド／シティトライアル／ロードトリップのチェックボックスを合計 50 個埋める。</div>
+
+    <div class="glossary-item"><span class="glossary-term"><a href="extras.html">Category Extension</a></span> – Speedrun.com には掲載されていない、コミュニティ主導の非公式カテゴリ。</div>
+  </section>
+
+  <!-- ==== JA What's next (comes AFTER Glossary) ==== -->
+  <h2 class="h-md-i">今後の予定（続き）</h2>
+  <p class="p-base">
+    KARs ガレージは現在も開発中です！  
+    要望・バグ報告・挨拶などは
+    <a href="https://discord.gg/XRBvC4u4Tr" target="_blank" rel="noopener">カービィ エアライダー スピードラン Discord</a>
+    にて <strong>@noodl999</strong> まで。
+  </p>
+</section> <!-- /.lang-ja -->
 
   <footer class="site-footer">
     <div class="container">

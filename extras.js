@@ -168,7 +168,7 @@ function mapExtrasRow(row, IDX) {
     body.filter(r => hasAny(r, /(^|\b)100%(\b|$)/i))
   );
 
-  // 5–7) New Game Categories (three sublabels)
+  // 5-7) New Game Categories (three sublabels)
   paintExtrasTable(
     'fg-ngc-air-ride',
     body.filter(r => hasAny(r, /new\s*game\s*categories/i) && hasAny(r, /air\s*ride\s*100%/i))
@@ -193,7 +193,7 @@ function mapExtrasRow(row, IDX) {
 const CE_SECTIONS = [
   {
     id: 'ce-amiibo',
-    category: 'Amiibo – Air Ride All Tracks',
+    category: 'Amiibo - Air Ride All Tracks',
     columns: ['Rank','Player','Time','Amiibo','Video'],
     row: (r,i)=>[
       String(i+1),
@@ -205,7 +205,7 @@ const CE_SECTIONS = [
   },
   {
     id: 'ce-online-85',
-    category: 'Online Checklist – 85 Checkboxes',
+    category: 'Online Checklist - 85 Checkboxes',
     columns: ['Rank','Player','Time','Video'],
     row: (r,i)=>[
       String(i+1),
@@ -216,7 +216,7 @@ const CE_SECTIONS = [
   },
   {
     id: 'ce-99-air-ride',
-    category: '99 Laps – Air Ride',
+    category: '99 Laps - Air Ride',
     columns: ['Rank','Player','Time','Rider','Machine','Video'],
     row: (r,i)=>[
       String(i+1),
@@ -229,7 +229,7 @@ const CE_SECTIONS = [
   },
   {
     id: 'ce-99-top-ride',
-    category: '99 Laps – Top Ride',
+    category: '99 Laps - Top Ride',
     columns: ['Rank','Player','Time','Rider','Machine','Video'],
     row: (r,i)=>[
       String(i+1),
