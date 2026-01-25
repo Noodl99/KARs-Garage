@@ -2475,6 +2475,48 @@ html, body {
   }
 }
 
+/* Stacked Links column (mobile) + narrower Player */
+@media (max-width: 900px) {
+  /* Vertically stack Link and Video, one per line */
+  .table--search td.col--links .links-vert {
+    line-height: 1.25;
+  }
+  .table--search td.col--links .links-vert a {
+    display: block;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  /* Make Player a bit narrower now that we freed a column */
+  .table--search th.col--player,
+  .table--search td.col--player {
+    width: 12.5ch !important;
+    min-width: 10ch !important;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  /* Track header stays centered */
+  .table--search thead th.col--track {
+    text-align: center !important;
+  }
+  .table--search thead th.col--track .th-label--mobile,
+  .table--search thead th.col--track .th-label--full {
+    display: block !important;
+    width: 100% !important;
+    text-align: center !important;
+  }
+}
+
+/* Ultra-narrow safeguard (e.g., 360px devices) */
+@media (max-width: 380px) {
+  .table--search th.col--player, .table--search td.col--player {
+    width: 12ch !important;  /* one more notch if needed */
+  }
+}
+
 @supports (height: 1svh) {
   @media (max-width:900px){
     .hero{
