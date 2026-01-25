@@ -2375,6 +2375,106 @@ html, body {
   .table--search thead th.col--track .th-label--mobile { display: inline !important; } /* shows "Track" */
 }
 
+/* === FILTER TABLE: Guarantee no right-edge clipping on phones === */
+/* Target very common phone widths first */
+@media (max-width: 430px) {
+  /* Reduce general horizontal padding so the table “breathes” inside the viewport */
+  .table--search th, .table--search td {
+    padding-left: 5px !important;
+    padding-right: 5px !important;
+  }
+
+  /* Player: shave a bit more */
+  .table--search th.col--player, .table--search td.col--player {
+    width: 15ch !important;      /* was ~15.5–16ch */
+    min-width: 11ch !important;
+    white-space: nowrap !important;
+    overflow: hidden !important;
+    text-overflow: ellipsis !important;
+  }
+
+  /* Cat/Subcat: allow smaller minimums so the table can shrink fully */
+  .table--search th.col--cat,    .table--search td.col--cat    { min-width: 11.5ch !important; }
+  .table--search th.col--subcat, .table--search td.col--subcat { min-width: 9ch   !important; }
+
+  /* Rider & Machine: small icon columns — trim to 36px */
+  .table--search th.col--rider,   .table--search td.col--rider,
+  .table--search th.col--machine, .table--search td.col--machine {
+    width: 36px !important;         /* was 40–44px */
+    max-width: 46px !important;
+    text-align: center !important;
+    padding-left: 4px !important;
+    padding-right: 4px !important;
+    white-space: nowrap !important;
+    overflow: hidden !important;
+    text-overflow: clip !important;
+  }
+  /* (Optional) shrink the icon itself a touch to match narrower column) */
+  .table--search td.cell--machine .cell-icon img,
+  .table--search td.cell--rider  .cell-icon img { width: 18px; height: 18px; }
+
+  /* Link & Video: one more notch tighter */
+  .table--search th.col--link,  .table--search td.col--link,
+  .table--search th.col--video, .table--search td.col--video {
+    width: 3.5ch !important;
+    min-width: 3.3ch !important;
+    padding-left: 4px !important;
+    padding-right: 4px !important;
+    white-space: nowrap !important;
+    overflow: hidden !important;
+    text-overflow: clip !important;
+  }
+
+  /* Place: smallest column */
+  .table--search th.col--place, .table--search td.col--place {
+    width: 2.8ch !important;
+    min-width: 2.8ch !important;
+    padding-left: 4px !important;
+    padding-right: 4px !important;
+    text-align: center !important;
+    white-space: nowrap !important;
+  }
+
+  /* Ensure the table itself never paints wider than the viewport */
+  .table--search {
+    width: 100% !important;
+    max-width: 100vw !important;
+    table-layout: fixed !important;  /* keep column widths deterministic */
+  }
+  /* Keep wrapper from allowing any overflow paint */
+  .table-wrap {
+    overflow-x: clip !important;     /* stronger than hidden in some browsers */
+  }
+}
+
+/* Ultra‑narrow safeguard (Pixel 4a, older iPhones, etc.) */
+@media (max-width: 380px) {
+  .table--search th.col--player, .table--search td.col--player {
+    width: 14.5ch !important; min-width: 10.5ch !important;
+  }
+  .table--search th.col--link,   .table--search td.col--link,
+  .table--search th.col--video,  .table--search td.col--video  {
+    width: 3.3ch !important; min-width: 3.2ch !important;
+  }
+  .table--search th, .table--search td {
+    padding-left: 4px !important;
+    padding-right: 4px !important;
+  }
+}
+
+/* === TRACK HEADER: keep it centered no matter what === */
+@media (max-width: 900px){
+  .table--search thead th.col--track {
+    text-align: center !important;
+  }
+  .table--search thead th.col--track .th-label--mobile,
+  .table--search thead th.col--track .th-label--full {
+    display: block !important;    /* beat earlier 'inline !important' swaps */
+    width: 100% !important;
+    text-align: center !important;
+  }
+}
+
 @supports (height: 1svh) {
   @media (max-width:900px){
     .hero{
