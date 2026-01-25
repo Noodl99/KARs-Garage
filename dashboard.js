@@ -1924,8 +1924,8 @@ function chartDropdownFilters({ mountCardSel, chartSel, onChange, excludeCategor
 
 // === Icon paths + maps (only used by the two "Most Popular" charts) ===
 // Update these two lines if your icons live elsewhere:
-const RIDER_ICON_BASE   = '/icons/riders/';
-const MACHINE_ICON_BASE = '/icons/machines/';
+const RIDER_ICON_BASE   = 'icons/riders/';
+const MACHINE_ICON_BASE = 'icons/machines/';
 
 // Note: names must match your **canonical** labels produced by canonRider / canonMachine.
 

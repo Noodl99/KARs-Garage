@@ -2285,6 +2285,13 @@ body.page-about .site-nav a.active {
   }
 }
 
+
+/* Never allow a horizontal scrollbar */
+html, body {
+  max-width: 100%;
+  overflow-x: hidden;
+}
+
 @supports (height: 1svh) {
   @media (max-width:900px){
     .hero{
