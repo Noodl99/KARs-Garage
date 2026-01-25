@@ -2821,3 +2821,80 @@ html, body {
     }
   }
 }
+
+/* ============================================================
+   KARs Garage – iPhone right-edge clipping hotfix
+   Date: 2026‑01‑25
+   Scope: iOS Safari + general cross‑browser safety
+   ============================================================ */
+
+/* 1) Do NOT globally clip the page horizontally.
+   (Your full-bleed areas get handled by pseudo-elements below.) */
+html, body {
+  overflow-x: visible !important;
+  max-width: 100%;
+}
+
+/* 2) Full-bleed hero/accent: background via ::before sized with svw,
+      so the layout width itself never exceeds the page width. */
+.hero--home,
+.accent--fullbleed {
+  position: relative;
+  width: 100%;
+  margin-left: 0;
+  margin-right: 0;
+  background: transparent; /* actual background comes from ::before */
+}
+
+.hero--home::before,
+.accent--fullbleed::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  /* stretch the background to the viewport edges without affecting layout width */
+  left: calc((100svw - 100%) / -2);
+  right: calc((100svw - 100%) / -2);
+  z-index: -1;
+  background: inherit;
+}
+
+/* Fallback for engines that don't support svw yet */
+@supports not (width: 100svw) {
+  .hero--home::before,
+  .accent--fullbleed::before {
+    left: calc((100vw - 100%) / -2);
+    right: calc((100vw - 100%) / -2);
+  }
+}
+
+/* 3) Let grid children shrink (prevents subtle overflows on iOS). */
+.hero-left, .hero-right,
+.hero-grid > *, .dash-row > * {
+  min-width: 0 !important;
+}
+
+/* 4) Delta rows: never clip the equals + green number line. */
+.delta-big,
+.delta-big .row-top,
+.delta-big .row-eq {
+  overflow: visible !important;   /* undo earlier hidden/clip overrides */
+}
+
+/* Keep the green line on one line on phones, but allow it to size naturally. */
+@media (max-width: 900px) {
+  .delta-big .row-eq { white-space: nowrap; }
+}
+
+/* 5) Search table: allow horizontal scroll on mobile instead of clipping. */
+.table-wrap {
+  overflow-x: auto !important;    /* was 'clip' in one of the later blocks */
+  -webkit-overflow-scrolling: touch;
+}
+
+/* 6) Belt-and-suspenders: common scrollers shouldn’t force the page wider. */
+.tile-carousel, .tile-belt { min-width: 0 !important; }
+
+/* Optional tiny nudge if you still see a 1–2px gutter with iOS safe area. */
+@supports (padding: env(safe-area-inset-right)) {
+  body { padding-right: max(0px, env(safe-area-inset-right) - 1px); }
+}
