@@ -1277,49 +1277,49 @@ function buildTable() {
   // On mobile, combine Link + Video into one stacked "Links" column.
   const useStackedLinks = isMobile;
 
-  const cols = useStackedLinks
-    ? [
-        { key:'CategoryUI',    label:'Category',      mobileLabel:'Cat' },
-        { key:'SubcategoryUI', label:'Subcategory',   mobileLabel:'Subcat' },
-        { key:'TrackUI',       label:'Track/Stadium', mobileLabel:'Track' },
-        { key:'Rider',         label:'Rider',         mobileLabel:'Rider' },
-        { key:'Machine',       label:'Machine',       mobileLabel:'Machine' },
-        { key:'Player',        label:'Player',        mobileLabel:'Player' },
-        { key:'TimeOrScore',   label:'Time/Score',    mobileLabel:'Time', sortKey:'TimeSec' },
-        { key:'Place',         label:'Place',         mobileLabel:'Place' },
-        { key:'Links',         label:'Links',         mobileLabel:'Links' },   // combined column
-      ]
-    : [
-        { key:'CategoryUI',    label:'Category',      mobileLabel:'Cat' },
-        { key:'SubcategoryUI', label:'Subcategory',   mobileLabel:'Subcat' },
-        { key:'TrackUI',       label:'Track/Stadium', mobileLabel:'Track' },
-        { key:'Rider',         label:'Rider',         mobileLabel:'Rider' },
-        { key:'Machine',       label:'Machine',       mobileLabel:'Machine' },
-        { key:'Player',        label:'Player',        mobileLabel:'Player' },
-        { key:'TimeOrScore',   label:'Time/Score',    mobileLabel:'Time', sortKey:'TimeSec' },
-        { key:'Place',         label:'Place',         mobileLabel:'Place' },
-        { key:'Link',          label:'Link',          mobileLabel:'Link' },
-        { key:'Video',         label:'Video',         mobileLabel:'Video' },
-      ];
+
+const cols = useStackedLinks
+  ? [
+      { key:'CategoryUI',    label:'Category',      mobileLabel:'Cat' },
+      { key:'SubcategoryUI', label:'Subcategory',   mobileLabel:'Subcat' },
+      { key:'TrackUI',       label:'Track/Stadium', mobileLabel:'Track' },
+      { key:'RM',            label:'Rider / Machine', mobileLabel:'R/M' },
+      { key:'Player',        label:'Player',        mobileLabel:'Player' },
+      { key:'TimeOrScore',   label:'Time/Score',    mobileLabel:'Time', sortKey:'TimeSec' },
+      { key:'Place',         label:'Place',         mobileLabel:'Place' },
+      { key:'Links',         label:'Links',         mobileLabel:'Links' },
+    ]
+  : [
+      { key:'CategoryUI',    label:'Category',      mobileLabel:'Cat' },
+      { key:'SubcategoryUI', label:'Subcategory',   mobileLabel:'Subcat' },
+      { key:'TrackUI',       label:'Track/Stadium', mobileLabel:'Track' },
+      { key:'RM',            label:'Rider / Machine', mobileLabel:'R/M' },
+      { key:'Player',        label:'Player',        mobileLabel:'Player' },
+      { key:'TimeOrScore',   label:'Time/Score',    mobileLabel:'Time', sortKey:'TimeSec' },
+      { key:'Place',         label:'Place',         mobileLabel:'Place' },
+      { key:'Link',          label:'Link',          mobileLabel:'Link' },
+      { key:'Video',         label:'Video',         mobileLabel:'Video' },
+    ];
+
 
   // ===== Build header (ONCE) =====
   cols.forEach((c) => {
     const attrs = { onclick: () => sortBy(c.key) };
 
-    // Per-column class on the <th>
-    const thClassByKey = {
-      CategoryUI:    'col--cat',
-      SubcategoryUI: 'col--subcat',
-      TrackUI:       'col--track',
-      Rider:         'col--rider',
-      Machine:       'col--machine',
-      Player:        'col--player',
-      TimeOrScore:   'col--time',
-      Place:         'col--place',
-      Link:          'col--link',
-      Video:         'col--video',
-      Links:         'col--links',    // <-- add this line for the combined header on mobile
-    };
+
+const thClassByKey = {
+  CategoryUI:    'col--cat',
+  SubcategoryUI: 'col--subcat',
+  TrackUI:       'col--track',
+  RM:            'col--rm',      // NEW stacked column
+  Player:        'col--player',
+  TimeOrScore:   'col--time',
+  Place:         'col--place',
+  Link:          'col--link',
+  Video:         'col--video',
+  Links:         'col--links',
+};
+
     const thClass = thClassByKey[c.key];
     if (thClass) attrs.class = thClass;
 
@@ -1378,6 +1378,24 @@ function buildTable() {
     return String(ax).localeCompare(String(bx), undefined, { numeric: true, sensitivity: 'base' }) * dir;
   });
 
+// Build a single cell with Rider on top and Machine below (each = icon + text)
+function rmCellHtml(r) {
+  const riderHtml   = iconCellHtml(r.Rider, 'Rider');
+  const machineHtml = iconCellHtml(r.Machine, 'Machine');
+
+  // If Machine is missing (e.g., some modes), render just Rider
+  if (!r.Machine) {
+    return `
+      <div class="rm rm--rider has-icon">${riderHtml}</div>
+    `;
+  }
+
+  return `
+    <div class="rm rm--rider has-icon">${riderHtml}</div>
+    <div class="rm rm--machine has-icon" style="margin-top:4px">${machineHtml}</div>
+  `;
+}
+
   // Helper: return HTML that shows an icon + keeps text in DOM (for accessibility)
   function iconCellHtml(label, which /* 'Rider' | 'Machine' */) {
     const name = String(label || '').trim();
@@ -1398,22 +1416,30 @@ function buildTable() {
   }
 
   // Column class map used for <td> on this device mode
-  const tdClassByIndex = useStackedLinks
-    ? [
-        'col--cat',     // 0
-        'col--subcat',  // 1
-        'col--track',   // 2
-        'col--rider',   // 3
-        'col--machine', // 4
-        'col--player',  // 5
-        'col--time',    // 6
-        'col--place',   // 7
-        'col--links',   // 8
-      ]
-    : [
-        'col--cat', 'col--subcat', 'col--track', 'col--rider', 'col--machine',
-        'col--player', 'col--time', 'col--place', 'col--link', 'col--video'
-      ];
+
+const tdClassByIndex = useStackedLinks
+  ? [
+      'col--cat',     // 0
+      'col--subcat',  // 1
+      'col--track',   // 2
+      'col--rm',      // 3  (stacked Rider/Machine)
+      'col--player',  // 4
+      'col--time',    // 5
+      'col--place',   // 6
+      'col--links',   // 7
+    ]
+  : [
+      'col--cat',     // 0
+      'col--subcat',  // 1
+      'col--track',   // 2
+      'col--rm',      // 3
+      'col--player',  // 4
+      'col--time',    // 5
+      'col--place',   // 6
+      'col--link',    // 7
+      'col--video'    // 8
+    ];
+
 
   // ===== Render body rows =====
   rows.forEach(r => {
@@ -1429,45 +1455,42 @@ function buildTable() {
     const linkHtml  = (r.Link  ? `<a href="${r.Link}"  target="_blank" rel="noopener">Link</a>`  : '');
     const videoHtml = (r.Video ? `<a href="${r.Video}" target="_blank" rel="noopener">Video</a>` : '');
 
-    // Cells in display order (mobile stacks Links)
-    const cells = useStackedLinks
-      ? [
-          (() => {
-            const href = categoryHref(r.CategoryUI);
-            return href ? `<a href="${href}" target="_self">${r.CategoryUI}</a>` : (r.CategoryUI || '');
-          })(),
-          r.SubcategoryUI || '',
-          r.TrackUI || '',
-          iconCellHtml(r.Rider, 'Rider'),
-          iconCellHtml(r.Machine, 'Machine'),
-          r.Player || '',
-          timeOrScore,
-          (r.Place != null ? (isMobile ? String(r.Place) : ordinal(Number(r.Place))) : ''),
-          (linkHtml || videoHtml ? `<div class="links-vert">${linkHtml}${videoHtml ? `<br>${videoHtml}` : ''}</div>` : ''),
-        ]
-      : [
-          (() => {
-            const href = categoryHref(r.CategoryUI);
-            return href ? `<a href="${href}" target="_self">${r.CategoryUI}</a>` : (r.CategoryUI || '');
-          })(),
-          r.SubcategoryUI || '',
-          r.TrackUI || '',
-          iconCellHtml(r.Rider, 'Rider'),
-          iconCellHtml(r.Machine, 'Machine'),
-          r.Player || '',
-          timeOrScore,
-          (r.Place != null ? (isMobile ? String(r.Place) : ordinal(Number(r.Place))) : ''),
-          linkHtml,
-          videoHtml,
-        ];
+  
+const cells = useStackedLinks
+  ? [
+      (() => {
+        const href = categoryHref(r.CategoryUI);
+        return href ? `<a href="${href}" target="_self">${r.CategoryUI}</a>` : (r.CategoryUI || '');
+      })(),
+      r.SubcategoryUI || '',
+      r.TrackUI || '',
+      rmCellHtml(r),                     // <-- stacked RM cell
+      r.Player || '',
+      timeOrScore,
+      (r.Place != null ? (isMobile ? String(r.Place) : ordinal(Number(r.Place))) : ''),
+      (linkHtml || videoHtml ? `<div class="links-vert">${linkHtml}${videoHtml ? `<br>${videoHtml}` : ''}</div>` : ''),
+    ]
+  : [
+      (() => {
+        const href = categoryHref(r.CategoryUI);
+        return href ? `<a href="${href}" target="_self">${r.CategoryUI}</a>` : (r.CategoryUI || '');
+      })(),
+      r.SubcategoryUI || '',
+      r.TrackUI || '',
+      rmCellHtml(r),                     // <-- stacked RM cell
+      r.Player || '',
+      timeOrScore,
+      (r.Place != null ? (isMobile ? String(r.Place) : ordinal(Number(r.Place))) : ''),
+      linkHtml,
+      videoHtml,
+    ];
+
 
     // Append <td>s with classes
     cells.forEach((html, i) => {
       const td = h('td', { html });
       td.classList.add(tdClassByIndex[i]);
       // icon helpers (same indexes in both modes)
-      if (i === 3) td.classList.add('has-icon', 'cell--rider');
-      if (i === 4) td.classList.add('has-icon', 'cell--machine');
       tr.appendChild(td);
     });
 

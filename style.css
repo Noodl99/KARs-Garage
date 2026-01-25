@@ -697,40 +697,91 @@ body.page-about .site-nav a.active {
 .sort-ind { margin-left:6px; opacity:.85; }
 .info-muted { color:#777; font-size:12px; }
 
-/* ===== Search table (table--search) — icon cells + mobile behavior ===== */
 
-/* Default (desktop): show text, keep icons hidden */
-.table--search td.cell--machine .cell-icon,
-.table--search td.cell--rider  .cell-icon{
-  display: none;
+/* === Rider/Machine STACKED COLUMN (Search table) ===================== */
+
+.table--search th.col--rm {
+  text-align: center;
+  width: 60px;
+  max-width: 70px;
+}
+.table--search td.col--rm { padding: 4px 6px; }
+
+/* Two small stacked rows: Rider on top, Machine below */
+.table--search td.col--rm .rm {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  line-height: 1.2;
+}
+.table--search td.col--rm .rm + .rm { margin-top: 4px; }
+
+.table--search td.col--rm .cell-icon img {
+  width: 20px; height: 20px; object-fit: contain; border-radius: 4px;
 }
 
-/* Icon images in table cells */
-.table--search td.cell--machine .cell-icon img,
-.table--search td.cell--rider  .cell-icon img{
-  width: 20px; height: 20px; display: block; object-fit: contain;
-  border-radius: 4px;
-}
-
-/* Mobile + mid widths: switch Rider/Machine to icon view, hide text but keep accessible */
+/* <=1440px: icon-only (hide text visually), keep column tight */
 @media (max-width: 1440px){
-  .table--search td.cell--machine .cell-icon,
-  .table--search td.cell--rider  .cell-icon{
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
+  .table--search td.col--rm .cell-text{
+    position: absolute;
+    width: 1px; height: 1px; margin: -1px;
+    overflow: hidden; clip: rect(0,0,0,0); clip-path: inset(50%);
+    white-space: nowrap; border: 0;
   }
-  .table--search td.cell--machine .cell-text,
-  .table--search td.cell--rider  .cell-text{
+  .table--search th.col--rm,
+  .table--search td.col--rm{
+    width: 44px !important;
+    max-width: 56px !important;
+    text-align: center !important;
+  }
+  .table--search td.col--rm .cell-icon img{ width: 18px; height: 18px; }
+}
+
+/* Phones: trim a bit more to donate width to Cat/Subcat/Track */
+@media (max-width: 900px){
+  .table--search th.col--rm,
+  .table--search td.col--rm{
+    width: 36px !important;
+    max-width: 46px !important;
+    padding-left: 4px !important;
+    padding-right: 4px !important;
+  }
+  .table--search td.col--rm .cell-icon img{ width: 17px; height: 17px; }
+}
+
+/* (Keep these: IL/RT tables icon behavior – separate tables, still valid) */
+@media (max-width:1440px){
+  .table--il td.cell--machine.has-icon .cell-icon,
+  .table--il td.cell--rider.has-icon  .cell-icon{
+    display: inline-flex;
+  }
+  .table--il td.cell--machine.has-icon .cell-text,
+  .table--il td.cell--rider.has-icon  .cell-text{
     position: absolute;
     width: 1px; height: 1px; padding: 0; margin: -1px;
     overflow: hidden; clip: rect(0,0,0,0); clip-path: inset(50%);
     white-space: nowrap; border: 0;
   }
-
-  /* Narrower fixed widths for the two icon columns */
-  .table--search th:nth-child(4), .table--search td:nth-child(4), /* Rider col */
-  .table--search th:nth-child(5), .table--search td:nth-child(5){ /* Machine col */
+  .table--il th:nth-child(3), .table--il td:nth-child(3),
+  .table--il th:nth-child(4), .table--il td:nth-child(4){
+    width: 44px !important;
+    max-width: 56px !important;
+    text-align: center;
+  }
+}
+@media (max-width:1440px){
+  .table--rt td.cell--rider.has-icon .cell-icon{
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .table--rt td.cell--rider.has-icon .cell-text{
+    position: absolute;
+    width: 1px; height: 1px; padding: 0; margin: -1px;
+    overflow: hidden; clip: rect(0,0,0,0); clip-path: inset(50%);
+    white-space: nowrap; border: 0;
+  }
+  .table--rt th:nth-child(3), .table--rt td:nth-child(3){
     width: 44px !important;
     max-width: 56px !important;
     text-align: center;
@@ -745,41 +796,7 @@ body.page-about .site-nav a.active {
     max-width: 100vw;
   }
 
-  /* Make Player breathe on mobile: allow more width */
-  .table--search th:nth-child(6),
-  .table--search td:nth-child(6){
-    max-width: none;
-    width: auto;              /* expands if space is available */
-    white-space: normal !important;
-  }
-
-  /* MASSIVELY narrow Place (col 8) — 2–3 characters wide */
-  .table--search th:nth-child(8),
-  .table--search td:nth-child(8){
-    width: 3ch !important;    /* try 2ch or 4ch if you prefer */
-    max-width: 3ch !important;
-    text-align: center;
-    white-space: nowrap !important;
-    overflow: hidden;
-    text-overflow: clip;
-  }
-
-  /* Tighten Link (col 9) even more; keep Video as-is or slightly narrow */
-  .table--search th:nth-child(9),
-  .table--search td:nth-child(9){
-    width: 5ch !important;    /* was 6ch–15ch; make it tighter on phones */
-    max-width: 10ch !important;
-  }
-
-  /* Optional: Time column stays single-line, compact */
-  .table--search th:nth-child(7),
-  .table--search td:nth-child(7){
-    white-space: nowrap !important;
-    overflow: hidden;
-    text-overflow: clip;
-    max-width: 12ch;          /* small guard; adjust if needed */
-  }
-  .table--search th, .table--search td{
+   .table--search th, .table--search td{
     white-space: normal !important;
     overflow-wrap: anywhere;
     word-break: normal;
