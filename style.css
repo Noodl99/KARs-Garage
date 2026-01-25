@@ -2517,6 +2517,67 @@ html, body {
   }
 }
 
+/* ===========================================================
+   Mobile fit: prioritize full Time, wrap Player + Cat/Subcat/Track
+   =========================================================== */
+@media (max-width: 900px) {
+
+  /* --- TIME: keep pristine (single line, no clipping) --- */
+  .table--search th.col--time,
+  .table--search td.col--time {
+    white-space: nowrap !important;
+    overflow: visible !important;
+    text-overflow: clip !important;
+    /* Make sure Time has enough room for 00:00:00.000 */
+    min-width: 12.5ch !important;   /* ~length of hh:mm:ss.mmm */
+    letter-spacing: 0 !important;
+  }
+
+  /* --- PLAYER: allow wrapping (no ellipsis) --- */
+  .table--search th.col--player,
+  .table--search td.col--player {
+    white-space: normal !important;     /* wrap onto multiple lines */
+    overflow: visible !important;       /* show full content */
+    text-overflow: clip !important;     /* no ... */
+    /* Start fairly narrow; wrapping will handle long names */
+    width: 10.5ch !important;
+    min-width: 9ch !important;
+    line-height: 1.25;
+  }
+
+  /* --- CAT / SUBCAT / TRACK: get narrower and wrap freely --- */
+  .table--search th.col--cat,
+  .table--search td.col--cat,
+  .table--search th.col--subcat,
+  .table--search td.col--subcat,
+  .table--search th.col--track,
+  .table--search td.col--track {
+    width: auto !important;       /* let them shrink */
+    min-width: 0 !important;
+    white-space: normal !important;        /* allow wrapping */
+    overflow: hidden;                       /* safety */
+    text-overflow: clip !important;         /* no ... */
+    word-break: normal;                     /* keep whole words when possible */
+    overflow-wrap: anywhere;                /* break long words if necessary */
+    line-height: 1.25;
+  }
+
+  /* Nudge these three a little narrower to buy space for Time */
+  .table--search th.col--cat,    .table--search td.col--cat    { max-width: 12ch !important; }
+  .table--search th.col--subcat, .table--search td.col--subcat { max-width: 10ch !important; }
+  .table--search th.col--track,  .table--search td.col--track  { max-width: 12ch !important; }
+
+  /* --- LINKS column (stacked Link + Video) stays compact --- */
+  .table--search th.col--links,
+  .table--search td.col--links {
+    width: 6ch !important;
+    min-width: 5.8ch !important;
+  }
+  .table--search td.col--links .links-vert {
+    line-height: 1.2;
+  }
+  .table--search td.col--links .links-vert a {
+
 @supports (height: 1svh) {
   @media (max-width:900px){
     .hero{
