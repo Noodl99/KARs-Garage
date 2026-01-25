@@ -2292,6 +2292,89 @@ html, body {
   overflow-x: hidden;
 }
 
+/* --- Fit hero delta blocks on small phones --- */
+@media (max-width: 430px) {
+  /* Nudge the whole delta card in a bit */
+  .delta-big {
+    padding-left: 8px;
+    padding-right: 8px;
+  }
+  /* Top row: reduce side gap a hair */
+  .delta-big .row-top { gap: 6px !important; }
+
+  /* Black times */
+  .delta-big .num {
+    font-size: clamp(20px, 6.2vw, 30px);   /* was ~22–34px in earlier overrides */
+    line-height: 1.05;
+  }
+
+  /* The green delta row: keep on one line, make it smaller */
+  .delta-big .row-eq { gap: 8px; white-space: nowrap; }
+  .delta-big .row-eq .eq,
+  .delta-big .num.num--highlight {
+    font-size: clamp(22px, 6.8vw, 34px);   /* down from ~26–40+ */
+  }
+}
+
+/* Ultra-narrow phones (≤ 380px): one step tighter */
+@media (max-width: 380px) {
+  .delta-big { padding-left: 6px; padding-right: 6px; }
+  .delta-big .num         { font-size: clamp(18px, 5.6vw, 28px); }
+  .delta-big .row-eq .eq,
+  .delta-big .num.num--highlight { font-size: clamp(20px, 6.2vw, 32px); }
+}
+
+/* --- Fit the search table fully within the viewport on mobile --- */
+@media (max-width: 430px) {
+  /* Trim table cell padding a bit on very small devices */
+  .table--search th, .table--search td {
+    padding-left: 6px !important;
+    padding-right: 6px !important;
+  }
+
+  /* Player: shave a tiny bit */
+  .table--search th.col--player,
+  .table--search td.col--player {
+    width: 15.5ch !important;
+    min-width: 11.5ch !important;
+  }
+
+  /* Cat/Subcat: allow a touch more flexibility (prevents overflow) */
+  .table--search th.col--cat,    .table--search td.col--cat    { min-width: 12.5ch !important; }
+  .table--search th.col--subcat, .table--search td.col--subcat { min-width: 9.5ch  !important; }
+
+  /* Link & Video: one more squeeze */
+  .table--search th.col--link,  .table--search td.col--link,
+  .table--search th.col--video, .table--search td.col--video {
+    width: 3.8ch !important;
+    min-width: 3.5ch !important;
+    padding-left: 5px !important;
+    padding-right: 5px !important;
+  }
+
+  /* Place: the smallest column */
+  .table--search th.col--place,
+  .table--search td.col--place {
+    width: 3ch !important;
+    min-width: 3ch !important;
+    padding-left: 4px !important;
+    padding-right: 4px !important;
+  }
+}
+
+/* Ultra-narrow (≤ 380px): final nudge if needed */
+@media (max-width: 380px) {
+  .table--search th.col--player, .table--search td.col--player { width: 15ch !important; min-width: 11ch !important; }
+  .table--search th.col--link,   .table--search td.col--link,
+  .table--search th.col--video,  .table--search td.col--video  { width: 3.6ch !important; min-width: 3.4ch !important; }
+}
+
+/* Force "Track" label on mobile for the Track column header */
+@media (max-width: 900px){
+  .table--search thead th.col--track .th-label--full   { display: none !important; }   /* hides "Track/Stadium" */
+  .table--search thead th.col--track .th-label--mobile { display: inline !important; } /* shows "Track" */
+}
+
 @supports (height: 1svh) {
   @media (max-width:900px){
     .hero{
