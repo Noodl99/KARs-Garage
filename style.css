@@ -2898,3 +2898,51 @@ html, body {
 @supports (padding: env(safe-area-inset-right)) {
   body { padding-right: max(0px, env(safe-area-inset-right) - 1px); }
 }
+
+/* ============================================================
+   BUGFIX 1: Extras page horizontal expansion (Android Chrome)
+   Cause: a wide element inside .catex-body or .table-wrap forces
+          a fractional-pixel overflow during scroll.
+   Fix: force shrinkability + isolate the renderer.
+   ============================================================ */
+
+.catex-body,
+.catex-table,
+.catex-rules,
+.table-card.wide,
+.table-wrap,
+.tables-grid {
+  max-width: 100% !important;
+  overflow-x: hidden;
+  min-width: 0 !important;
+  contain: content;   /* prevents the scroll-triggered expansion */
+}
+
+/* ------------------------------------------------------------
+   BUGFIX 2: About page feature bullets clipped on the left
+   Cause: a mobile rule earlier removed padding on UL/LI inside
+          .about-wrap and .roadmap.
+   Fix: restore normal list padding.
+   ------------------------------------------------------------ */
+
+.page-about ul,
+.page-about li {
+  padding-left: revert !important;
+  margin-left: revert !important;
+  list-style-position: outside !important;
+}
+
+/* Slight extra safety for bullet indent on very narrow phones */
+@media (max-width: 480px) {
+  .page-about ul {
+    padding-left: 1.2rem !important;
+  }
+}
+
+@supports (height: 1svh) {
+  @media (max-width:900px){
+    .hero{
+      min-height: 15svh; /* more reliable than vh on mobile */
+    }
+  }
+}
