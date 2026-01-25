@@ -2755,6 +2755,10 @@ body * {
   max-width: 100vw;
 }
 
+@supports (width: 100svw) {
+  body * { max-width: 100svw; }
+}
+
 .delta-big .row-top,
 .delta-big .row-eq {
   overflow-x: hidden;
@@ -2764,6 +2768,37 @@ body * {
   max-width: 100vw !important;
   overflow-x: auto;
   -webkit-overflow-scrolling: touch;
+}
+
+/* === iPhone full-bleed fixes (keep existing rules; these override them) === */
+@supports (width: 100svw) {
+  /* Use 'svw' (small viewport width) instead of 'vw' so Safari doesn't include
+     transient UI or odd gutters that make the element a few px too wide. */
+  .hero--home,
+  .accent--fullbleed {
+    width: 100svw;
+    margin-left:  calc((100svw - 100%) / -2);
+    margin-right: calc((100svw - 100%) / -2);
+  }
+}
+
+/* Grid children must be allowed to shrink or long text can push the grid wider */
+.hero-left, .hero-right { min-width: 0; }
+
+/* The headline rows sometimes grow by sub-pixels on iOS. Clip at the row level. */
+.delta-big, .delta-big .row-top, .delta-big .row-eq {
+  overflow-x: clip; /* supported in modern Safari; falls back to hidden-like behavior */
+}
+
+/* Top nav: never exceed the visual viewport width even with safe area and gaps */
+.site-nav {
+  max-width: 100svw;          /* override the 100vw-ish width in Safari */
+  overscroll-behavior-x: contain;
+}
+
+/* Keep the overall page from ever painting wider than the visual viewport */
+.container, #dash-hero, .dashboard, .hero-grid, .table-wrap {
+  max-width: 100svw;
 }
 
 @supports (height: 1svh) {
