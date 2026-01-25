@@ -2481,173 +2481,61 @@ html, body {
   .table--search td.col--links .links-vert {
     line-height: 1.25;
   }
-  .table--search td.col--links .links-vert a {
-    display: block;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-  }
 
-  /* Make Player a bit narrower now that we freed a column */
-  .table--search th.col--player,
-  .table--search td.col--player {
-    width: 12.5ch !important;
-    min-width: 10ch !important;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-  }
-
-  /* Track header stays centered */
-  .table--search thead th.col--track {
-    text-align: center !important;
-  }
-  .table--search thead th.col--track .th-label--mobile,
-  .table--search thead th.col--track .th-label--full {
-    display: block !important;
-    width: 100% !important;
-    text-align: center !important;
-  }
-}
-
-/* Ultra-narrow safeguard (e.g., 360px devices) */
-@media (max-width: 380px) {
-  .table--search th.col--player, .table--search td.col--player {
-    width: 12ch !important;  /* one more notch if needed */
-  }
-}
-
-/* ===========================================================
-   Mobile fit: prioritize full Time, wrap Player + Cat/Subcat/Track
-   =========================================================== */
+/* ===== FINAL MOBILE ROW BEHAVIOR (≤900px) ===== */
 @media (max-width: 900px) {
 
-  /* --- TIME: keep pristine (single line, no clipping) --- */
-  .table--search th.col--time,
-  .table--search td.col--time {
-    white-space: nowrap !important;
-    overflow: visible !important;
-    text-overflow: clip !important;
-    /* Make sure Time has enough room for 00:00:00.000 */
-    min-width: 12.5ch !important;   /* ~length of hh:mm:ss.mmm */
-    letter-spacing: 0 !important;
-  }
-
-  /* --- PLAYER: allow wrapping (no ellipsis) --- */
-  .table--search th.col--player,
-  .table--search td.col--player {
-    white-space: normal !important;     /* wrap onto multiple lines */
-    overflow: visible !important;       /* show full content */
-    text-overflow: clip !important;     /* no ... */
-    /* Start fairly narrow; wrapping will handle long names */
-    width: 10.5ch !important;
-    min-width: 9ch !important;
-    line-height: 1.25;
-  }
-
-  /* --- CAT / SUBCAT / TRACK: get narrower and wrap freely --- */
-  .table--search th.col--cat,
-  .table--search td.col--cat,
-  .table--search th.col--subcat,
-  .table--search td.col--subcat,
-  .table--search th.col--track,
-  .table--search td.col--track {
-    width: auto !important;       /* let them shrink */
-    min-width: 0 !important;
-    white-space: normal !important;        /* allow wrapping */
-    overflow: hidden;                       /* safety */
-    text-overflow: clip !important;         /* no ... */
-    word-break: normal;                     /* keep whole words when possible */
-    overflow-wrap: anywhere;                /* break long words if necessary */
-    line-height: 1.25;
-  }
-
-  /* Nudge these three a little narrower to buy space for Time */
-  .table--search th.col--cat,    .table--search td.col--cat    { max-width: 12ch !important; }
-  .table--search th.col--subcat, .table--search td.col--subcat { max-width: 10ch !important; }
-  .table--search th.col--track,  .table--search td.col--track  { max-width: 12ch !important; }
-
-  /* --- LINKS column (stacked Link + Video) stays compact --- */
-  .table--search th.col--links,
-  .table--search td.col--links {
-    width: 6ch !important;
-    min-width: 5.8ch !important;
-  }
-  .table--search td.col--links .links-vert {
-    line-height: 1.2;
-  }
-  .table--search td.col--links .links-vert a {
-
-/* ====== FIX a broken block above: close the .links-vert rule + media ====== */
-@media (max-width: 900px) {
-  .table--search td.col--links .links-vert a {
-    display: block;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    line-height: 1.2;
-  }
-} /* <-- closes the @media if it was left open earlier */
-
-
-/* ====== FINAL MOBILE LAYOUT (≤900px): stretch row; protect Time; wrap Player & Cat/Subcat/Track ====== */
-@media (max-width: 900px) {
-
-  /* Let the table APPORTION leftover width across columns (not fixed) */
+  /* 1) Let the browser redistribute width (not fixed). */
   .table--search {
-    table-layout: auto !important;   /* beats earlier 'fixed' rules */
+    table-layout: auto !important;   /* beats any earlier 'fixed' */
     width: 100% !important;
     max-width: 100vw !important;
   }
 
-  /* Keep the wrapper from creating a horizontal scrollbar */
-  .table-wrap {
-    overflow-x: clip !important;
-  }
+  .table-wrap { overflow-x: clip !important; }  /* no horizontal scroll */
 
-  /* TIME: single line, never clipped */
+  /* 2) Time: one line, never clipped. */
   .table--search th.col--time,
   .table--search td.col--time {
     white-space: nowrap !important;
     overflow: visible !important;
     text-overflow: clip !important;
-    min-width: 12.6ch !important;     /* room for 00:00:00.000 */
+    min-width: 12.6ch !important;    /* room for 00:00:00.000 */
     font-variant-numeric: tabular-nums;
     font-feature-settings: "tnum" 1, "lnum" 1;
     letter-spacing: 0;
   }
 
-  /* PLAYER: wrap (no ellipsis), so full names are readable */
+  /* 3) Player: wrap full name (no ellipsis). */
   .table--search th.col--player,
   .table--search td.col--player {
-    white-space: normal !important;   /* wrap across lines */
+    white-space: normal !important;   /* allow multi-line */
     overflow: visible !important;
-    text-overflow: clip !important;   /* no … */
-    width: auto !important;           /* allow it to expand when there IS room */
-    min-width: 9ch !important;        /* but still able to get narrow */
+    text-overflow: clip !important;   /* remove … */
+    width: auto !important;           /* can grow when space exists */
+    min-width: 9ch !important;        /* but can get fairly narrow */
     line-height: 1.25;
   }
 
-  /* CAT / SUBCAT / TRACK: make them narrow and WRAPPABLE to free room for Time */
+  /* 4) Cat / Subcat / Track: get narrow and wrap to free width for Time. */
   .table--search th.col--cat,    .table--search td.col--cat,
   .table--search th.col--subcat, .table--search td.col--subcat,
   .table--search th.col--track,  .table--search td.col--track {
-    white-space: normal !important;  /* allow wraps */
+    white-space: normal !important;  /* wrap */
     overflow: hidden;
     text-overflow: clip !important;
     width: auto !important;
     min-width: 0 !important;
     line-height: 1.25;
   }
-  /* cap their widths so they actually get narrow */
   .table--search th.col--cat,    .table--search td.col--cat    { max-width: 11.5ch !important; }
-  .table--search th.col--subcat, .table--search td.col--subcat { max-width: 9.5ch  !important; }
+  .table--search th.col--subcat, .table--search td.col--subcat { max-width:  9.5ch !important; }
   .table--search th.col--track,  .table--search td.col--track  { max-width: 11.5ch !important; }
 
-  /* ICON columns: keep tight */
+  /* 5) Small/tight columns stay tiny. */
   .table--search th.col--rider,   .table--search td.col--rider,
   .table--search th.col--machine, .table--search td.col--machine {
-    width: 36px !important;
+    width: 36px !important;         /* icon columns */
     max-width: 46px !important;
     text-align: center !important;
     padding-left: 4px !important;
@@ -2656,13 +2544,11 @@ html, body {
   .table--search td.cell--machine .cell-icon img,
   .table--search td.cell--rider  .cell-icon img { width: 18px; height: 18px; }
 
-  /* LINKS (stacked Link + Video) stays compact */
   .table--search th.col--links, .table--search td.col--links {
     width: 6ch !important;
     min-width: 5.8ch !important;
   }
 
-  /* PLACE: tiny and centered */
   .table--search th.col--place, .table--search td.col--place {
     width: 3ch !important;
     min-width: 3ch !important;
@@ -2670,7 +2556,7 @@ html, body {
     white-space: nowrap !important;
   }
 
-  /* Track header stays centered */
+  /* Keep “Track” header centered. */
   .table--search thead th.col--track {
     text-align: center !important;
   }
@@ -2682,9 +2568,9 @@ html, body {
   }
 }
 
-/* Ultra‑narrow phones safeguard (≤380px): small nudges only */
+/* Ultra‑narrow phones (≤380px): tiny nudges only if you still see squeeze. */
 @media (max-width: 380px) {
-  .table--search th.col--time, .table--search td.col--time { min-width: 12.8ch !important; } /* tiny bump for tight fonts */
+  .table--search th.col--time, .table--search td.col--time { min-width: 12.8ch !important; }
   .table--search th.col--links, .table--search td.col--links { width: 5.6ch !important; min-width: 5.4ch !important; }
 }
 
