@@ -1274,51 +1274,53 @@ function buildTable() {
     return null;
   }
 
-  // On mobile, combine Link + Video into one stacked "Links" column.
-  const useStackedLinks = isMobile;
-
-
+// On mobile, keep stacked Rider/Machine and stack Links; on desktop split Rider and Machine.
+const useStackedLinks = isMobile;
 const cols = useStackedLinks
   ? [
-      { key:'CategoryUI',    label:'Category',      mobileLabel:'Cat' },
-      { key:'SubcategoryUI', label:'Subcategory',   mobileLabel:'Subcat' },
-      { key:'TrackUI',       label:'Track/Stadium', mobileLabel:'Track' },
-      { key:'RM',            label:'Rider / Machine', mobileLabel:'R/M' },
-      { key:'Player',        label:'Player',        mobileLabel:'Player' },
-      { key:'TimeOrScore',   label:'Time/Score',    mobileLabel:'Time', sortKey:'TimeSec' },
-      { key:'Place',         label:'Place',         mobileLabel:'Place' },
-      { key:'Links',         label:'Links',         mobileLabel:'Links' },
+      { key:'CategoryUI',   label:'Category',     mobileLabel:'Cat'   },
+      { key:'SubcategoryUI',label:'Subcategory',  mobileLabel:'Subcat'},
+      { key:'TrackUI',      label:'Track/Stadium',mobileLabel:'Track' },
+      { key:'RM',           label:'Rider / Machine', mobileLabel:'R/M' },
+      { key:'Player',       label:'Player',       mobileLabel:'Player'},
+      { key:'TimeOrScore',  label:'Time/Score',   mobileLabel:'Time', sortKey:'TimeSec' },
+      { key:'Place',        label:'Place',        mobileLabel:'Place' },
+      { key:'Links',        label:'Links',        mobileLabel:'Links' },
     ]
   : [
-      { key:'CategoryUI',    label:'Category',      mobileLabel:'Cat' },
-      { key:'SubcategoryUI', label:'Subcategory',   mobileLabel:'Subcat' },
-      { key:'TrackUI',       label:'Track/Stadium', mobileLabel:'Track' },
-      { key:'RM',            label:'Rider / Machine', mobileLabel:'R/M' },
-      { key:'Player',        label:'Player',        mobileLabel:'Player' },
-      { key:'TimeOrScore',   label:'Time/Score',    mobileLabel:'Time', sortKey:'TimeSec' },
-      { key:'Place',         label:'Place',         mobileLabel:'Place' },
-      { key:'Link',          label:'Link',          mobileLabel:'Link' },
-      { key:'Video',         label:'Video',         mobileLabel:'Video' },
+      { key:'CategoryUI',   label:'Category',     mobileLabel:'Cat'   },
+      { key:'SubcategoryUI',label:'Subcategory',  mobileLabel:'Subcat'},
+      { key:'TrackUI',      label:'Track/Stadium',mobileLabel:'Track' },
+      // Desktop: separate Rider and Machine columns (text-only)
+      { key:'Rider',        label:'Rider',        mobileLabel:'Rider' },
+      { key:'Machine',      label:'Machine',      mobileLabel:'Machine'},
+      { key:'Player',       label:'Player',       mobileLabel:'Player'},
+      { key:'TimeOrScore',  label:'Time/Score',   mobileLabel:'Time', sortKey:'TimeSec' },
+      { key:'Place',        label:'Place',        mobileLabel:'Place' },
+      { key:'Link',         label:'Link',         mobileLabel:'Link'  },
+      { key:'Video',        label:'Video',        mobileLabel:'Video' },
     ];
 
+const thClassByKey = {
+  CategoryUI:  'col--cat',
+  SubcategoryUI:'col--subcat',
+  TrackUI:     'col--track',
+  // Mobile-only stacked column:
+  RM:          'col--rm',
+  // Desktop-only split columns:
+  Rider:       'col--rider',
+  Machine:     'col--machine',
+  Player:      'col--player',
+  TimeOrScore: 'col--time',
+  Place:       'col--place',
+  Link:        'col--link',
+  Video:       'col--video',
+  Links:       'col--links',
+};
 
   // ===== Build header (ONCE) =====
   cols.forEach((c) => {
     const attrs = { onclick: () => sortBy(c.key) };
-
-
-const thClassByKey = {
-  CategoryUI:    'col--cat',
-  SubcategoryUI: 'col--subcat',
-  TrackUI:       'col--track',
-  RM:            'col--rm',      // NEW stacked column
-  Player:        'col--player',
-  TimeOrScore:   'col--time',
-  Place:         'col--place',
-  Link:          'col--link',
-  Video:         'col--video',
-  Links:         'col--links',
-};
 
     const thClass = thClassByKey[c.key];
     if (thClass) attrs.class = thClass;
@@ -1432,12 +1434,13 @@ const tdClassByIndex = useStackedLinks
       'col--cat',     // 0
       'col--subcat',  // 1
       'col--track',   // 2
-      'col--rm',      // 3
-      'col--player',  // 4
-      'col--time',    // 5
-      'col--place',   // 6
-      'col--link',    // 7
-      'col--video'    // 8
+      'col--rider',      // 3
+      'col--machine',      // 4
+      'col--player',  // 5
+      'col--time',    // 6
+      'col--place',   // 7
+      'col--link',    // 8
+      'col--video'    // 9
     ];
 
 
@@ -1454,33 +1457,32 @@ const tdClassByIndex = useStackedLinks
     // Prebuild anchor HTML
     const linkHtml  = (r.Link  ? `<a href="${r.Link}"  target="_blank" rel="noopener">Link</a>`  : '');
     const videoHtml = (r.Video ? `<a href="${r.Video}" target="_blank" rel="noopener">Video</a>` : '');
+ 
 
-  
 const cells = useStackedLinks
+  // ====== MOBILE ======
   ? [
-      (() => {
-        const href = categoryHref(r.CategoryUI);
-        return href ? `<a href="${href}" target="_self">${r.CategoryUI}</a>` : (r.CategoryUI || '');
-      })(),
-      r.SubcategoryUI || '',
-      r.TrackUI || '',
-      rmCellHtml(r),                     // <-- stacked RM cell
-      r.Player || '',
+      (() => { const href = categoryHref(r.CategoryUI);
+               return href ? `<a href="${href}" target="_self">${r.CategoryUI}</a>` : (r.CategoryUI || ''); })(),
+      (r.SubcategoryUI || ''),
+      (r.TrackUI || ''),
+      rmCellHtml(r), // stacked Rider/Machine with icons; CSS hides text on small screens
+      (r.Player || ''),
       timeOrScore,
-      (r.Place != null ? (isMobile ? String(r.Place) : ordinal(Number(r.Place))) : ''),
+      (r.Place != null ? String(r.Place) : ''),
       (linkHtml || videoHtml ? `<div class="links-vert">${linkHtml}${videoHtml ? `<br>${videoHtml}` : ''}</div>` : ''),
     ]
+  // ====== DESKTOP ======
   : [
-      (() => {
-        const href = categoryHref(r.CategoryUI);
-        return href ? `<a href="${href}" target="_self">${r.CategoryUI}</a>` : (r.CategoryUI || '');
-      })(),
-      r.SubcategoryUI || '',
-      r.TrackUI || '',
-      rmCellHtml(r),                     // <-- stacked RM cell
-      r.Player || '',
+      (() => { const href = categoryHref(r.CategoryUI);
+               return href ? `<a href="${href}" target="_self">${r.CategoryUI}</a>` : (r.CategoryUI || ''); })(),
+      (r.SubcategoryUI || ''),
+      (r.TrackUI || ''),
+      (r.Rider   || ''),  // text only
+      (r.Machine || ''),  // text only
+      (r.Player  || ''),
       timeOrScore,
-      (r.Place != null ? (isMobile ? String(r.Place) : ordinal(Number(r.Place))) : ''),
+      (r.Place != null ? ordinal(Number(r.Place)) : ''),
       linkHtml,
       videoHtml,
     ];
@@ -2139,6 +2141,30 @@ function paintPopularityChart(rows, key, mountSel, topN=15) {
 }
 
 
+// Rebuild the search table when the viewport crosses 900px
+function installResponsiveRebuild() {
+  const mq = window.matchMedia('(max-width: 900px)');
+  let last = mq.matches;
+  let t = null;
+
+  function onChange() {
+    const now = mq.matches;
+    if (now === last) return;     // only react when it actually flips
+    last = now;
+    // debounce a touch so we don't thrash during resize
+    if (t) cancelAnimationFrame(t);
+    t = requestAnimationFrame(() => {
+      // Rebuild under current filters
+      applyFilters();
+      buildTable();
+    });
+  }
+
+  // Newer browsers: 'change' event; older Safari: addListener fallback
+  if (mq.addEventListener) mq.addEventListener('change', onChange);
+  else mq.addListener(onChange);
+}
+
 /* ============== 8) Main ============== */
 
 document.addEventListener('DOMContentLoaded', async () => {
@@ -2199,7 +2225,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     console.log('[Dashboard] merged:', merged.length,
       { latest, spotlight: finalSpotlight, deltaAR, deltaTR });
     initFiltersAndCharts(merged);
-
+    installResponsiveRebuild();
 
     chartDropdownFilters({
       mountCardSel:'#dash-char', chartSel:'#chart-rider',

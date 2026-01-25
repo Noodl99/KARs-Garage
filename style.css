@@ -2665,13 +2665,81 @@ html, body {
   .table--search th .th-label--mobile { display: inline !important; }
 }
 
+}
+
+/* === FINAL HEADER-LABEL SWAP (Search table only) ===================== */
+/* Desktop & wide: show full labels, hide mobile labels */
+.table--search thead th .th-label--full   { display: inline !important; }
+.table--search thead th .th-label--mobile { display: none   !important; }
+
+/* Be extra explicit for the Track column, in case earlier rules leak through */
+.table--search thead th.col--track .th-label--full   { display: inline !important; }
+.table--search thead th.col--track .th-label--mobile { display: none   !important; }
+
+/* Mobile (≤900px): hide full, show short labels */
 @media (max-width: 900px){
-  .table--search thead th.col--track { text-align: center !important; }
-  .table--search thead th.col--track .th-label--mobile {
-    display: inline-block !important;
-    width: 100%;
-    text-align: center !important;
-  }
+  .table--search thead th .th-label--full   { display: none  !important; }
+  .table--search thead th .th-label--mobile { display: inline !important; }
+
+  /* Track-specific reinforcement */
+  .table--search thead th.col--track .th-label--full   { display: none  !important; }
+  .table--search thead th.col--track .th-label--mobile { display: inline !important; }
+}
+
+/* === SEARCH TABLE: desktop full labels; mobile short labels (final) === */
+.table--search thead th .th-label--full   { display: inline !important; }
+.table--search thead th .th-label--mobile { display: none   !important; }
+@media (max-width: 900px){
+  .table--search thead th .th-label--full   { display: none  !important; }
+  .table--search thead th .th-label--mobile { display: inline !important; }
+}
+
+/* Track column: extra reinforcement */
+.table--search thead th.col--track .th-label--full   { display: inline !important; }
+.table--search thead th.col--track .th-label--mobile { display: none  !important; }
+@media (max-width: 900px){
+  .table--search thead th.col--track .th-label--full   { display: none  !important; }
+  .table--search thead th.col--track .th-label--mobile { display: inline !important; }
+}
+
+/* Center Cat/Subcat header labels (body cells remain left by default) */
+.table--search thead th.col--cat,
+.table--search thead th.col--subcat {
+  text-align: center !important;
+}
+.table--search thead th.col--cat   .th-label--full,
+.table--search thead th.col--cat   .th-label--mobile,
+.table--search thead th.col--subcat .th-label--full,
+.table--search thead th.col--subcat .th-label--mobile {
+  display: inline-block !important;
+  width: 100% !important;
+  text-align: center !important;
+}
+
+/* --- FINAL: Search table header labels for Cat/Subcat --- */
+/* Desktop/wide: show full labels only */
+.table--search thead th.col--cat    .th-label--full,
+.table--search thead th.col--subcat .th-label--full { display: inline !important; }
+.table--search thead th.col--cat    .th-label--mobile,
+.table--search thead th.col--subcat .th-label--mobile { display: none !important; }
+
+/* Mobile (≤900px): show short labels only */
+@media (max-width: 900px){
+  .table--search thead th.col--cat    .th-label--full,
+  .table--search thead th.col--subcat .th-label--full { display: none !important; }
+  .table--search thead th.col--cat    .th-label--mobile,
+  .table--search thead th.col--subcat .th-label--mobile { display: inline !important; }
+}
+
+/* (optional) Keep Cat/Subcat headers centered */
+.table--search thead th.col--cat,
+.table--search thead th.col--subcat { text-align: center !important; }
+.table--search thead th.col--cat .th-label--full,
+.table--search thead th.col--cat .th-label--mobile,
+.table--search thead th.col--subcat .th-label--full,
+.table--search thead th.col--subcat .th-label--mobile {
+  width: 100% !important;
+  text-align: center !important;
 }
 
 @supports (height: 1svh) {
