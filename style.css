@@ -2750,14 +2750,6 @@ html, body {
 }
 
 /* Prevent any child from extending past the right edge on iPhones */
-body * {
-  box-sizing: border-box;
-  max-width: 100vw;
-}
-
-@supports (width: 100svw) {
-  body * { max-width: 100svw; }
-}
 
 .delta-big .row-top,
 .delta-big .row-eq {
@@ -2774,31 +2766,52 @@ body * {
 @supports (width: 100svw) {
   /* Use 'svw' (small viewport width) instead of 'vw' so Safari doesn't include
      transient UI or odd gutters that make the element a few px too wide. */
-  .hero--home,
-  .accent--fullbleed {
-    width: 100svw;
-    margin-left:  calc((100svw - 100%) / -2);
-    margin-right: calc((100svw - 100%) / -2);
-  }
+
+/* Replace your existing .hero--home and .accent--fullbleed rules */
+.hero--home,
+.accent--fullbleed {
+  /* live inside the page flow at normal width */
+  width: 100%;
+  margin-left: 0;
+  margin-right: 0;
+  position: relative;
 }
+
+/* Create the true full‑bleed background using a pseudo element that
+   expands only its background, not the layout width. */
+.hero--home::before,
+.accent--fullbleed::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  /* extend background to the viewport edges without changing layout width */
+  left: calc((100vw - 100%) / -2);
+  right: calc((100vw - 100%) / -2);
+  z-index: -1;
+  background: inherit; /* the parent already sets background image/color */
+}
+
+/* Because we moved the background to ::before, give the base a transparent bg */
+.hero--home,
+.accent--fullbleed {
+  background: transparent;
+}
+
 
 /* Grid children must be allowed to shrink or long text can push the grid wider */
 .hero-left, .hero-right { min-width: 0; }
 
 /* The headline rows sometimes grow by sub-pixels on iOS. Clip at the row level. */
 .delta-big, .delta-big .row-top, .delta-big .row-eq {
-  overflow-x: clip; /* supported in modern Safari; falls back to hidden-like behavior */
+  overflow-x: hidden; /* supported in modern Safari; falls back to hidden-like behavior */
 }
 
-/* Top nav: never exceed the visual viewport width even with safe area and gaps */
-.site-nav {
-  max-width: 100svw;          /* override the 100vw-ish width in Safari */
-  overscroll-behavior-x: contain;
-}
-
-/* Keep the overall page from ever painting wider than the visual viewport */
-.container, #dash-hero, .dashboard, .hero-grid, .table-wrap {
-  max-width: 100svw;
+/* Desktop: nav should not scroll and should not set its own max-width */
+@media (min-width: 901px) {
+  .site-nav {
+    max-width: none !important;
+    overflow: visible !important;
+  }
 }
 
 @supports (height: 1svh) {
