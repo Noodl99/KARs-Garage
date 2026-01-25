@@ -2755,6 +2755,17 @@ body * {
   max-width: 100vw;
 }
 
+.delta-big .row-top,
+.delta-big .row-eq {
+  overflow-x: hidden;
+}
+
+.site-nav {
+  max-width: 100vw !important;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
 @supports (height: 1svh) {
   @media (max-width:900px){
     .hero{
