@@ -253,10 +253,19 @@ async function loadExtras(){
     try{
       const res = await fetch(CE_API_BASE, { cache:'no-store' });
       const data = await res.json();
-      CE_SECTIONS.forEach(sec=>{
-        const runs = data[sec.category] || [];
+
+      /* normalize category keys so "-" and "–" match */
+      const normKey = (s) => String(s || '')
+        .replace(/[\u2013\u2014\u2212]/g, '-')  // en dash / em dash / minus -> hyphen
+        .replace(/\s+/g, ' ')
+        .trim();
+
+      const dataNorm = {};
+      Object.keys(data || {}).forEach(k => { dataNorm[normKey(k)] = data[k]; });
+
+      CE_SECTIONS.forEach(sec => {
+        const runs = dataNorm[normKey(sec.category)] || [];
         const rows = runs.map((r,i)=>sec.row(r,i));
-        // Empty prompt goes to the Google Form:
         mountTable(sec.id, sec.columns, rows, 'https://forms.gle/PsSRSGpU8V2gfcUt6');
       });
     }catch(err){
