@@ -197,10 +197,10 @@ const CE_SECTIONS = [
     columns: ['Rank','Player','Time','Amiibo','Video'],
     row: (r,i)=>[
       String(i+1),
-      esc(r.display_name||''),
+      esc(r.display_name ?? ''),
       r.metric_type==='points' ? esc(String(r.points)) : fmtFromMs(r.time_ms),
-      esc(r.rider||''),
-      link(r.video_url, String(r.video_url || ''))
+      esc(r.rider ?? ''),
+      link(r.video_url, String(r.video_url ?? ''))
     ]
   },
   {
@@ -209,22 +209,37 @@ const CE_SECTIONS = [
     columns: ['Rank','Player','Time','Video'],
     row: (r,i)=>[
       String(i+1),
-      esc(r.display_name||''),
+      esc(r.display_name ?? ''),
       r.metric_type==='points' ? esc(String(r.points)) : fmtFromMs(r.time_ms),
-      link(r.video_url, String(r.video_url || ''))
+      link(r.video_url, String(r.video_url ?? ''))
     ]
   },
+
+  // === NEW: City Trial – Max Stats (between Online Checklist and 99 Laps) ===
+  {
+    id: 'ce-ct-max-stats',
+    category: 'City Trial - Max Stats',          // hyphen ok; JS normalizes dashes
+    columns: ['Rank','Player','Time','Rider','Video'],
+    row: (r,i)=>[
+      String(i+1),
+      esc(r.display_name ?? ''),
+      r.metric_type==='points' ? esc(String(r.points)) : fmtFromMs(r.time_ms),
+      esc(r.rider ?? ''),
+      link(r.video_url, String(r.video_url ?? ''))
+    ]
+  },
+
   {
     id: 'ce-99-air-ride',
     category: '99 Laps - Air Ride',
     columns: ['Rank','Player','Time','Rider','Machine','Video'],
     row: (r,i)=>[
       String(i+1),
-      esc(r.display_name||''),
+      esc(r.display_name ?? ''),
       r.metric_type==='points' ? esc(String(r.points)) : fmtFromMs(r.time_ms),
-      esc(r.rider||''),
-      esc(r.machine||''),
-      link(r.video_url, String(r.video_url || ''))
+      esc(r.rider ?? ''),
+      esc(r.machine ?? ''),
+      link(r.video_url, String(r.video_url ?? ''))
     ]
   },
   {
@@ -233,14 +248,15 @@ const CE_SECTIONS = [
     columns: ['Rank','Player','Time','Rider','Machine','Video'],
     row: (r,i)=>[
       String(i+1),
-      esc(r.display_name||''),
+      esc(r.display_name ?? ''),
       r.metric_type==='points' ? esc(String(r.points)) : fmtFromMs(r.time_ms),
-      esc(r.rider||''),
-      esc(r.machine||''),
-      link(r.video_url, String(r.video_url || ''))
+      esc(r.rider ?? ''),
+      esc(r.machine ?? ''),
+      link(r.video_url, String(r.video_url ?? ''))
     ]
   }
 ];
+
 
 
 async function loadExtras(){
@@ -287,7 +303,7 @@ async function loadExtras(){
   const sectionIds = [
     'ex-arm-noleg','ex-arm-all','ex-lessons','ex-100',
     'ex-ngc-air','ex-ngc-top','ex-ngc-city','ex-tetrathlon',
-    'ce-amiibo-anchor','ce-online-85-anchor','ce-99-air-anchor','ce-99-top-anchor',
+    'ce-amiibo-anchor','ce-online-85-anchor','ce-ct-max-anchor','ce-99-air-anchor','ce-99-top-anchor',
     'full-game','cat-ex'
   ];
   (function setupScrollSpy(ids){
