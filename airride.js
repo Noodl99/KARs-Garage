@@ -17,6 +17,7 @@ const TA_LABEL = /time\s*attack/i;
 const FR_LABEL = /free\s*run/i;
 const RESTRICTED   = /\brestricted\b/i;
 const UNRESTRICTED = /\bunrestricted\b/i;
+const LEGENDARIES = /\blegendaries\b/i;
 
 /* === Full Mode (Category === "Air Ride") === */
 // Category label matcher for the full-game mode
@@ -771,6 +772,7 @@ const rulesText = (parts[1] ?? '').trim() || subcat;
 
 let rules = '';
 if (UNRESTRICTED.test(rulesText)) rules = 'Unrestricted';
+else if (LEGENDARIES.test(rulesText)) rules = 'Unrestricted';
 else if (RESTRICTED.test(rulesText)) rules = 'Restricted';
 if (!course || !rules) return;
 
