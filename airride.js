@@ -411,7 +411,7 @@ function labelForUrl(u) {
   }
 }
 
-/* For speedrider.coresv.net links, prefer English by forcing lang=en */
+/* For speedrider.net links, prefer English by forcing lang=en */
 function preferEnglishUrl(u) {
   const href = normalizeUrl(u);
   if (!href) return '';
@@ -419,7 +419,7 @@ function preferEnglishUrl(u) {
   try {
     const url = new URL(href);
     // Only touch Speedrider host(s)
-    if (/^(.+\.)?speedrider\.coresv\.net$/i.test(url.hostname)) {
+    if (/^(.+\.)?(speedrider\.coresv\.net|speedrider\.net)$/i.test(url.hostname)) {
       // Add or overwrite the lang param
       url.searchParams.set('lang', 'en');
       return url.toString();
