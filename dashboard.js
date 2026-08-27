@@ -1223,14 +1223,55 @@ function colorForCount(count, minCount, maxCount) {
 
 /** Charts: tally helpers under current filters */
 const tally = (rows, key) => {
+ 
+  // Deduplicate only for the Player chart
+  if (key === 'Player') {
+ 
+    const counts = new Map();
+    const seen = new Set();
+ 
+    rows.forEach(r => {
+ 
+      const player = String(r.Player || '')
+        .trim()
+        .toLowerCase();
+ 
+      if (!player) return;
+ 
+      const recordKey = [
+        String(r.CategoryUI || r.Category || ''),
+        String(r.TrackUI || r.Track || ''),
+        String(r.Machine || ''),
+        String(r.Rider || ''),
+        Number(r.TimeSec || 0).toFixed(3)
+      ].join('|');
+ 
+      if (seen.has(recordKey)) return;
+      seen.add(recordKey);
+ 
+      counts.set(
+        player,
+        (counts.get(player) || 0) + 1
+      );
+    });
+ 
+    return [...counts.entries()]
+      .map(([k,v]) => ({ key:k, count:v }))
+      .sort((a,b)=>b.count-a.count || a.key.localeCompare(b.key));
+  }
+ 
+  // Existing behavior for Rider / Machine charts
   const m = new Map();
+ 
   rows.forEach(r=>{
     const k = norm(r[key]);
     if (!k) return;
     m.set(k, (m.get(k)||0) + 1);
   });
-  // Sort by Count desc then by label asc
-  return [...m.entries()].map(([k,v])=>({key:k, count:v})).sort((a,b)=>b.count-a.count || a.key.localeCompare(b.key));
+ 
+  return [...m.entries()]
+    .map(([k,v])=>({key:k, count:v}))
+    .sort((a,b)=>b.count-a.count || a.key.localeCompare(b.key));
 };
 
 function paintChart({rows, key, mountSel, topN=15}) {
