@@ -50,6 +50,10 @@ const SR_TA_CSV =
   'https://docs.google.com/spreadsheets/d/e/2PACX-1vRLLtoztu41AtY4reRXwNd00WqxhlFyTbn3RKoBwssrf1fXFGAZxO2b1dB62-0lrUOz4yi1dLuJrmml/pub?gid=1618721256&single=true&output=csv';
 const SR_FR_CSV =
   'https://docs.google.com/spreadsheets/d/e/2PACX-1vRLLtoztu41AtY4reRXwNd00WqxhlFyTbn3RKoBwssrf1fXFGAZxO2b1dB62-0lrUOz4yi1dLuJrmml/pub?gid=109124482&single=true&output=csv';
+const SR_TA_CSV_TR =
+  'https://docs.google.com/spreadsheets/d/e/2PACX-1vRLLtoztu41AtY4reRXwNd00WqxhlFyTbn3RKoBwssrf1fXFGAZxO2b1dB62-0lrUOz4yi1dLuJrmml/pub?gid=600831483&single=true&output=csv';
+const SR_FR_CSV_TR =
+  'https://docs.google.com/spreadsheets/d/e/2PACX-1vRLLtoztu41AtY4reRXwNd00WqxhlFyTbn3RKoBwssrf1fXFGAZxO2b1dB62-0lrUOz4yi1dLuJrmml/pub?gid=1030452206&single=true&output=csv';
 
 // 6-hour spotlight cadence aligned to your :30 refreshes:
 const SPOTLIGHT_ROLLOVER_HOURS = 6;
@@ -236,7 +240,7 @@ function adaptSRC(rows, label) {
 }
 
 
-function adaptSpeedrider(rows, modeLabel /* 'Time Attack' | 'Free Run' */) {
+function adaptSpeedrider(rows, modeLabel, segment /* 'Air Ride' | 'Top Ride' */) {
   if (!rows.length) return [];
   const header = rows[0].map(h => norm(h));
   const idx = (name) => header.findIndex(h => h.toLowerCase() === name.toLowerCase());
@@ -251,7 +255,7 @@ function adaptSpeedrider(rows, modeLabel /* 'Time Attack' | 'Free Run' */) {
     NodeLink: idx('Node Link'),
     PlayerLink: idx('Player Link'),
   };
-
+  
   const out = [];
   for (let i = 1; i < rows.length; i++) {
     const r       = rows[i];
@@ -270,14 +274,14 @@ function adaptSpeedrider(rows, modeLabel /* 'Time Attack' | 'Free Run' */) {
     }
 
     out.push({
-      Category: `Air Ride ${modeLabel}`,
-      CategoryBucket: categoryBucketFrom(`Air Ride ${modeLabel}`),
+      Category: `${segment} ${modeLabel}`,
+      CategoryBucket: categoryBucketFrom(`${segment} ${modeLabel}`),
       Track: course,
       Machine: machine,
       Rider: rider,
       Player: player,
       Place: null,
-      Time: '',               // leave blank → table will use timeFmt(TimeSec)
+      Time: timeStr,               // leave blank → table will use timeFmt(TimeSec)
       TimeSec: timeSec,       // seconds → renders as hh:mm:ss.mmm
       Date: '',
       Link: nodeLink,
@@ -1153,13 +1157,30 @@ function scheduleRefresh() {
 }
 
 function parseSrTimeToSec(txt) {
-  // Accept mm'ss"ff  (ff=2) or mm'ss"fff (fff=3)
-  const s = String(txt || '').trim();
-  let m = s.match(/^(\d+)'(\d{2})"(\d{2,3})$/);
-  if (!m) return null;
-  const mm = +m[1], ss = +m[2], frac = m[3];
-  const ms = frac.length === 2 ? +frac * 10 : +frac;  // ".xx" => centiseconds -> ×10
-  return (mm * 60 + ss) + (ms / 1000);
+  const s = String(txt || '').trim()
+  .replace(/[\u2019\u2032\u02B9]/g, "'")
+  .replace(/[\u201D\u2033\u02BA]/g, '"');
+ 
+  // Current Speedrider format: 01:34.61
+  let m = s.match(/^(\d+):(\d{2})\.(\d{2})$/);
+  if (m) {
+    const mm = +m[1];
+    const ss = +m[2];
+    const cs = +m[3]; // centiseconds
+    return (mm * 60 + ss) + (cs / 100);
+  }
+ 
+  // Older Speedrider format: 1'34"610
+  m = s.match(/^(\d+)'(\d{2})"(\d{2,3})$/);
+  if (m) {
+    const mm = +m[1];
+    const ss = +m[2];
+    const frac = m[3];
+    const ms = frac.length === 2 ? +frac * 10 : +frac;
+    return (mm * 60 + ss) + (ms / 1000);
+  }
+ 
+  return null;
 }
 
 /* === Popularity chart color scale (light -> dark by count) === */
@@ -1449,9 +1470,10 @@ const tdClassByIndex = useStackedLinks
     const tr = h('tr');
 
     // Build the Time/Score text for the row
-    const timeOrScore = (r.ScoreUnit
-      ? `${r.ScoreLabel} ${r.ScoreUnit}`                            // e.g., "41 KOs" or "1,523.17 Yards"
-      : (r.Time || (r.TimeSec != null ? timeFmt(r.TimeSec) : ''))   // normal time
+    const timeOrScore = (
+      r.ScoreUnit
+        ? `${r.ScoreLabel} ${r.ScoreUnit}`
+        : (r.TimeSec != null ? timeFmt(r.TimeSec) : (r.Time || ''))
     );
 
     // Prebuild anchor HTML
@@ -1595,6 +1617,10 @@ function canonMachine(nameRaw) {
     if (s === starName)  return starName; // keep as-is if already the star variant
   }
   return s;
+}
+
+function canonPlayer(nameRaw) {
+  return String(nameRaw || '').trim().toLowerCase();
 }
 
 function deriveUIFields(r) {
@@ -1799,10 +1825,13 @@ function initFiltersAndCharts(merged) {
     // Canonicalize Rider/Machine so filters/charts don't splinter
     const Machine = canonMachine(r.Machine);
     const Rider   = canonRider(r.Rider);
+	const Player = canonPlayer(r.Player);
 
     return {
       ...r,
-      Machine, Rider,
+      Machine,
+	  Rider,
+	  Player,
       CategoryUI, SubcategoryUI, TrackUI,
       ScoreUnit, ScoreNum, ScoreLabel
     };
@@ -2172,7 +2201,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     // 1) Load everything in parallel
     const [
       arCSV, trCSV, ctCSV, rtCSV, exCSV,
-      srTaCSV, srFrCSV,
+      srTaCSV, srFrCSV, srTaCsvTR, srFrCsvTR,
       catExJson
     ] = await Promise.all([
       fetchCSV(SRC_CSV_AIR_RIDE),
@@ -2182,6 +2211,8 @@ document.addEventListener('DOMContentLoaded', async () => {
       fetchCSV(SRC_CSV_EXTRAS_FULL_GAME),
       fetchCSV(SR_TA_CSV),
       fetchCSV(SR_FR_CSV),
+	  fetchCSV(SR_TA_CSV_TR),
+	  fetchCSV(SR_FR_CSV_TR),
       fetchCatEx()
     ]);
 
@@ -2193,8 +2224,10 @@ document.addEventListener('DOMContentLoaded', async () => {
       .concat(adaptSRC(rtCSV, 'Road Trip'))
       .concat(adaptSRC(exCSV, 'Extras'));
     const srRows  = []
-      .concat(adaptSpeedrider(srTaCSV, 'Time Attack'))
-      .concat(adaptSpeedrider(srFrCSV, 'Free Run'));
+      .concat(adaptSpeedrider(srTaCSV, 'Time Attack', 'Air Ride'))
+      .concat(adaptSpeedrider(srFrCSV, 'Free Run', 'Air Ride'))
+      .concat(adaptSpeedrider(srTaCsvTR, 'Time Attack', 'Top Ride'))
+      .concat(adaptSpeedrider(srFrCsvTR, 'Free Run', 'Top Ride'));
     const ceRows  = adaptCatEx(catExJson);
 
     // 3) Merge and dedup (video ID first, then fingerprint)

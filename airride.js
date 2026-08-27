@@ -449,7 +449,13 @@ function buildSrcCategoryUrl(course, mode, rules) {
 function toMillis(t) {
   const s = String(t ?? '').trim();
   let m;
-
+  // Speedrider format: mm:ss.cc
+  if ((m = s.match(/^(\d+):(\d{2})\.(\d{2})$/))) {
+    const mm = +m[1];
+    const ss = +m[2];
+    const cs = +m[3];
+    return (mm * 60 + ss) * 1000 + (cs * 10);
+  }
   // mm'ss"ff (ff=2 or 3 digits)
   if ((m = s.match(/^(\d+)'(\d{2})"(\d{2,3})$/))) {
     const mm = +m[1], ss = +m[2], frac = +m[3];
@@ -682,7 +688,7 @@ function buildSrIndex(rows) {
       "Player":      r[IDX.Player],
       "Node Link":   r[IDX.NodeLink],
       "Player Link": r[IDX.PlayerLink],
-      _sec: Number(r[IDX.TimeSec] ?? NaN)
+      _sec: toMillis(r[IDX.Time]) / 1000
     };
     if (!byCourse.has(course)) byCourse.set(course, []);
     byCourse.get(course).push(entry);

@@ -227,7 +227,15 @@ function normalizeUrl(u){if(!u) return ''; const raw=String(u).trim(); if(/^http
 function labelForUrl(u){try{const url=new URL(u);const path=url.pathname.replace(/\/+$/,'');const host=url.hostname.replace(/^www\./i,'');return host+(path&&path!=='/'?path:'');}catch{return String(u).replace(/^https?:\/\/(?:www\.)?/i,'');}}
 function preferEnglishUrl(u){const href=normalizeUrl(u); if(!href) return ''; try{const url=new URL(href); if (/^(.+\.)?(speedrider\.coresv\.net|speedrider\.net)$/i.test(url.hostname)) {url.searchParams.set('lang','en'); return url.toString();} return href;}catch{return href;}}
 function linkCell(url){const href=normalizeUrl(url); if(!href) return ''; const label=labelForUrl(href); return `<a href="${href}" target="_blank" rel="noopener">${label}</a>`;}
-function toMillis(t){const s=String(t??'').trim(); let m; if((m=s.match(/^(\d+)'(\d{2})"(\d{2,3})$/))){const mm=+m[1], ss=+m[2], frac=+m[3]; const ms=m[3].length===2?frac*10:frac; return (mm*60+ss)*1000+ms;} if((m=s.match(/^(\d+):(\d{2})\.(\d{3})$/))){const mm=+m[1], ss=+m[2], ms=+m[3]; return (mm*60+ss)*1000+ms;} if((m=s.match(/^(\d+):(\d{2}):(\d{2})\.(\d{3})$/))){const hh=+m[1], mm=+m[2], ss=+m[3], ms=+m[4]; return ((hh*3600)+(mm*60)+ss)*1000+ms;} return Number.POSITIVE_INFINITY;}
+function toMillis(t){const s=String(t??'').trim(); let m; 
+  // Speedrider format: mm:ss.cc
+  if ((m = s.match(/^(\d+):(\d{2})\.(\d{2})$/))) {
+    const mm = +m[1];
+    const ss = +m[2];
+    const cs = +m[3];
+    return (mm * 60 + ss) * 1000 + (cs * 10);
+  }
+  if((m=s.match(/^(\d+)'(\d{2})"(\d{2,3})$/))){const mm=+m[1], ss=+m[2], frac=+m[3]; const ms=m[3].length===2?frac*10:frac; return (mm*60+ss)*1000+ms;} if((m=s.match(/^(\d+):(\d{2})\.(\d{3})$/))){const mm=+m[1], ss=+m[2], ms=+m[3]; return (mm*60+ss)*1000+ms;} if((m=s.match(/^(\d+):(\d{2}):(\d{2})\.(\d{3})$/))){const hh=+m[1], mm=+m[2], ss=+m[3], ms=+m[4]; return ((hh*3600)+(mm*60)+ss)*1000+ms;} return Number.POSITIVE_INFINITY;}
 
 /* === "Be the first!" direct SRC links (Top Ride ILs) === */
 const SRC_EMPTY_LINKS = {
@@ -488,7 +496,7 @@ function buildSrIndex(rows) {
       "Player":      r[IDX.Player],
       "Node Link":   r[IDX.NodeLink],
       "Player Link": r[IDX.PlayerLink],
-      _sec: Number(r[IDX.TimeSec] ?? NaN)
+      _sec: toMillis(r[IDX.Time]) / 1000
     };
     if (!byCourse.has(course)) byCourse.set(course, []);
     byCourse.get(course).push(entry);
