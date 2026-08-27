@@ -1641,16 +1641,21 @@ function canonMachine(nameRaw) {
   // Map generic names to "Star" variants
   const starPairs = [
     ['Bulk', 'Bulk Star'],
+	['Compact', 'Compact Star'],
     ['Formula', 'Formula Star'],
+	['Hop', 'Hop Star'],
     ['Jet', 'Jet Star'],
     ['Paper', 'Paper Star'],
     ['Rocket', 'Rocket Star'],
     ['Shadow', 'Shadow Star'],
     ['Slick', 'Slick Star'],
     ['Swerve', 'Swerve Star'],
+	['Tank', 'Tank Star'],
     ['Transform', 'Transform Star'],
+	['Turbo', 'Turbo Star'],
     ['Vampire', 'Vampire Star'],
     ['Wagon', 'Wagon Star'],
+	['Warp', 'Warp Star'],
     ['Winged', 'Winged Star'],
   ];
   for (const [shortName, starName] of starPairs) {
